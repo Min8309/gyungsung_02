@@ -15,6 +15,54 @@
     rm.forEach(function (k) { localStorage.removeItem(k); });
   } catch (e) {}
 })();
+/* 경성야록 · 휴대폰 화면 — yk-mobile.css 를 모든 페이지에 붙임 (폰 폭에서만 작동) */
+(function () {
+  try {
+    var cs = document.currentScript, src = cs && cs.src ? cs.src.replace(/yk-zoom\.js.*$/, '') : '';
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = src + 'yk-mobile.css?v=1';
+    (document.head || document.documentElement).appendChild(l);
+    if (window.matchMedia && matchMedia('(max-width: 760px)').matches) document.documentElement.classList.add('yk-mob');
+  } catch (e) {}
+  /* 폰에서 좁아 찌그러지는 칸 · 옆으로 삐져나가는 칸을 저절로 펴 줌 */
+  function fit() {
+    if (!(window.matchMedia && matchMedia('(max-width: 760px)').matches)) return;
+    var vw = document.documentElement.clientWidth, all = document.querySelectorAll('body *');
+    for (var i = 0; i < all.length; i++) {
+      var e = all[i]; if (e.closest('svg') || e.closest('nav, .mh, .masthead') || e.dataset.ykFit) continue;
+      var cs = getComputedStyle(e); if (cs.position === 'fixed' || cs.display === 'none') continue;
+      if (cs.display === 'grid' || cs.display === 'inline-grid') {
+        var cols = cs.gridTemplateColumns.split(' ').filter(function (x) { return /px$/.test(x); }).map(parseFloat);
+        var txt = 0; Array.prototype.forEach.call(e.children, function (c) { txt = Math.max(txt, (c.textContent || '').replace(/\s+/g, '').length); });
+        if (cols.length >= 2 && cols.length <= 4 && Math.min.apply(null, cols) < 132 && txt > 28 && e.getBoundingClientRect().width < vw * 1.05) {
+          e.style.gridTemplateColumns = 'minmax(0,1fr)'; e.style.gridColumnGap = '0'; e.dataset.ykFit = 'g';
+          Array.prototype.forEach.call(e.children, function (c) { c.style.gridColumn = 'auto'; c.style.gridRow = 'auto'; });
+        }
+      }
+    }
+    for (var j = 0; j < all.length; j++) {
+      var f = all[j]; if (f.closest('svg')) continue;
+      var r = f.getBoundingClientRect(); if (!r.width || r.right <= vw + 1) continue;
+      var c2 = getComputedStyle(f); if (c2.position === 'fixed' || c2.position === 'absolute' || /translate|matrix/.test(c2.transform)) continue;
+      if (r.width > vw * 0.55 && r.left >= -1) { f.style.maxWidth = (vw - Math.max(0, r.left)) + 'px'; f.style.minWidth = '0'; if (/px$/.test(c2.width) && f.tagName !== 'IMG') f.style.width = 'auto'; f.dataset.ykFit = 'w'; }
+      if (c2.display === 'flex' && c2.flexWrap === 'nowrap' && c2.flexDirection.indexOf('row') === 0) { f.style.flexWrap = 'wrap'; f.dataset.ykFit = 'f'; }
+    }
+  }
+  /* 손가락으로도 : 문지르기 · 돋보기 · 다이얼 · 끌기 칸에서는 화면이 밀리지 않고 손가락을 따라감 */
+  var ZONE = '.lens, .jangv4, .c3 .visual.desk, .bs-plate, .rx-dial, .jr-pic, .sb-item, #vPic, .km-touch';
+  function touchy() {
+    if (!(window.matchMedia && matchMedia('(hover: none)').matches)) return;
+    document.documentElement.classList.add('yk-touch');
+    var st = document.createElement('style'); st.textContent = ZONE.split(',').map(function (x) { return x.trim(); }).join(',') + '{touch-action:none}';
+    document.head.appendChild(st);
+    /* 마우스만 듣는 장치에 손가락 움직임을 마우스 움직임으로 전해 줌 */
+    document.addEventListener('touchmove', function (e) {
+      var t = e.touches[0], el = e.target; if (!t || !el.closest || !el.closest(ZONE)) return;
+      try { el.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, cancelable: true, clientX: t.clientX, clientY: t.clientY, view: window })); } catch (x) {}
+    }, { passive: true });
+  }
+  function later() { setTimeout(fit, 300); setTimeout(fit, 1600); touchy(); }
+  if (document.readyState === 'complete') later(); else window.addEventListener('load', later);
+})();
 /* 경성야록 · 화면 배율 120%
    팀 의견: "폭이 너무 좁다 → 브라우저 120% 배율로 보는 게 좋다"
    → 페이지가 열릴 때 스스로 120%로 키워서 보여 준다 (브라우저 배율을 따로 안 건드려도 됨).

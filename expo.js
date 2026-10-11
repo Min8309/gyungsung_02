@@ -351,7 +351,7 @@
   function tagHTML(w) {
     var c = caseById(w.case);
     var toPage = '<a class="to-page" href="' + esc(C.caseLink(c.id)) + '">이 작품이 태어난 지면 →</a>';
-    var pending = w.verify ? '<span class="pending">자료집 대조 중</span><br>' : '';
+    var pending = w.verify ? '<span class="pending">다른 문헌에 의함</span><br>' : '';
 
     // 1990년 이후 작품: 사건과 지면 링크만 (제목 · 연도는 이미 위 표찰에)
     if (w.recent) {
@@ -446,7 +446,7 @@
                      '</button></div>' +
                    '</li>';
           }).join('')
-        : '<li class="node-empty">파생 작품은 자료집과 대조 중입니다</li>';
+        : '<li class="node-empty">파생 작품은 아즉 실리지 안앗소</li>';
 
       return '<article class="tree">' +
                '<header class="root">' +

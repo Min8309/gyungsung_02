@@ -1634,7 +1634,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 
   <section class="index" id="index" aria-label="지면별 기록 색인">
-    <header class="ix-head"><b><span class="hj" data-ko="各面 記錄">각면 긔록</span></b><span><span class="hj l" data-ko="各面 記錄 索引 · 第一輯 調査 資料에 依함">각면 긔록 색인 · 제일집 조사 자료에 의함</span></span><em>◆ <span class="hj l" data-ko="一面 揭載">일면 게재</span> · <b>甲</b> <span class="hj l" data-ko="本報 紙面 日字 確認">본보 지면 일자 확인</span> · <b>乙</b> <span class="hj l" data-ko="原文 對照 中">원문 대조 중</span></em></header>
+    <header class="ix-head"><b><span class="hj" data-ko="各面 記錄">각면 긔록</span></b><span><span class="hj l" data-ko="各面 記錄 索引 · 第一輯 調査 資料에 依함">각면 긔록 색인 · 제일집 조사 자료에 의함</span></span><em>◆ <span class="hj l" data-ko="一面 揭載">일면 게재</span> · <b>甲</b> <span class="hj l" data-ko="本報 紙面 日字 確認">본보 지면 일자 확인</span> · <b>乙</b> <span class="hj l" data-ko="다른 문헌 기준">다른 문헌에 의함</span></em></header>
     <div class="ix-grid">
       <div class="ix-col" data-sec="사회">
         <h4><b><span class="hj" data-ko="社會面">사회면</span></b><small>7건</small></h4>
@@ -1834,7 +1834,7 @@ btns.forEach(b=>b.addEventListener('click',()=>showSec(b.dataset.f)));
 
 /* ① 오늘의 경성: 90년 전 오늘 */
 /* 날짜별 기사: "월-일": {hj:"한자 제목", ko:"한글 제목", link:"상세 페이지 주소"}
-   ※ 반드시 팀이 모은 동아일보 지면에서 확인한 기사만 넣을 것 */
+   ※ 반드시 동아일보 지면에서 확인한 기사만 넣을 것 */
 const TODAY_ARCHIVE = {
   "08-25": { hj:"손기정 군 우승 사진 — 가슴의 표지를 지운 채", ko:"孫基禎 君 優勝 寫眞 — 가슴의 標識이 지워진 채", link:"#" }
 };
@@ -1849,7 +1849,7 @@ function renderToday(){
   dh.dataset.ko="昭和"+kanji(y-1925)+"年 "+kanji(m)+"月 "+kanji(dd)+"日 "+wd; dh.classList.remove('gloss'); if(dh._hide)dh._hide();
   document.getElementById('t-gap').textContent=GAP;
   const key=String(m).padStart(2,'0')+"-"+String(dd).padStart(2,'0');
-  // 1936년 8월 말 ~ 1937년 6월 초: 일장기 말소 사건으로 동아일보 무기정간 (팀 자료로 정확한 날짜 확인 필요)
+  // 1936년 8월 말 ~ 1937년 6월 초: 일장기 말소 사건으로 동아일보 무기정간
   const t=past.getTime(), stopped = t>=new Date(1936,7,29).getTime() && t<new Date(1937,5,3).getTime();
   const head=document.getElementById('t-head'), link=document.getElementById('t-link');
   let item=TODAY_ARCHIVE[key];

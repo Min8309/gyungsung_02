@@ -1,6 +1,6 @@
 /* 경성야록 · 부산 마리아 참살사건 — 화면 장치 (보통 스크립트, 더블클릭으로도 동작)
    - 글자: <span class="hj" data-ko="오늘말">옛말</span> → 마우스를 올리면 오늘말로 바뀜
-   - 그림/소리는 ../case/ 폴더(팀 서버 페이지)의 것을 씀 */
+   - 그림/소리는 ../case/ 폴더의 것을 씀 */
 (function () {
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -104,7 +104,7 @@
         '<div class="pr-then-now"><div><small>' + H('그때 자리', '그때 자리') + '</small><b>' + H(p.thenAddr[0], p.thenAddr[1]) + '</b></div><span aria-hidden="true">→</span><div><small>' + H('이제 자리', '지금 자리') + '</small><b>' + H(p.nowAddr[0], p.nowAddr[1]) + '</b></div></div>' +
         '<p>' + H(p.text[0], p.text[1]) + '</p></div>' +
         '<figure class="pr-photo"><img alt="" src="' + p.then + '"><span class="pr-seal" aria-hidden="true">釜山</span></figure>' +
-        '<span class="pr-src">사진 · 부산 옛 사진 / 오늘 사진 (팀 수집 자료)</span>';
+        '<span class="pr-src">사진 · 부산 옛 사진 / 오늘 사진</span>';
       $('.pl-arrow.left', root).disabled = cur === 0;
       $('.pl-arrow.right', root).disabled = cur === PLACES.length - 1;
     }
@@ -117,7 +117,7 @@
   })();
 
   /* =========================================================
-     02  동아일보가 쪼차간 긔록 (팀 원고 · 인물 이름은 가림)
+     02  동아일보가 쪼차간 긔록 (인물 이름은 가림)
      ========================================================= */
   var ARTS = [
     { d: ['팔월 사일 · 一', '8월 4일 ①'], tag: ['처음 실림', '처음 실림'], day: ['사흘째', '사흘째'], date: '1931.08.04', img: '19310804_01.png',
@@ -408,7 +408,7 @@
       '<article class="lt-report">' +
         '<div class="lt-rhead"><b>鑑定書</b><span>' + H('필적 감정 · 체험', '필적 감정 · 체험') + '</span><em class="lt-count">0 / 3</em></div>' +
         '<ol class="lt-finds">' + SPOTS.map(function (s, i) { return '<li data-i="' + i + '"><b>' + H(s.t[0], s.t[1]) + '</b><span>' + H('— 아즉 차지 못함', '— 아직 찾지 못함') + '</span></li>'; }).join('') + '</ol>' +
-        '<div class="lt-read"><div class="lt-read-head"><div class="lt-tabs">' + LETTERS.map(function (L, i) { return '<button type="button" class="lt-tab' + (i ? '' : ' on') + '" data-i="' + i + '">' + H(L.t[0], L.t[1]) + '<small>' + L.d + '</small></button>'; }).join('') + '</div><button type="button" class="lt-read-go">' + H('다시 읽기') + '</button></div><ol class="lt-lines"></ol><p class="lt-read-src">※ 나무위키(후대 정리)에 인용된 투서를 줄여 옮김 · 동아일보 원 지면 대조 중</p></div>' +
+        '<div class="lt-read"><div class="lt-read-head"><div class="lt-tabs">' + LETTERS.map(function (L, i) { return '<button type="button" class="lt-tab' + (i ? '' : ' on') + '" data-i="' + i + '">' + H(L.t[0], L.t[1]) + '<small>' + L.d + '</small></button>'; }).join('') + '</div><button type="button" class="lt-read-go">' + H('다시 읽기') + '</button></div><ol class="lt-lines"></ol><p class="lt-read-src">※ 나무위키(후대 정리)에 인용된 투서를 줄여 옮김</p></div>' +
         '<div class="lt-check"><div class="lt-check-head"><b>' + H('편지 대 사실', '편지 대 사실') + '</b><span>' + H('줄을 눌러 도장을 찍으시압', '줄을 눌러 도장을 찍어 보세요') + '</span><em class="lt-ck-n">0 / ' + CHECK.length + '</em></div><ol>' +
           CHECK.map(function (c, i) { return '<li data-i="' + i + '"><span class="ck-c">' + c.c + '</span><span class="ck-f">' + c.f + '</span><span class="ck-st ' + c.k + '">' + c.st + '</span></li>'; }).join('') + '</ol></div>' +
         '<ol class="mr-steps lt-steps">' + STEPS.map(function (s) { return '<li class="' + (s.key ? 'key' : '') + '"><b>' + H(s.b[0], s.b[1]) + '</b><strong>' + H(s.h[0], s.h[1]) + '</strong><span>' + H(s.s[0], s.s[1]) + '</span></li>'; }).join('') + '</ol>' +
@@ -891,7 +891,7 @@
     function open() { m.hidden = false; tab.classList.add('seen'); $('.mr-prev', m).hidden = false; $('.mr-next', m).hidden = false; show(0); play('sfxBell'); }
     function close() { m.hidden = true; }
     tab.addEventListener('click', open);
-    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '팀 카드'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
+    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '號外'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
     $('.mr-x', m).addEventListener('click', close);
     $('.mr-prev', m).addEventListener('click', function () { show(i - 1); });
     $('.mr-next', m).addEventListener('click', function () { show(i + 1); });

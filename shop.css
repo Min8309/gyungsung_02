@@ -1,5 +1,6 @@
 /* 경성야록 상점 — 진짜 광고 진열장 */
-.shop-page{max-width:1280px;margin:0 auto;padding:0 40px 60px}
+.shop-page{--sp-x:clamp(18px,calc(4vw / var(--ykz, 1)),56px);max-width:1440px;margin:0 auto;padding:0 var(--sp-x) 60px}
+.shop-page>.mh{margin-left:calc(-1 * var(--sp-x));margin-right:calc(-1 * var(--sp-x))}
 .shop-page .hj.gloss{color:inherit!important}
 .sp-head{text-align:center;padding:46px 0 10px;border-top:3px double var(--rule);margin-top:10px}
 .sp-k{margin:0;font-family:var(--myeongjo);font-size:12.5px;letter-spacing:.3em;color:var(--fade)}
@@ -135,7 +136,7 @@
 .sx-head p{margin:12px auto 0;max-width:580px;font-family:var(--myeongjo);font-size:15px;line-height:1.85;color:#3a3128}
 
 /* ② 한 상품의 십오 년 */
-.sp-years{margin:80px -40px 0;padding:56px 40px 50px;border-top:3px double var(--rule);transition:background-color 1.6s ease,color 1.6s ease}
+.sp-years{margin:80px calc(-1 * var(--sp-x)) 0;padding:56px var(--sp-x) 50px;border-top:3px double var(--rule);transition:background-color 1.6s ease,color 1.6s ease}
 .yr-tabs{display:flex;justify-content:center;margin:24px auto 0;border:1px solid var(--rule);width:max-content}
 .yr-tabs button{font-family:var(--serif);font-weight:700;font-size:14px;letter-spacing:.2em;padding:8px 20px 7px;background:none;border:0;border-right:1px solid var(--rule);color:var(--ink);cursor:pointer}
 .yr-tabs button:last-child{border-right:0}.yr-tabs button.on{background:var(--ink);color:var(--paper)}
@@ -191,7 +192,7 @@
 .ud-go{display:inline-block;margin-top:18px;color:var(--ink);font-family:var(--myeongjo);font-size:13.5px;letter-spacing:.12em;text-decoration:none;border-bottom:1px solid var(--ink)}
 
 /* ④ 끝 — 물든 광고, 지워진 광고 */
-.sp-dark{margin:90px -40px 0;padding:70px 56px 80px;background:#15130f;color:#e9dfc9;box-shadow:inset 0 0 140px rgba(0,0,0,.6)}
+.sp-dark{margin:90px calc(-1 * var(--sp-x)) 0;padding:70px 56px 80px;background:#15130f;color:#e9dfc9;box-shadow:inset 0 0 140px rgba(0,0,0,.6)}
 .sp-dark .sx-k{color:#c9b88f}.sp-dark .sx-head h2{color:#f1e6cc}.sp-dark .sx-head p{color:rgba(233,223,201,.72)}
 .sp-dark .hj.gloss{color:inherit!important}
 .dk-dyed{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;margin:50px auto 0;max-width:1020px}
@@ -258,14 +259,14 @@
 .sb-tab.done{border-left-color:#7a3a2a}
 
 @media (max-width:900px){.ud-row,.yr-frame,.kb,.dk-dyed{grid-template-columns:1fr}.sp-years,.sp-dark{margin-left:-16px;margin-right:-16px;padding-left:20px;padding-right:20px}.yr-pic{height:320px}.kb{gap:30px}}
-@media (max-width:760px){.shop-page{padding:0 16px 40px}.sp-head h1{font-size:30px}.sp-grid{columns:2 150px;column-gap:16px}}
+@media (max-width:760px){.shop-page{--sp-x:16px;padding:0 16px 40px}.sp-head h1{font-size:30px}.sp-grid{columns:2 150px;column-gap:16px}}
 .kb-body .col{flex-direction:column;align-items:center}
 .kb-body .ln{width:11px;background:repeating-linear-gradient(180deg,rgba(30,25,19,.6) 0 8px,transparent 8px 11px)}
 .kb-body .gap{width:15px;flex:1.4}
 .kb-body .xx{width:15px}
 
 /* ═════════ v4 : 다섯 서랍 · 광고만 켜기 · 속간한 날 · 분양 공고 · 엽서 보내기 ═════════ */
-.sp-drawers,.sp-oneday,.sp-bunyang{margin:80px -40px 0;padding:56px 40px 50px;border-top:3px double var(--rule)}
+.sp-drawers,.sp-oneday,.sp-bunyang{margin:80px calc(-1 * var(--sp-x)) 0;padding:56px var(--sp-x) 50px;border-top:3px double var(--rule)}
 /* 약장 */
 .dr-cab{position:relative;max-width:900px;margin:40px auto 0;padding:18px 18px 20px;background:linear-gradient(180deg,#3a2a1c,#2a1e14);box-shadow:inset 0 0 0 1px #5a432c,inset 0 2px 0 #6b5138,0 40px 50px -30px #000c;border-radius:2px}
 .dr-cab:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(92deg,#0000 0 7px,#ffffff05 7px 8px,#0000 8px 19px)}

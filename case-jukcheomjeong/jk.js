@@ -74,7 +74,7 @@
       src: '바탕 지도 · 아현동 일대 지도(1936) · 서울역사아카이브' }
   ];
 
-  /* 신문이 받아 적은 말 — 날마다 지면에 오른 「말」 (팀 원고 바탕) */
+  /* 신문이 받아 적은 말 — 날마다 지면에 오른 「말」 */
   var ARTS = [
     { d: ['오월 십칠일', '5월 17일'], tag: ['처음 실림', '첫 보도'], day: ['이튿날', '이튿날'], date: '1933.05.17', img: '19330517.jpg',
       title: '시내 형사 총출동, 팔방 활동도 수포',
@@ -285,7 +285,7 @@
   })();
 
   /* =========================================================
-     第五章  말은 아즉 떠도오 — 미신의 주파수 (팀 라듸오 원고)
+     第五章  말은 아즉 떠도오 — 미신의 주파수
      ========================================================= */
   var JK = './';
   var ST = [
@@ -653,7 +653,7 @@
     function open() { m.hidden = false; tab.classList.add('seen'); $('.mr-prev', m).hidden = false; $('.mr-next', m).hidden = false; show(0); play('sfxBell'); }
     function close() { m.hidden = true; }
     tab.addEventListener('click', open);
-    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '팀 카드'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
+    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '號外'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
     $('.mr-x', m).addEventListener('click', close);
     $('.mr-prev', m).addEventListener('click', function () { show(i - 1); });
     $('.mr-next', m).addEventListener('click', function () { show(i + 1); });

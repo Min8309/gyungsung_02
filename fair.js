@@ -384,11 +384,11 @@
     img.onerror = function () { if (k < tries.length) img.src = tries[k++]; else if (fail) fail(); };
     img.onerror();
   }
-  // 표찰에 공통으로 붙는 줄: 사건 · 확인 중 · 지면 링크 · 찾아보기
+  // 표찰에 공통으로 붙는 줄: 사건 · 문헌 표시 · 지면 링크 · 찾아보기
   function foot(w) {
     var c = w.case ? F.cases[w.case] : null;
     return (c ? '<p class="t-case">' + T({ old: '사건', now: '사건' }) + ' · ' + T(c) + '</p>' : '<p class="t-case">' + T({ old: '사건과 바로 닷지 안는 시대 자료', now: '사건과 직접 관계없는 시대 자료' }) + '</p>') +
-      (w.verify ? '<p class="t-verify">' + T({ old: '자료집 대조 중', now: '자료집 확인 중' }) + ' · 乙</p>' : '') +
+      (w.verify ? '<p class="t-verify">' + T({ old: '다른 문헌에 의함', now: '다른 문헌 기준' }) + ' · 乙</p>' : '') +
       '<p class="t-go">' + (w.link ? '<a href="' + esc(w.link) + '" target="_blank" rel="noopener">' + T({ old: '차저보기', now: '찾아보기' }) + '</a>' : '') +
       (w.link && c ? ' · ' : '') + (c ? '<a href="' + C.caseLink(w.case) + '">' + T({ old: '이 작품이 태여난 지면', now: '이 작품이 태어난 지면' }) + '</a>' : '') + '</p>';
   }
@@ -442,7 +442,7 @@
               (w.quote ? '<blockquote>' + T(w.quote) + '<cite>' + T(w.quote.src) + '</cite></blockquote>' : '') +
               (c && c.story ? '<section class="case-box"><h4>' + T({ old: '이 작품이 그린 사건', now: '이 작품이 그린 사건' }) + '<span class="cb-name">' + T(c) + '</span></h4><p>' + T(c.story) + '</p></section>' : '') +
               (w.note ? '<p class="p-note">' + T(w.note) + '</p>' : '') +
-              (w.verify ? '<p class="t-verify">' + T({ old: '자료집 대조 중', now: '자료집 확인 중' }) + ' · 乙</p>' : '') +
+              (w.verify ? '<p class="t-verify">' + T({ old: '다른 문헌에 의함', now: '다른 문헌 기준' }) + ' · 乙</p>' : '') +
               (c ? '<a class="rd-more" href="' + C.caseLink(w.case) + '">' + T({ old: '본지에서 사건 닑기', now: '신문에서 사건 읽기' }) + '</a>' : '') +
               (w.lastpage ? '<button type="button" class="lp-go">' + T({ old: '책장을 끗까지 넘기시오', now: '마지막 장 넘기기' }) + '</button>' : '') +
               // 마지막 장: 판권 뒤 빈 장 — 글 쓴 사람에게 그 뒤 생긴 일

@@ -64,7 +64,7 @@
   });
 
   /* =========================================================
-     보도 — 지면이 따라간 반년 (팀 원고 바탕 · 첫 장은 조선일보 호외)
+     보도 — 지면이 따라간 반년 (첫 장은 조선일보 호외)
      ========================================================= */
   var ARTS = [
     { d: ['사월 십삼일', '4월 13일'], tag: ['보도 금지 해제 · 호외', '보도 금지 해제 · 호외'], paper: '조선일보', date: '1937.04.13', img: '19370413.png',
@@ -276,7 +276,7 @@
   })();
 
   /* =========================================================
-     라듸오 — 닫힌 무리의 주파수 (팀 원고 1962 · 1987 · 1990년대 · 1996)
+     라듸오 — 닫힌 무리의 주파수 (1962 · 1987 · 1990년대 · 1996)
      ========================================================= */
   var JK = './';
   var ST = [
@@ -485,7 +485,7 @@
     function open() { m.hidden = false; tab.classList.add('seen'); $('.mr-prev', m).hidden = false; $('.mr-next', m).hidden = false; show(0); play('sfxBell'); }
     function close() { m.hidden = true; }
     tab.addEventListener('click', open);
-    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '팀 카드'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
+    window.ykMariaCard = function (src) { m.hidden = false; $('.mr-modal-img img', m).src = src; $('.mr-page-no', m).textContent = '號外'; $('.mr-prev', m).hidden = true; $('.mr-next', m).hidden = true; };
     $('.mr-x', m).addEventListener('click', close);
     $('.mr-prev', m).addEventListener('click', function () { show(i - 1); });
     $('.mr-next', m).addEventListener('click', function () { show(i + 1); });

@@ -1,0 +1,31 @@
+/* 경성야록 · 휴대폰 화면 (폭 760px 아래에서만)
+   1) 무엇이 폭을 넘어도 화면이 옆으로 밀리거나 작게 쪼그라들지 않게
+   2) 페이지마다 넘치던 칸을 폰 폭에 맞춤 */
+@media (max-width:760px){
+  html,body{max-width:100%;overflow-x:clip}
+  @supports not (overflow:clip){html,body{overflow-x:hidden}}
+  img,video,canvas,svg{max-width:100%}
+}
+
+/* 공통 : 떠 있는 단추들이 글을 덮지 않게 */
+@media (max-width:760px){
+  .ykg-tab{transform:scale(.72);transform-origin:top left}
+  .notebook{top:auto!important;bottom:14px!important;right:auto!important;left:50%!important;transform:translateX(-50%);width:auto!important;min-width:150px;z-index:80}
+  .notebook .nb-cover{padding:6px 12px!important;font-size:11px!important}
+  .mh nav.sections{display:grid!important;grid-template-columns:1fr 1fr!important}
+  .mh nav.sections .idx,.mh nav.sections .search-inline{display:none!important}
+  .ykr-tel{right:12px!important;left:12px!important;bottom:76px!important;width:auto!important}
+  .bb-chant-stop{left:50%!important;transform:translateX(-50%)!important;bottom:70px!important}
+  .bb-chant-stop:not(.on){transform:translate(-50%,8px)!important}
+}
+
+/* 메인 */
+@media (max-width:760px){
+  .ads.ads2{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  .ads.ads2>*{min-height:150px}
+}
+/* 상점 */
+@media (max-width:760px){
+  .yr-line li:not(.on) button{font-size:0!important;gap:0!important}
+  .yr-line{max-width:100%}
+}

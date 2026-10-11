@@ -273,7 +273,7 @@ if(location.hash.indexOf('#yarok=')===0)document.documentElement.classList.add('
 @media (prefers-reduced-motion:reduce){ .mol-stamp{animation:none} .tl-dot::before{transition:none} }
 </style>
 <meta charset="UTF-8">
-<script src="yk-zoom.js" data-yk-main></script><!-- 화면 배율 120% -->
+<script src="yk-zoom.js?v=2" data-yk-main></script><!-- 화면 배율 120% -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>경성야록 京城野錄 · 시즌 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2570,7 +2570,7 @@ html::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
 
 
   <section class="index" id="index" hidden aria-hidden="true" aria-label="지면별 기록 색인">
-    <header class="ix-head"><b><span class="hj" data-ko="지면별 기록">각면 긔록</span></b><span><span class="hj l" data-ko="지면별 기록 목록 · 시즌 1 조사 자료 기준">각면 긔록 색인 · 제일집 조사 자료에 의함</span></span><em>◆ <span class="hj l" data-ko="1면 수록">일면 게재</span> · <b>甲</b> <span class="hj l" data-ko="동아일보 지면 날짜 확인">본보 지면 일자 확인</span> · <b>乙</b> <span class="hj l" data-ko="원문 확인 중">원문 대조 중</span></em></header>
+    <header class="ix-head"><b><span class="hj" data-ko="지면별 기록">각면 긔록</span></b><span><span class="hj l" data-ko="지면별 기록 목록 · 시즌 1 조사 자료 기준">각면 긔록 색인 · 제일집 조사 자료에 의함</span></span><em>◆ <span class="hj l" data-ko="1면 수록">일면 게재</span> · <b>甲</b> <span class="hj l" data-ko="동아일보 지면 날짜 확인">본보 지면 일자 확인</span> · <b>乙</b> <span class="hj l" data-ko="다른 문헌 기준">다른 문헌에 의함</span></em></header>
     <div class="ix-grid">
       <div class="ix-col" data-sec="사회">
         <h4><b><span class="hj" data-ko="사회면">사회면</span></b><small>7건</small></h4>
@@ -2910,7 +2910,7 @@ btns.forEach(b=>b.addEventListener('click',()=>showSec(b.dataset.f)));
 
 /* ① 오늘의 경성: 90년 전 오늘 */
 /* 날짜별 기사: "월-일": {hj:"한자 제목", ko:"한글 제목", link:"상세 페이지 주소"}
-   ※ 반드시 팀이 모은 동아일보 지면에서 확인한 기사만 넣을 것 */
+   ※ 반드시 동아일보 지면에서 확인한 기사만 넣을 것 */
 const TODAY_ARCHIVE = {
   "08-25": { hj:"손기정 군 우승 사진 — 가슴의 표지를 지운 채", ko:"손기정 우승 사진 — 가슴의 일장기가 지워진 채", link:"#" }
 };
@@ -2925,7 +2925,7 @@ function renderToday(){
   dh.dataset.ko=y+"년 "+m+"월 "+dd+"일 "+"일월화수목금토"[past.getDay()]+"요일"; dh.classList.remove('gloss'); if(dh._hide)dh._hide();
   document.getElementById('t-gap').textContent=GAP;
   const key=String(m).padStart(2,'0')+"-"+String(dd).padStart(2,'0');
-  // 1936년 8월 말 ~ 1937년 6월 초: 일장기 말소 사건으로 동아일보 무기정간 (팀 자료로 정확한 날짜 확인 필요)
+  // 1936년 8월 말 ~ 1937년 6월 초: 일장기 말소 사건으로 동아일보 무기정간
   const t=past.getTime(), stopped = t>=new Date(1936,7,29).getTime() && t<new Date(1937,5,3).getTime();
   const head=document.getElementById('t-head'), link=document.getElementById('t-link');
   let item=TODAY_ARCHIVE[key];
@@ -3192,7 +3192,7 @@ document.querySelectorAll('.hj').forEach(el=>{
   };
 
   // 한 줄 더하기 — 응접자(△) 답은 보이지 안는 손이 쓰듯 한 자씩 나타남
-  // tail : 다 쓴 뒤 붓치는 꼬리 (원문 대조 중 '┉')
+  // tail : 다 쓴 뒤 붓치는 꼬리 ('┉')
   function add(kind, whoOld, whoNow, body, src, ours, slow, tail){
     const d = document.createElement('div');
     d.className = 'msg '+kind;
@@ -3234,7 +3234,7 @@ document.querySelectorAll('.hj').forEach(el=>{
       m.querySelector('.who .sw').classList.add('erased');
       setTimeout(done, typeTime(p.mid)); return;
     }
-    const so = p.part ? srcOld+' · 답 압부분' : srcOld, sn = p.part ? srcNow+' · 답 앞부분만 (원문 대조 중)' : srcNow;
+    const so = p.part ? srcOld+' · 답 압부분' : srcOld, sn = p.part ? srcNow+' · 답 앞부분만' : srcNow;
     add('reporter', w.old, w.now, sw(p.a.old,p.a.now), sw(so,sn), false, true);
     setTimeout(done, typeTime(p.a));
   }
@@ -3814,6 +3814,6 @@ document.querySelectorAll('.hj').forEach(el=>{
 <script src="nr-store.js?v=1"></script>
 <script src="nr-main.js?v=5"></script>
 <script src="hg-main.js?v=3"></script>
-<script src="yk-guide.js?v=15"></script>
+<script src="yk-guide.js?v=17"></script>
 </body>
 </html>

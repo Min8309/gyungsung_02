@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="ko"><head>
 <!-- 야록 편집국 v1 — 팀원이 만든 「경성신문 편집국」 기능을 본지 디자인으로 옮김. 서버 없이 더블클릭으로 열림 -->
-<meta charset="UTF-8"><script src="yk-zoom.js"></script>
+<meta charset="UTF-8"><script src="yk-zoom.js?v=2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>자정의 편집국 · 경성야록</title>
 <link rel="stylesheet" href="case-jukcheomjeong/fonts/fonts.css">
 <link rel="stylesheet" href="case-jukcheomjeong/assets/jukcheom.css">
-<link rel="stylesheet" href="shop.css?v=4">
+<link rel="stylesheet" href="shop.css?v=5">
 <link rel="stylesheet" href="newsroom.css?v=6">
 </head><body class="nr-body">
 <!-- ═══ 출입 확인 : 기자(관리자)만. 이름 + 출입증 번호(OpenAI 키) ═══ -->
@@ -117,7 +117,7 @@
           <label class="nr-f"><span>인물 <small>한 줄에 하나</small></span><textarea id="ePeople" rows="3"></textarea></label>
           <label class="nr-f"><span>장소 <small>한 줄에 하나</small></span><textarea id="ePlaces" rows="3"></textarea></label>
           <label class="nr-f"><span>사건 날짜 <small>한 줄에 하나</small></span><textarea id="eDates" rows="3"></textarea></label>
-          <label class="nr-f"><span>확인 필요 <small>한 줄에 하나</small></span><textarea id="eUnc" rows="3"></textarea></label>
+          <label class="nr-f"><span>남은 물음 <small>한 줄에 하나</small></span><textarea id="eUnc" rows="3"></textarea></label>
         </div>
         <button type="button" class="nr-btn" id="save">고친 것 저장</button>
       </details>
@@ -128,7 +128,7 @@
         <button type="button" class="nr-btn dark" id="pub">교열 마침 · 조판하여 싣기</button>
         <button type="button" class="nr-link" id="del">이 원고 버리기</button>
       </div>
-      <p class="nr-help">AI 풀이는 사실 확인을 대신하지 않습니다. 원문과 「확인 필요」를 꼭 읽고 실어 주세요.</p>
+      <p class="nr-help">AI 풀이는 사실 확인을 대신하지 않습니다. 원문과 「남은 물음」을 꼭 읽고 실어 주세요.</p>
     </section>
   </div>
 
@@ -153,6 +153,6 @@
 </div>
 <script src="yk-reward.js?v=7"></script>
 <script src="nr-store.js?v=1"></script>
-<script src="newsroom.js?v=6"></script>
-<script src="yk-guide.js?v=15"></script>
+<script src="newsroom.js?v=7"></script>
+<script src="yk-guide.js?v=17"></script>
 </body></html>
