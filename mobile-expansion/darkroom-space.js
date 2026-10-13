@@ -7,7 +7,7 @@ class DarkroomSpace{
   this.game=game;this.T=T;this.archive=archive;this.room=game.room;this.group=new T.Group();this.group.name='mobile-darkroom-spaces';game.scene.add(this.group);this.curtains=[];this.photos=[];this.pulseLights=[];this.zone='archive';this.developed=false;
   this.originalFlashlightColor=game.lighting.flashlight.color.clone();this.originalAmbientColor=archive.ambient.color.clone();
   this.mats={...archive.materials,curtain:new T.MeshStandardMaterial({color:0x121217,roughness:.95,side:2}),metal:new T.MeshStandardMaterial({color:0x555b54,roughness:.65,metalness:.6}),liquid:new T.MeshStandardMaterial({color:0x343b2f,roughness:.2,metalness:.15}),bottle:new T.MeshStandardMaterial({color:0x42351d,roughness:.3,metalness:.2})};
-  this.cutArchiveExit();this.buildRooms();this.buildWorkstations();this.buildPhotographs();this.installInteraction();this.installUpdate();
+  this.cutArchiveExit();this.buildRooms();this.buildWorkstations();this.buildPhotographs();this.buildMissingPerson();this.installInteraction();this.installUpdate();
   archive.quest.on('safe-light',({safe})=>this.workLights.forEach(light=>light.color.setHex(safe?0xcc1818:0xe8e2d7)));
   archive.quest.on('puzzle-solved',detail=>{if(detail.room==='darkroom'){this.developed=true;game.sharedInventory.addItem({id:'developed_press_photo',name:'윤전기 사진 · 14',desc:'세척·안전등·현상·정착을 거쳐 숫자 14가 떠오른 사진.'});this.refreshNotice();this.archive.playPuzzleEffect('develop');}});
   Promise.all([...game.ghostEncounters.pending.values()]).then(()=>{const types=window.SikjasilGhosts.GHOSTS;this.photos.forEach((mesh,index)=>{const texture=game.ghostEncounters.textures.get(types[index%types.length].id);if(texture){mesh.material.map=texture;mesh.material.needsUpdate=true;}});});
@@ -57,9 +57,24 @@ class DarkroomSpace{
   for(const [row,x]of[36.8,38.4,40].entries()){const line=this.cylinder(.006,.006,5.4,x,f+2.8,-2.7,this.mats.curtain);line.rotation.x=Math.PI/2;for(let i=0;i<7;i++){const z=-5.1+i*.8;const string=this.cylinder(.004,.004,.32,x,f+2.65,z,this.mats.curtain);this.photo(x,f+2.18+(i%3)*.04,z,-Math.PI/2,i+row*7);}}
   for(let i=0;i<6;i++)this.photo(41.85,f+1.55,-4.85+i*.83,-Math.PI/2,i);
  }
- refreshNotice(){if(this.zone==='develop'){this.archive.notice.hidden=false;this.archive.notice.textContent=this.developed?'暗室 · 현상 완료 · 봉인 숫자 14 · 뒤쪽 커튼을 젖히시오':'暗室 · 오른쪽 인화 작업대를 조사해 사진을 현상하시오';}else if(this.zone==='photos'){this.archive.notice.hidden=false;this.archive.notice.textContent='寫眞乾燥室 · 붉은 등 아래 천장과 벽의 사진들';}}
+ missingPhotoTexture(index,empty=false){
+  const canvas=document.createElement('canvas');canvas.width=600;canvas.height=360;const c=canvas.getContext('2d');c.fillStyle='#b4a68a';c.fillRect(0,0,600,360);c.strokeStyle='#39c85a';c.lineWidth=12;c.strokeRect(8,8,584,344);c.fillStyle='#203d2a';c.font='bold 26px serif';c.textAlign='center';c.fillText('사진 '+(index+1)+' · 같은 검은 모자를 찾으세요',300,43);
+  for(let slot=0;slot<3;slot++){const person=(slot+index)%3,x=110+slot*190;if(empty&&person===0){c.fillStyle='#4a6047';c.font='20px serif';c.fillText('빈 자리',x,290);continue;}c.fillStyle='#36372f';c.beginPath();c.ellipse(x,295,60,70,0,0,Math.PI*2);c.fill();c.fillStyle='#786f5b';c.beginPath();c.ellipse(x,155,40,52,0,0,Math.PI*2);c.fill();c.fillStyle='#22251e';if(person===0){c.fillRect(x-36,89,72,43);c.fillRect(x-55,124,110,13);}else if(person===1){c.fillStyle='#e4d6b5';c.fillRect(x-40,207,80,25);c.fillRect(x-12,225,25,70);}else{c.strokeStyle='#22251e';c.lineWidth=5;for(const dx of[-18,18]){c.beginPath();c.arc(x+dx,156,15,0,Math.PI*2);c.stroke();}c.beginPath();c.moveTo(x-4,156);c.lineTo(x+4,156);c.stroke();}}
+  return new this.T.CanvasTexture(canvas);
+ }
+ buildMissingPerson(){
+  this.missingPerson=new window.GyeongMissingPerson.Puzzle();this.missingPhotos=[];
+  for(const [index,x] of [36,38.3,40.6].entries()){
+   const photo=this.archive.sign('검은 모자 · 사진 '+(index+1),1.25,.7,true);photo.position.set(x,-2,-5.42);photo.material.map.dispose();photo.material.map=this.missingPhotoTexture(index);photo.material.needsUpdate=true;
+   photo.userData={isInteractable:true,type:'drying_missing_photo',clueId:'drying_missing_photo_'+index,photoIndex:index,name:'초록 집게 사진 '+(index+1),description:'같은 검은 모자 인물이 세 사진에 찍혀 있다.'};this.group.add(photo);this.missingPhotos.push(photo);
+   const clip=this.archive.sign(['①','②','③'][index],.25,.18,true);clip.position.set(x,-1.5,-5.4);clip.userData=photo.userData;this.group.add(clip);
+  }
+  const memo=this.archive.sign('초록 집게 사진 3장 →',2,.35,true);memo.position.set(35.4,-1.7,-4.3);memo.rotation.y=-Math.PI/2;memo.userData={isInteractable:true,type:'drying_missing_note',clueId:'drying_missing_note',name:'사진사의 초록 메모',description:'왼쪽 벽의 초록 집게 사진 세 장에서 같은 검은 모자 인물을 찾으세요.'};this.group.add(memo);
+ }
+ removeMissingPerson(){if(this.missingRemoved)return;this.missingRemoved=true;for(const [index,photo] of this.missingPhotos.entries()){const old=photo.material.map;photo.material.map=this.missingPhotoTexture(index,true);photo.material.needsUpdate=true;old?.dispose();}}
+ refreshNotice(){if(this.zone==='develop'){this.archive.notice.hidden=false;this.archive.notice.textContent=this.developed?'暗室 · 현상 완료 · 봉인 숫자 14 · 뒤쪽 커튼을 젖히시오':'暗室 · 오른쪽 인화 작업대를 조사해 사진을 현상하시오';}else if(this.zone==='photos'){this.archive.notice.hidden=false;this.archive.notice.style.borderColor='#39c85a';this.archive.notice.style.color='#b8f2c8';this.archive.notice.textContent=this.missingPerson.solved?'사진 찾기 완료 · 다음 기록은 아직 비어 있다 · 계속 탐색하세요':'사진 찾기 · 왼쪽 벽 초록 집게 ①·②·③ 조사 → 같은 검은 모자 선택';}}
  installInteraction(){
-  this.onInspect=e=>{if(e.detail.type==='mobile_darkroom_station'){
+  this.onInspect=e=>{if(['drying_missing_photo','drying_missing_note'].includes(e.detail.type)){window.GyeongMissingPerson.render(this,e.detail.photoIndex);return;}if(e.detail.type==='mobile_darkroom_station'){
    const view=this.game.inspectViewRenderer.viewContainer;this.game.inspectViewRenderer.actionBar.replaceChildren();view.style.minHeight='0';this.game.interactionManager.inspectTagEl.textContent='暗室 · 1934';this.archive.quest.host=view;this.archive.quest.render();return;
   }
   if(e.detail.type!=='mobile_darkroom_curtain')return;
