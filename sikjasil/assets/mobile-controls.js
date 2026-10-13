@@ -24,7 +24,7 @@
     };
     // Aim assistance for small green clues, limited to nearby visible objects.
     var assistedTargets=[],nextTargetScan=0,assistPoint=new game.sceneAPI.Vector3(),assistForward=new game.sceneAPI.Vector3(),assistDirection=new game.sceneAPI.Vector3();
-    var assistRay=interaction.raycaster.clone?interaction.raycaster.clone():new interaction.raycaster.constructor();
+    var assistRay=new interaction.raycaster.constructor();
     var assistBounds=new game.sceneAPI.Box3(),nextAssistCheck=0,lastAssistedTarget=null,nearbyClues=[];
     var originalInteractionUpdate=interaction.update.bind(interaction);
     function visibleObject(object){for(var parent=object;parent;parent=parent.parent)if(!parent.visible)return false;return true;}
