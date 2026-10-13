@@ -9,11 +9,11 @@ await page.evaluate(()=>{window.space={missingPerson:new GyeongMissingPerson.Puz
 assert.match(await page.locator('.mp-touch-guide').innerText(),/모바일/);
 for(let index=0;index<3;index++){
 await page.evaluate(i=>GyeongMissingPerson.render(space,i),index);
-for(const button of await page.locator('.mp-person').all()){const box=await button.boundingBox();assert.ok(box.width>=48&&box.height>=48);}
-await page.locator('.mp-real-photo img').evaluate(image=>image.decode());if(process.env.PHOTO_SCREENSHOT&&index===0&&viewport.width===390)await page.screenshot({path:process.env.PHOTO_SCREENSHOT});assert.match(await page.locator('.mp-photo-credit').innerText(),/이 사진은 ai생성 이미지 입니다/);
-await page.getByRole('button',{name:'납작 모자 인물 선택',exact:true}).tap();assert.match(await page.locator('[role=status]').innerText(),/괜찮아요/);
+for(const button of await page.locator('.mp-difference').all()){const box=await button.boundingBox();assert.ok(box.width>=48&&box.height>=48);}
+await page.locator('.mp-comparison img').first().evaluate(image=>image.decode());if(process.env.PHOTO_SCREENSHOT&&index===0&&viewport.width===390)await page.screenshot({path:process.env.PHOTO_SCREENSHOT});assert.equal(await page.locator('.mp-comparison figure').count(),2);assert.equal(await page.locator('.mp-comparison figure').first().locator('button').count(),0);assert.equal(await page.getByRole('button',{name:'달라진 흔적 선택'}).innerText(),await page.evaluate(i=>GyeongMissingPerson.DIFFERENCES[i].mark,index));assert.match(await page.locator('.mp-photo-credit').innerText(),/이 사진은 ai생성 이미지 입니다/);
+await page.locator('.mp-compare-photo').last().tap();assert.match(await page.locator('[role=status]').innerText(),/원본과 같아요/);
 await page.getByRole('button',{name:'초록 힌트 보기',exact:true}).tap();assert.equal(await page.locator('.mp-answer').count(),1);
-await page.getByRole('button',{name:'검은 모자 인물 선택',exact:true}).tap();
+await page.getByRole('button',{name:'달라진 흔적 선택',exact:true}).tap();
 const bounds=await page.locator('#inspect-close').boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height);
 assert.equal(await page.evaluate(()=>{const e=document.querySelector('#inspect-interactive-view');return e.scrollWidth<=e.clientWidth}),true);
 }

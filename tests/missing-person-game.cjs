@@ -19,9 +19,9 @@ assert.equal(await page.evaluate(()=>game.mobileDarkroom.missingPhotos.every(p=>
 assert.equal(await page.evaluate(()=>game.mobileDarkroom.group.children.find(o=>o.userData.clueId==='drying_missing_note').rotation.y),0);
 for(const [index,x] of [36,38.3,40.6].entries()){
 await inspect([x,-2,-3.8],[x,-2,-5.42],'drying_missing_photo_'+index);
-await page.getByRole('button',{name:'납작 모자 인물 선택',exact:true})[mobile?'tap':'click']();assert.match(await page.locator('.mp-puzzle [role="status"]').innerText(),/괜찮아요/);
+await page.locator('.mp-compare-photo').last()[mobile?'tap':'click']();assert.match(await page.locator('.mp-puzzle [role="status"]').innerText(),/원본과 같아요/);
 await page.getByRole('button',{name:'초록 힌트 보기',exact:true})[mobile?'tap':'click']();assert.equal(await page.locator('.mp-answer').count(),1);
-await page.getByRole('button',{name:'검은 모자 인물 선택',exact:true})[mobile?'tap':'click']();
+await page.getByRole('button',{name:'달라진 흔적 선택',exact:true})[mobile?'tap':'click']();
 if(index<2)await page.locator('#inspect-close')[mobile?'tap':'click']();else{assert.match(await page.locator('.mp-puzzle blockquote').innerText(),/다음 시즌 예고/);await page.getByRole('button',{name:'예고를 읽었습니다 · 창 닫고 계속 탐색',exact:true})[mobile?'tap':'click']();}
 }
 assert.equal(await page.evaluate(()=>game.mobileDarkroom.missingPerson.solved),true);assert.equal(await page.evaluate(()=>!!game.gameEnded||!!game.ending),false);await page.locator('#inspect-modal').waitFor({state:'hidden'});
