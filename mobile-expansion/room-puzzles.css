@@ -27,3 +27,7 @@
 @media(max-width:480px){.gm-expansion [data-actions]{grid-template-columns:1fr}#inspect-modal:has(.gm-expansion) .inspect-card{padding:10px}.gp-artifact{margin:8px 0}}
 
 .mp-portraits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mp-person{padding:4px!important;background:#b2a58c!important;min-width:0}.mp-person svg{display:block;width:100%;max-height:200px}.mp-answer{outline:4px solid #39c85a;outline-offset:-4px}.mp-puzzle button{min-height:44px;white-space:normal;padding:10px;color:#d7ffe2;background:#153c27;border:1px solid #39c85a}.mp-puzzle blockquote{white-space:pre-line;line-height:1.8;border-left:3px solid #39c85a;padding:12px;margin:12px 0;color:#c9e6cf}.mp-puzzle{font-size:15px}
+
+.mp-person-label{display:block;padding:6px 2px;color:#14271b;font-size:14px;font-weight:bold}.mp-touch-guide{color:#9be8b0;font-size:13px}.mp-puzzle button{touch-action:manipulation;min-height:48px}.mp-puzzle .mp-portraits{margin:12px 0}.mp-puzzle .mp-person{-webkit-tap-highlight-color:#39c85a55}.mp-puzzle .mp-person:active{outline:3px solid #39c85a}
+@media(max-width:480px){.mp-portraits{gap:6px}.mp-person-label{font-size:12px}.mp-puzzle h2{font-size:18px}.mp-puzzle>button{width:100%}#inspect-modal:has(.mp-puzzle) .inspect-header{flex-wrap:wrap;gap:4px}#inspect-modal:has(.mp-puzzle){padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}}
+@media(max-height:450px){.mp-person svg{max-height:125px}.mp-puzzle .gp-hints{font-size:13px}.mp-puzzle h2{margin:6px 0}}

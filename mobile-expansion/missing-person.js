@@ -12,6 +12,7 @@ function render(space,index){
  const game=space.game,state=space.missingPerson,view=game.inspectViewRenderer.viewContainer;game.inspectViewRenderer.actionBar.replaceChildren();view.replaceChildren();game.interactionManager.inspectTagEl.textContent='乾燥室 · 초록 단서';
  const panel=document.createElement('section');panel.className='gm-expansion mp-puzzle';view.appendChild(panel);
  const h=document.createElement('h2');h.textContent='사진 속 사라진 사람 찾기';panel.appendChild(h);
+ const touch=document.createElement('p');touch.className='mp-touch-guide';touch.textContent=navigator.maxTouchPoints>0?'모바일: 사진을 향해 조사 버튼을 누르고, 아래 인물 사진을 터치하세요. 설명은 위아래로 스크롤할 수 있어요.':'사진을 조사한 뒤 아래 인물 사진을 선택하세요.';panel.appendChild(touch);
  const help=document.createElement('p');help.className='gp-hints';help.textContent='초록 집게 사진 ① 입구 왼쪽 → ② 가운데 왼쪽 → ③ 안쪽 왼쪽. 세 사진에서 같은 검은 모자 인물을 선택하세요. 잘못 골라도 다시 선택할 수 있어요.';panel.appendChild(help);
  const progress=document.createElement('p');progress.setAttribute('role','status');progress.textContent=`찾은 사진 ${state.found.size}/3`;panel.appendChild(progress);
  if(state.solved){
@@ -24,7 +25,7 @@ function render(space,index){
  const caption=document.createElement('p');caption.textContent=`사진 ${index+1} · ${['신문사 앞','야간 플랫폼','인쇄소 골목'][index]}`;panel.appendChild(caption);
  if(state.found.has(index)){caption.textContent+=' · 확인 완료 ✓';return;}
  const choices=document.createElement('div');choices.className='mp-portraits';panel.appendChild(choices);
- for(const person of [...PEOPLE.slice(index),...PEOPLE.slice(0,index)]){const b=document.createElement('button');b.className='mp-person';b.innerHTML=portrait(person);b.setAttribute('aria-label',person[1]+' 인물 선택');b.onclick=()=>{if(game.gameEnded)return;if(!state.choose(index,person[0])){progress.textContent='괜찮아요. 세 사진에 공통으로 찍힌 검은 모자를 찾아보세요.';return;}if(state.solved){game.sharedInventory.addItem({id:'drying_press_key',name:'윤전기실 열쇠',desc:'사라진 사람의 사진 뒷면에서 찾은 열쇠. 다음 기록은 아직 비어 있다.'});game.soundManager.playFloorboardCreak();}render(space,index);};choices.appendChild(b);}
+ for(const person of [...PEOPLE.slice(index),...PEOPLE.slice(0,index)]){const b=document.createElement('button');b.className='mp-person';b.innerHTML=portrait(person)+'<span class="mp-person-label">'+person[1]+'</span>';b.setAttribute('aria-label',person[1]+' 인물 선택');b.onclick=()=>{if(game.gameEnded)return;if(!state.choose(index,person[0])){progress.textContent='괜찮아요. 세 사진에 공통으로 찍힌 검은 모자를 찾아보세요.';return;}if(state.solved){game.sharedInventory.addItem({id:'drying_press_key',name:'윤전기실 열쇠',desc:'사라진 사람의 사진 뒷면에서 찾은 열쇠. 다음 기록은 아직 비어 있다.'});game.soundManager.playFloorboardCreak();}render(space,index);};choices.appendChild(b);}
  const hint=document.createElement('button');hint.textContent='초록 힌트 보기';hint.onclick=()=>{progress.textContent='챙이 넓은 검은 모자를 쓴 사람입니다. 모자 인물을 누르세요.';choices.querySelector('[aria-label="검은 모자 인물 선택"]').classList.add('mp-answer');};panel.appendChild(hint);
 }
 return{Puzzle,render,portrait};
