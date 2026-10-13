@@ -22,6 +22,31 @@
       var label = target ? target.name : '대상을 바라보세요';
       if (targetLabel.textContent !== label) targetLabel.textContent = label;
     };
+    // Aim assistance for small green clues, limited to nearby visible objects.
+    var assistedTargets=[],nextTargetScan=0,assistPoint=new game.sceneAPI.Vector3(),assistForward=new game.sceneAPI.Vector3(),assistDirection=new game.sceneAPI.Vector3();
+    var assistRay=interaction.raycaster.clone?interaction.raycaster.clone():new interaction.raycaster.constructor();
+    var assistBounds=new game.sceneAPI.Box3(),nextAssistCheck=0,lastAssistedTarget=null,nearbyClues=[];
+    var originalInteractionUpdate=interaction.update.bind(interaction);
+    function visibleObject(object){for(var parent=object;parent;parent=parent.parent)if(!parent.visible)return false;return true;}
+    function belongsTo(object,target){for(var parent=object;parent;parent=parent.parent)if(parent===target)return true;return false;}
+    interaction.update=function(){
+      originalInteractionUpdate();if(!canExplore()||this.isInspecting)return;
+      var now=performance.now();if(now>=nextTargetScan){nextTargetScan=now+500;assistedTargets=[];game.scene.traverse(function(object){if(object.userData?.isInteractable&&object.userData.clueId&&object.userData.type!=='drawer_locked')assistedTargets.push(object);});}
+      var current=this.currentInteractable;
+      if(now<nextAssistCheck){if(current?.clueId&&current.type!=='drawer_locked')return;if(lastAssistedTarget){this.currentInteractable=lastAssistedTarget;this.setPrompt(lastAssistedTarget);}return;}nextAssistCheck=now+100;
+      game.camera.getWorldDirection(assistForward);var best=null,bestScore=Infinity;nearbyClues=[];
+      for(var target of assistedTargets){
+        if(!visibleObject(target))continue;assistBounds.setFromObject(target);assistBounds.clampPoint(game.camera.position,assistPoint);if(assistPoint.distanceToSquared(game.camera.position)<.0001)target.getWorldPosition(assistPoint);assistDirection.subVectors(assistPoint,game.camera.position);var distance=assistDirection.length();if(distance>2.6||distance<.01)continue;assistDirection.normalize();var alignment=assistDirection.dot(assistForward);if(alignment<.15)continue;
+        assistRay.set(game.camera.position,assistDirection);assistRay.far=distance+.25;var blocked=false;
+        for(var hit of assistRay.intersectObjects(game.scene.children,true)){if(!visibleObject(hit.object))continue;if(belongsTo(hit.object,target))break;var material=hit.object.material;if(material&&!Array.isArray(material)&&!material.transparent&&hit.distance<distance-.2){blocked=true;break;}}
+        if(blocked)continue;if(!nearbyClues.some(function(item){return item.clueId===target.userData.clueId;}))nearbyClues.push(target.userData);var score=distance+(1-alignment)*1.5;if(score<bestScore){best=target.userData;bestScore=score;}
+      }
+      if(current?.clueId&&current.type!=='drawer_locked')best=current;lastAssistedTarget=best;if(best){this.currentInteractable=best;this.setPrompt(best);}
+    };
+    var nearbyDialog=document.createElement('dialog');nearbyDialog.id='mobile-nearby-clues';nearbyDialog.setAttribute('aria-label','가까운 초록 단서 선택');document.body.appendChild(nearbyDialog);
+    var choosingClue=false;
+    function chooseNearbyClue(){reset();choosingClue=false;nearbyDialog.replaceChildren();var heading=document.createElement('h2');heading.textContent='가까운 초록 단서';nearbyDialog.appendChild(heading);for(var data of nearbyClues){var option=document.createElement('button');option.type='button';option.textContent=data.name;option.dataset.clueId=data.clueId;option.onclick=(function(clue){return function(){choosingClue=true;nearbyDialog.close();interaction.triggerInspect(clue);};})(data);nearbyDialog.appendChild(option);}var cancel=document.createElement('button');cancel.textContent='닫고 계속 탐색';cancel.onclick=function(){nearbyDialog.close();};nearbyDialog.appendChild(cancel);interaction.isInspecting=true;controls.unlock();nearbyDialog.showModal();}
+    nearbyDialog.addEventListener('close',function(){if(!choosingClue&&!game.gameEnded){interaction.isInspecting=false;controls.lock();}});
     var moveId = null, lookId = null, lastX = 0, lastY = 0, moveStrength = 0;
     var originalUpdate = player.update;
     player.update = function (delta) {
@@ -65,6 +90,7 @@
       button.type = 'button';
       button.addEventListener('click', function () {
         if (!canExplore()) return;
+        if(button.dataset.key==='KeyE'&&nearbyClues.length>1&&nearbyClues.some(function(item){return item.clueId===interaction.currentInteractable?.clueId;})){chooseNearbyClue();return;}
         window.dispatchEvent(new KeyboardEvent('keydown', { code: button.dataset.key, bubbles: true, cancelable: true }));
         window.dispatchEvent(new KeyboardEvent('keyup', { code: button.dataset.key, bubbles: true }));
       });

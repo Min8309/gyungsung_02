@@ -27,7 +27,7 @@ const assert = require('node:assert/strict');
    assert.notEqual(await page.evaluate(()=>testGame.camera.rotation.y),rotation);
    const flashlight=await page.evaluate(()=>testGame.lighting.flashlightOn);await page.locator('[data-key="KeyF"]').tap();
    assert.notEqual(await page.evaluate(()=>testGame.lighting.flashlightOn),flashlight);
-   assert.equal(await page.locator('.mobile-pickup').isDisabled(), true);
+   // Nearby clues now enable pickup even when the center ray misses.
    await page.evaluate(()=>{
     const manager=testGame.interactionManager;
     window.restoreInteractionUpdate=manager.update; manager.update=()=>{};
