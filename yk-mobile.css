@@ -29,3 +29,45 @@
   .yr-line li:not(.on) button{font-size:0!important;gap:0!important}
   .yr-line{max-width:100%}
 }
+
+/* 폰의 「어두운 화면(다크 모드)」이 신문지를 갈색으로 뒤집지 않게 */
+:root{color-scheme:only light}
+@media (prefers-color-scheme:dark){:root{color-scheme:only light}}
+@media (max-width:760px){
+  nav.sections{display:grid!important;grid-template-columns:1fr 1fr!important}
+  nav.sections>.idx,nav.sections>.search-inline{display:none!important}
+  nav.sections>*{min-width:0!important}
+  .ykg-tab{transform:scale(.62)!important;transform-origin:top left!important;left:6px!important}
+}
+
+/* ═══ 메인 · 폰 전용 짜임 ═══ */
+@media (max-width:760px){
+  /* 1면 머리 기사 : 약병 그림과 세로 제목을 신문 1면처럼 나란히 */
+  html body .c1 .lead-body{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto;gap:6px 14px!important;align-items:center}
+  html body .c1 .lead-body>.stage{grid-column:1;grid-row:1;width:auto!important;min-height:0!important;padding:0!important}
+  html body .c1 .lead-body .visual.bottle{width:100%!important;height:auto!important;max-height:300px}
+  html body .c1 .lead-body .visual.bottle .photo-obj{width:100%!important;height:auto!important;max-height:280px;object-fit:contain}
+  html body .c1 .lead-body .visual.bottle .lab{transform:scale(.72);transform-origin:center}
+  html body .c1 .lead-body>.vhead{grid-column:2;grid-row:1;width:auto!important;margin:0!important;transform:scale(.86);transform-origin:right center}
+  html body .c1 .lead-body>.real-ad{grid-column:1/-1;grid-row:2;display:flex!important;align-items:center;gap:12px;width:auto!important;margin:10px 0 0!important;padding-top:10px;border-top:1px solid rgba(58,49,40,.3)}
+  html body .c1 .lead-body>.real-ad .ad-scan{width:76px!important;height:auto!important;flex:none}
+  html body .c1 .lead-body>.real-ad figcaption{text-align:left!important;font-size:11.5px!important}
+  /* 광고 세 칸 : 위아래로 */
+  html body .ads.ads2 .adgrid{grid-template-columns:1fr!important;border-left:0!important}
+  html body .ads.ads2 .adgrid>.ad2{min-height:0!important;border-left:0!important;border-right:0!important;border-bottom:1px solid var(--rule)!important;padding:20px 6px!important}
+  html body .ads.ads2 .adgrid>.ad2 *{writing-mode:horizontal-tb}
+}
+
+/* ═══ 손가락 화면 공통 ═══ */
+.yk-sndnote{position:fixed;left:50%;bottom:84px;z-index:9500;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 20px 10px;background:rgba(20,16,12,.9);color:#efe6d0;font-family:"Nanum Myeongjo","Noto Serif KR",serif;border:1px solid rgba(239,230,208,.25);transform:translate(-50%,12px);opacity:0;transition:opacity .6s,transform .6s;pointer-events:none}
+.yk-sndnote.on{opacity:1;transform:translate(-50%,0)}
+.yk-sndnote b{font-size:14px;letter-spacing:.2em}.yk-sndnote span{font-size:11px;letter-spacing:.08em;color:#bfb08f}
+.yk-touch .ykg-q{width:30px!important;height:30px!important;font-size:13px!important}
+.yk-touch .ykg-q:after{display:none}
+.yk-touch .bt-q{min-width:34px;min-height:34px}
+.yk-touch .ykg-next,.yk-touch .ykg-prev,.yk-touch .ykg-skip{min-height:40px;padding-left:16px!important;padding-right:16px!important}
+.yk-touch .hj{-webkit-tap-highlight-color:transparent}
+.yk-touch .lantern,.yk-touch .bb-mount{-webkit-user-select:none;user-select:none}
+
+/* 폰이 글씨를 멋대로 키우지 않게 (컴퓨터와 같은 지면 그대로 줄여 보이기) */
+html{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}

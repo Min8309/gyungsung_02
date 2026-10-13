@@ -1280,3 +1280,14 @@ a.os-p{color:#1e1913;text-decoration:underline;text-underline-offset:3px}
 .tr-sign{padding:6px 28px;background:radial-gradient(ellipse 60% 90% at 50% 50%,rgba(10,7,4,.75),rgba(10,7,4,0) 100%);text-shadow:0 0 12px rgba(255,214,140,.25),0 1px 3px #000}
 .tr-plate{background:rgba(12,9,6,.55)}
 .tr-sill{background:linear-gradient(180deg,rgba(12,9,6,0) 0,rgba(12,9,6,.1) 25%,rgba(12,9,6,.55) 55%,rgba(10,7,5,.9) 100%),url(images/fair-tram/tram_sill.jpg) center calc(-8.7vw / var(--ykz, 1))/100% auto no-repeat,#0d0906}
+/* 폰 — 「회장 순환선」 판이 안내 글과 겹치지 않게 (안내 글을 아래로) */
+@media (max-width:600px){
+  .tr-top{display:flex!important;flex-direction:column;align-items:center;gap:6px}
+  .tr-plate{position:static!important;font-size:10.5px!important}
+  .tr-sign{font-size:14px!important;white-space:normal!important;text-align:center;line-height:1.6}
+}
+@media (max-width:600px){
+  .where{flex-wrap:nowrap!important;gap:0!important;padding-left:4px!important;padding-right:4px!important}
+  .where li{flex:1 1 0;min-width:0}
+  .where button{font-size:10.5px!important;letter-spacing:0!important;white-space:nowrap;padding-left:0!important;padding-right:0!important}
+}

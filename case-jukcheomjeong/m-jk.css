@@ -1,0 +1,23 @@
+/* 경성야록 · 죽첨정 본편 — 폰에서만 쓰는 이 지면만의 손질 (공통 틀은 ../yk-m.css) */
+@media (max-width:600px){
+  /* 서대문서의 장부 */
+  html body .lg-book{padding:20px 14px 18px!important}
+  html body .lg-head{flex-wrap:wrap;gap:6px 12px!important}
+  html body .lg-head b{font-size:22px!important}
+  html body .lg-cols{display:none!important}
+  html body .lg-rows li{grid-template-columns:1fr auto!important;grid-template-areas:"d st" "w st" "g g";gap:4px 12px!important}
+  html body .lg-rows li .lg-d{grid-area:d}
+  html body .lg-rows li .lg-w{grid-area:w;font-size:19px!important}
+  html body .lg-rows li .lg-g{grid-area:g;font-size:14.5px!important}
+  html body .lg-rows li .lg-st{grid-area:st;align-self:center}
+  html body .lg-last .lg-blank{min-width:110px!important}
+  /* 오보 — 그때와 오늘을 위아래로 */
+  html body .mis-grid{grid-template-columns:1fr!important;gap:14px!important}
+  html body .mis-mid{flex-direction:row!important;padding:4px 0}
+  html body .mis-mid i{flex:1;height:1px!important;width:auto!important}
+  html body .mis-clip img{height:auto!important}
+  /* 스물세 날 */
+  html body .dy-h{font-size:58px!important;letter-spacing:.16em!important}
+  html body .dy-grid{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+  html body .dy{min-height:88px!important;padding:8px 6px!important}
+}

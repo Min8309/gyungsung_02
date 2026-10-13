@@ -149,7 +149,7 @@
         '<img class="mj" src="' + C.assetDir + 'mj-pav-' + h.id + '.png" alt="" onload="this.parentNode.classList.add(\'has-mj\')" onerror="this.remove()">' +   // 바탕을 투명하게 빼 둔 .png (없으면 코드 그림)
         '<svg viewBox="0 0 320 300" class="lights"><g class="body">' + f.body + '</g>' + bulbsSVG(f.bulbs) + '</svg></div>' +
         board(h.name, h.kind,
-              n ? { old: '진열품 ' + NUMW[n] + ' 점이 노혀 잇소', now: '작품 ' + n + '점 진열' } : { old: '아즉 진열 준비 중이오', now: '진열 준비 중' },
+              n ? { old: '진열품 ' + (NUMW[n] || (['', '열', '스물', '설흔', '마흔'][Math.floor(n / 10)] + (['', '한', '두', '세', '네', '다섯', '여섯', '닐곱', '여덟', '아홉'][n % 10]))) + ' 점이 노혀 잇소', now: '작품 ' + n + '점 진열' } : { old: '아즉 진열 준비 중이오', now: '진열 준비 중' },
               null, { old: '드러가기', now: '들어가기' }, h.id) +
         '</section>');
       STOPS.push({ id: h.id, label: h.name });

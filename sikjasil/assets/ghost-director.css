@@ -1,0 +1,46 @@
+#ghost-apparition-overlay { position: fixed; inset: 0; z-index: 90; overflow: hidden; pointer-events: none; visibility: hidden; contain: layout paint; }
+#ghost-apparition-overlay.active { visibility: visible; }
+.ghost-veil { position: absolute; inset: 0; background: radial-gradient(ellipse, #0000 14%, #110001b3 100%); opacity: 0; }
+.ghost-figure { position: absolute; left: 50%; top: 50%; height: min(88vh, 760px); width: auto; max-width: 88vw; object-fit: contain; opacity: 0; transform: translate(-50%, -50%); filter: drop-shadow(0 0 22px #10171b) contrast(1.2); }
+#ghost-apparition-overlay.active .ghost-figure { animation: ghost-lunge 2.4s both; }
+#ghost-apparition-overlay.active .ghost-veil { animation: ghost-darken 2.4s both; }
+#ghost-apparition-overlay[data-location="ceiling"] { --ghost-x: 0vw; --ghost-y: -60vh; --ghost-angle: 170deg; }
+#ghost-apparition-overlay[data-location="floor"] { --ghost-x: 0vw; --ghost-y: 60vh; --ghost-angle: -12deg; }
+#ghost-apparition-overlay[data-location="corner"] { --ghost-x: -60vw; --ghost-y: -20vh; --ghost-angle: -22deg; }
+#ghost-apparition-overlay[data-location="cabinet"] { --ghost-x: -50vw; --ghost-y: 0vh; --ghost-angle: -14deg; }
+#ghost-apparition-overlay[data-location="wall"] { --ghost-x: 55vw; --ghost-y: -5vh; --ghost-angle: 28deg; }
+#ghost-apparition-overlay[data-location="corridor"] { --ghost-x: 0vw; --ghost-y: 0vh; --ghost-angle: 0deg; }
+#ghost-apparition-overlay[data-location="drawer"] { --ghost-x: 25vw; --ghost-y: 55vh; --ghost-angle: -20deg; }
+#ghost-apparition-overlay[data-location="door"] { --ghost-x: -12vw; --ghost-y: 0vh; --ghost-angle: 18deg; }
+@keyframes ghost-lunge {
+  0% { opacity: 0; transform: translate(calc(-50% + var(--ghost-x)), calc(-50% + var(--ghost-y))) scale(.08) rotate(var(--ghost-angle)); }
+  19% { opacity: 1; }
+  20% { transform: translate(-50%, -50%) scale(1.08) rotate(-3deg); }
+  26% { transform: translate(-49%, -51%) scale(1.22) rotate(4deg); }
+  32% { transform: translate(-51%, -49%) scale(1.15) rotate(-4deg); }
+  38%, 66% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
+  84% { opacity: .48; }
+  100% { opacity: 0; transform: translate(-50%, -48%) scale(1.32); }
+}
+@keyframes ghost-darken { 0%, 100% { opacity: 0; } 19%, 66% { opacity: 1; } }
+@media (pointer: coarse) {
+  .ghost-figure { height: min(86dvh, 760px); max-width: 92vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ghost-apparition-overlay.active .ghost-figure { animation: ghost-still 2.4s both; }
+}
+@keyframes ghost-still { 0%,100% { opacity: 0; } 10%,70% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+/* Six distinct screen tracks: no shared center hold. */
+#ghost-apparition-overlay.active[data-action="drop"] .ghost-figure{animation:ghost-drop 2.4s ease-in both}
+#ghost-apparition-overlay.active[data-action="rise"] .ghost-figure{animation:ghost-rise 2.4s ease-out both}
+#ghost-apparition-overlay.active[data-action="sweep"] .ghost-figure{animation:ghost-sweep 2.4s linear both}
+#ghost-apparition-overlay.active[data-action="rush"] .ghost-figure{animation:ghost-rush 2.4s ease-in both}
+#ghost-apparition-overlay.active[data-action="corner"] .ghost-figure{animation:ghost-corner 2.4s ease-in-out both}
+#ghost-apparition-overlay.active[data-action="retreat"] .ghost-figure{animation:ghost-retreat 2.4s ease-out both}
+@keyframes ghost-drop{0%{opacity:0;transform:translate(-65%,-160vh) scale(.6) rotate(175deg)}20%{opacity:1}65%{opacity:1;transform:translate(-60%,-20%) scale(1.15) rotate(185deg)}100%{opacity:0;transform:translate(-50%,100vh) scale(1.35) rotate(200deg)}}
+@keyframes ghost-rise{0%{opacity:0;transform:translate(-35%,100vh) scale(.35)}25%{opacity:1}70%{opacity:1;transform:translate(-30%,-80%) scale(1.35) rotate(-14deg)}100%{opacity:0;transform:translate(-20%,-150vh) scale(1.8) rotate(-25deg)}}
+@keyframes ghost-sweep{0%{opacity:0;transform:translate(-140vw,-60%) scale(.7) rotate(-20deg)}20%{opacity:1}75%{opacity:1}100%{opacity:0;transform:translate(100vw,-35%) scale(1.35) rotate(20deg)}}
+@keyframes ghost-rush{0%{opacity:0;transform:translate(-50%,-50%) scale(.08)}20%{opacity:.8;transform:translate(-50%,-50%) scale(.4)}65%{opacity:1;transform:translate(-50%,-50%) scale(1.8)}100%{opacity:0;transform:translate(-50%,-50%) scale(4.5)}}
+@keyframes ghost-corner{0%{opacity:0;transform:translate(55vw,45vh) scale(.2) rotate(-45deg)}20%{opacity:1}60%{opacity:1;transform:translate(-10%,-95%) scale(1.1) rotate(20deg)}100%{opacity:0;transform:translate(-100vw,-130vh) scale(.65) rotate(65deg)}}
+@keyframes ghost-retreat{0%{opacity:0;transform:translate(-70%,-30%) scale(2.8)}20%{opacity:1;transform:translate(-65%,-40%) scale(2.4)}55%{opacity:.85;transform:translate(-80%,-55%) scale(.9) rotate(-8deg)}100%{opacity:0;transform:translate(-90%,-70%) scale(.03) rotate(-18deg)}}
+@media(prefers-reduced-motion:reduce){#ghost-apparition-overlay.active[data-action] .ghost-figure{animation:ghost-still 2.4s both}}

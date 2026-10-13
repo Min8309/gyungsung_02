@@ -397,3 +397,99 @@ body.haunt .sc.replay .tx p,body.haunt .sc.replay figcaption p{animation:hfade 1
 @keyframes hfade{0%,100%{opacity:1}46%{opacity:1}50%{opacity:.25}54%{opacity:1}}
 body.haunt .cb-row a:not(.spirit)::before{opacity:.25;filter:grayscale(1)}
 @media (prefers-reduced-motion:reduce){body.haunt *{animation:none!important}}
+
+/* 대문 — 화면 한 장에 꽉 차게 (1012) : 그림은 비율을 지킨 채 화면을 덮고, 촛불 자리도 그림을 따라감 */
+@media (min-width:901px){
+  .top{position:absolute;left:0;right:0;top:0}
+  .gate{max-width:none;margin:0;padding:0}
+  .g-img{height:calc(100vh / var(--ykz, 1));min-height:560px;box-shadow:none;background:#0b0907}
+  .g-art{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100%, calc(max(560px, 100vh / var(--ykz, 1)) * 1456 / 816));aspect-ratio:1456/816}
+  .g-art>img{width:100%;height:100%;filter:brightness(calc(.5 + var(--lit) * .08));transition:filter 3s ease}
+  .g-img::before{content:"";position:absolute;left:0;right:0;top:0;height:140px;z-index:1;pointer-events:none;background:linear-gradient(rgba(11,9,7,.85),rgba(11,9,7,0))}
+  .g-img::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;z-index:1;pointer-events:none;background:linear-gradient(rgba(11,9,7,0),rgba(11,9,7,.9))}
+  .g-head{top:13%}
+  .g-enter{bottom:8%}
+  .pro{margin-top:110px}
+}
+@media (max-width:900px){.g-art>img{width:100%;height:auto;filter:brightness(calc(.5 + var(--lit) * .08))}.g-art{position:relative}}
+@media (min-width:901px){.top{padding-left:max(40px, calc(96px - (100vw / var(--ykz, 1) - 1180px) / 2))}}
+
+/* ═══ 1012 · 초가 줄수록 다가오는 것 · 창 가장자리 · 우로 가라는 쪽지 ═══ */
+.g-ghost{position:absolute;left:var(--gx,62%);bottom:var(--gb,36%);height:var(--gh,26%);width:auto!important;transform:translateX(-50%);opacity:0;mix-blend-mode:screen;filter:blur(var(--gbl,1.2px)) brightness(.8);pointer-events:none;transition:opacity 4s ease,height 4s ease,left 4s ease,bottom 4s ease,filter 4s ease;z-index:0}
+.fl{z-index:1}
+html[data-near="1"] .g-ghost{--gx:66%;--gh:24%;--gb:38%;opacity:.16}
+html[data-near="2"] .g-ghost{--gx:58%;--gh:38%;--gb:33%;opacity:.24}
+html[data-near="3"] .g-ghost{--gx:50%;--gh:56%;--gb:27%;opacity:.32;--gbl:.8px}
+html[data-near="4"] .g-ghost{--gx:44%;--gh:86%;--gb:8%;opacity:.4;--gbl:.4px}
+.peek{position:fixed;right:-120px;bottom:0;height:78vh;width:auto;z-index:45;opacity:0;pointer-events:none;mix-blend-mode:screen;filter:brightness(.75) blur(.6px);transition:opacity 2.6s ease,right 6s ease}
+.peek.on{opacity:.42;right:-60px}
+.up-note{position:fixed;left:50%;bottom:76px;transform:translate(-50%,8px);z-index:51;margin:0;padding:10px 18px 9px;background:rgba(11,9,7,.9);border:1px solid var(--moon4);font-size:13.5px;letter-spacing:.08em;color:var(--moon);opacity:0;pointer-events:none;transition:opacity .8s,transform .8s;white-space:nowrap}
+.up-note.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.up-note button{margin-left:12px;padding:3px 12px 2px;border:1px solid var(--moon3);color:var(--flame);font-size:13px;letter-spacing:.12em}
+.up-note button:hover{background:var(--moon);color:var(--night)}
+@media (max-width:900px){.peek{height:60vh}.up-note{white-space:normal;width:86%;text-align:center}}
+@media (prefers-reduced-motion:reduce){.peek{transition:opacity 1s}}
+.g-art>img.g-ghost{width:auto!important;height:var(--gh,26%)!important;filter:blur(var(--gbl,1.2px)) brightness(.8)!important}
+.g-art>img.g-ghost{z-index:2}
+/* 미드저니 귀신 (검은 바탕 → screen 으로 바탕은 사라지고 형체만) */
+html[data-near="1"] .g-ghost{--gh:28%;opacity:.3}
+html[data-near="2"] .g-ghost{--gh:44%;opacity:.42}
+html[data-near="3"] .g-ghost{--gh:64%;opacity:.55}
+html[data-near="4"] .g-ghost{--gh:98%;--gb:2%;opacity:.62}
+.g-art>img.g-ghost{filter:blur(var(--gbl,.8px)) brightness(.9)!important}
+.peek{right:-22vh;filter:brightness(.85)}
+.peek.on{opacity:.55;right:-14vh}
+/* 마지막 — 대문에서 「그것」을 보이고 다시 아래로 */
+.g-final{position:absolute;left:0;right:0;bottom:9%;z-index:4;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;opacity:0;pointer-events:none;transition:opacity 1.6s ease}
+.g-final.on{opacity:1;pointer-events:auto}
+.g-final p,.g-final button{opacity:0;transition:opacity 2s ease}
+.g-final.on .f1{opacity:1}
+.g-final.l2 .f2{opacity:1}
+.g-final.l3 .f3{opacity:1}
+.f1{font-family:var(--serif);font-weight:900;font-size:clamp(26px,2.6vw,40px);letter-spacing:.3em;color:var(--moon);text-shadow:0 0 30px #000}
+.f2{font-size:16px;letter-spacing:.14em;color:var(--flame);text-shadow:0 0 20px #000}
+.f3{margin-top:10px;padding:13px 30px 12px;border:1px solid var(--moon2);background:rgba(11,9,7,.6);font-weight:800;font-size:15px;letter-spacing:.2em;color:var(--moon)}
+.f3:hover{background:var(--moon);color:var(--night)}
+body.np-final .g-head{opacity:0;transition:opacity 1.5s}
+body.np-final .cbar{opacity:0;pointer-events:none}
+@media (max-width:900px){.g-final{position:static;margin:16px 0 0}.g-final:not(.on){display:none}}
+
+/* ═══ 호외 — 초가 다 꺼진 뒤, 신문이 독자를 보도함 (1012) ═══ */
+.hx{position:fixed;inset:0;z-index:90;background:#050403;overflow-y:auto;opacity:0;transition:opacity 2.4s ease;padding:clamp(24px,5vh,60px) 16px 80px}
+.hx.on{opacity:1}
+body.hx-on{overflow:hidden}
+body.hx-on .cbar,body.hx-on .up-note,body.hx-on .ykg-tab{opacity:0!important;pointer-events:none!important}
+.hx-call{max-width:760px;margin:12vh auto 0;text-align:center;font-family:var(--serif);font-size:clamp(16px,1.4vw,20px);line-height:1.9;letter-spacing:.08em;color:var(--moon2);min-height:2em;transition:margin 1.6s ease,opacity 1.6s ease,font-size 1.6s ease}
+.hx-call.hx-faded{margin-top:0;font-size:13px;opacity:.45}
+.hx-sheet{position:relative;max-width:900px;margin:18px auto 0;padding:clamp(22px,3.4vw,44px) clamp(18px,3.6vw,48px) 30px;background:#e4d7bb url(assets/np/v2_paper.jpg) center/cover;color:#1b1610;box-shadow:0 40px 120px rgba(0,0,0,.9),0 0 0 1px #3a3128;opacity:0;transform:translateY(40px) scale(.98);transition:opacity 1.2s ease,transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.hx-sheet.on{opacity:1;transform:none}
+.hx-sheet::before{content:"";position:absolute;inset:0;background:rgba(232,220,192,.55);pointer-events:none}
+.hx-sheet>*{position:relative}
+.hx-mast{display:flex;align-items:baseline;gap:16px;padding-bottom:10px;border-bottom:4px double #1b1610}
+.hx-mast b{font-family:var(--serif);font-weight:900;font-size:clamp(26px,3vw,38px);letter-spacing:.2em}
+.hx-tag{font-family:var(--serif);font-weight:900;font-size:clamp(20px,2.2vw,28px);letter-spacing:.3em;padding:2px 10px 0 14px;border:2px solid #1b1610}
+.hx-date{margin-left:auto;font-size:12.5px;letter-spacing:.08em;color:#3a3128}
+.hx-h{margin:22px 0 0;min-height:1.2em;font-family:var(--serif);font-weight:900;font-size:clamp(34px,5vw,64px);line-height:1.15;letter-spacing:.04em;color:#120d08}
+.hx-sub{margin:12px 0 0;min-height:1.4em;padding-bottom:14px;border-bottom:1px solid #1b1610;font-family:var(--serif);font-weight:800;font-size:clamp(15px,1.4vw,19px);letter-spacing:.04em;color:#2b2219}
+.hx-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(18px,3vw,36px);margin-top:20px}
+.hx-tx p{margin:0 0 12px;font-family:var(--myeongjo);font-size:clamp(15px,1.15vw,17px);line-height:1.9;color:#1b1610;text-align:justify;word-break:keep-all}
+.hx-tx p.hx-you{font-family:var(--serif);font-weight:900;font-size:clamp(17px,1.4vw,20px);color:#120d08}
+.hx-ph{margin:0;opacity:0;transition:opacity 3s ease 1s}
+.hx-sheet.done .hx-ph{opacity:1}
+.hx-glass{aspect-ratio:3/4;background:#000;border:6px solid #e9dfc6;outline:1px solid #1b1610;box-shadow:inset 0 0 40px rgba(255,255,255,.03)}
+.hx-ph figcaption{margin-top:8px;font-family:var(--myeongjo);font-size:12.5px;line-height:1.7;color:#2b2219;text-align:center}
+.hx-note{margin:18px 0 0;font-size:11.5px;line-height:1.7;color:#4a3f31;opacity:0;transition:opacity 2s}
+.hx-go{margin:18px 0 0;text-align:center;opacity:0;transition:opacity 2s ease 2.4s}
+.hx-sheet.done .hx-note,.hx-sheet.done .hx-go{opacity:1}
+.hx-go button{padding:12px 28px 11px;border:1px solid #1b1610;background:#1b1610;color:#e9dfc6;font-weight:800;font-size:15px;letter-spacing:.18em}
+.hx-go button:hover{background:none;color:#1b1610}
+@media (max-width:700px){.hx-body{grid-template-columns:1fr}.hx-ph{max-width:240px;margin:0 auto}.hx-mast{flex-wrap:wrap}.hx-date{margin-left:0;width:100%}}
+.hx-tx p{text-align:left}
+.hx-glass{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,0) 35%),#000!important}
+.hx-ph{transition:opacity 2s ease .4s}
+.hx-seek{display:inline-block;padding:12px 22px 11px;border:1px solid #1b1610;font-weight:800;font-size:14px;letter-spacing:.14em;color:#1b1610;text-decoration:none}
+.hx-seek:hover{background:#1b1610;color:#e9dfc6}
+.wg-skip{margin:10px 0 0;text-align:right}
+.wg-skip button{font-size:12.5px;letter-spacing:.12em;color:var(--moon3);border-bottom:1px dashed var(--moon4);padding-bottom:2px}
+.wg-skip button:hover{color:var(--moon)}
+.end.snuff .e-sheet{filter:brightness(.25);transition:filter 1.6s ease}

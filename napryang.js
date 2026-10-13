@@ -212,7 +212,7 @@
   /* ═════════════ 들어가기 ═════════════ */
   function enter(withSound) {
     if (withSound) { if (!playing) soundOn(true); } else { userOff = true; if (playing) soundOn(false); }
-    D.body.classList.remove('locked');
+    D.body.classList.remove('locked'); T_IN = Date.now();
     setTimeout(function () { $('#pro').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }, 300);
     setTimeout(initFog, 400);
   }
@@ -221,18 +221,42 @@
 
   /* ═════════════ 초 ═════════════ */
   var lit = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 };
+  var ORDER = [], T_IN = Date.now();
   function left() { var n = 0; for (var k in lit) if (lit[k]) n++; return n; }
   function blowOut(n) {
-    if (!lit[n]) return; lit[n] = 0;
+    if (!lit[n]) return; lit[n] = 0; ORDER.push(n);
     var sc = D.getElementById('ep' + n); sc.classList.add('out'); $('.blow', sc).disabled = true;
     var f = $('.fl[data-n="' + n + '"]'); f.classList.remove('fresh'); void f.offsetWidth; f.classList.add('out', 'fresh');
     $('.cb-row a[data-n="' + n + '"]').classList.add('out');
     D.documentElement.style.setProperty('--lit', left()); $('#left').textContent = left();
     breath();
+    near();
     if (!left()) setTimeout(ending, 1600);
-    else { var nx = null; for (var k = 1; k <= 6; k++) { var j = ((n - 1 + k) % 6) + 1; if (lit[j]) { nx = j; break; } }
-      if (nx) setTimeout(function () { D.getElementById('ep' + nx).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 2200); }
+    else {
+      /* 다음 초는 아래쪽에서만 찾아 내려감 — 우에만 남앗으면 쪽지로 알려 줌 (저절로 우로 끌어올리지 안음) */
+      var nx = null; for (var j = n + 1; j <= 6; j++) if (lit[j]) { nx = j; break; }
+      if (nx) setTimeout(function () { D.getElementById('ep' + nx).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 2200);
+      else setTimeout(upNote, 2000);
+    }
   }
+  function near() {}
+  /* ── 우에 남은 초 알림 ── */
+  var UP = $('#upNote');
+  function upNote() {
+    if (!UP || !left()) return;
+    var first = null; for (var k = 1; k <= 6; k++) if (lit[k]) { first = k; break; }
+    UP.innerHTML = '<span class="hj" data-ko="남은 초 ' + left() + '개는 위쪽에 있어요">남은 초 ' + left() + ' 자루는 우에 잇소</span><button type="button">↑ <span class="hj" data-ko="올라가기">올라가기</span></button>';
+    UP.classList.add('on'); hover(UP);
+    UP.querySelector('button').onclick = function () { UP.classList.remove('on'); D.getElementById('ep' + first).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
+    clearTimeout(UP._t); UP._t = setTimeout(function () { UP.classList.remove('on'); }, 9000);
+  }
+  /* ── 다른 창으로 가면 탭 제목이 바뀜 ── */
+  var T0 = D.title;
+  D.addEventListener('visibilitychange', function () {
+    if (D.body.classList.contains('locked')) return;
+    if (D.hidden) D.title = left() ? '…아즉 닑고 잇소? · 납량란' : '號外 — 납량란 독자 一名 행방불명';
+    else { D.title = '도라왓구려 · 납량란'; setTimeout(function () { D.title = T0; }, 2600); }
+  });
   var RESET = {};
   function ready(n) { var sc = D.getElementById('ep' + n); sc.classList.add('ok'); var b = $('.blow', sc); if (b && lit[n]) b.disabled = false; }
   $$('.sc').forEach(function (sc) {
@@ -482,19 +506,113 @@
 
   /* ═════════════ 끝 · 일곱째 초 ═════════════ */
   var end = $('#end');
-  function ending() {
-    end.classList.add('on'); setMode('quiet');
-    setTimeout(function () { end.classList.add('show'); end.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 80);
+  /* ═════════════ 끝 — 귀신 대신, 신문이 「당신」을 보도함 ═════════════
+     백물어: 초가 다 꺼지면 무엇이 온다 — 경성야록에선 기자가 오고, 호외가 찍힘. 기사의 주인공은 방금까지 닑던 독자.
+     쓰는 것: 이 화면의 시계 · 머문 시간 · 초를 끈 차례 · 소리 켬 여부 · 기기 종류(폰/컴퓨터). 어듸로도 보내지 안음 */
+  var SINO = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+  function kn(n) {   /* 숫자 → 「이십삼」 꼴 */
+    if (n === 0) return '영'; var out = '', u = [['천', 1000], ['백', 100], ['십', 10]];
+    u.forEach(function (x) { var q = Math.floor(n / x[1]); if (q) { out += (q > 1 ? SINO[q] : '') + x[0]; n -= q * x[1]; } });
+    return out + (n ? SINO[n] : '');
+  }
+  var HAN = ['', '一', '二', '三', '四', '五', '六'];
+  function report() {
+    var now = new Date(), h = now.getHours(), m = now.getMinutes(), mins = Math.max(1, Math.round((Date.now() - T_IN) / 60000));
+    var ampm = h < 12 ? '오전' : '오후', h12 = h % 12 || 12;
+    var phone = W.matchMedia && matchMedia('(hover: none)').matches;
+    var night = h >= 18 || h < 5;
+    var when = ampm + ' ' + kn(h12) + ' 시 ' + (m ? kn(m) + ' 분' : '정각');
+    var ord = ORDER.map(function (n) { return '제' + HAN[n] + '호'; }).join(' → ');
+    return {
+      date: '소화 ' + kn(now.getFullYear() - 1925) + ' 년 ' + kn(now.getMonth() + 1) + ' 월 ' + kn(now.getDate()) + ' 일 · ' + when + ' 발행',
+      h: '납량란 독자 一名 행방불명',
+      sub: '아모도 켜지 안은 일곱째 초가 꺼진 직후 — 마지막 목격지는 「이 화면 압」',
+      tx: [
+        '오늘 밤 ' + when + ', 경성야록 납량란을 닑던 독자 한 사람의 소식이 끈겻다.',
+        '독자는 이 면에 약 ' + kn(mins) + ' 분 동안 머물럿다. 봉투는 ' + ord + ' 의 차례로 열엇고, 그때마다 초를 하나씩 껏다.',
+        playing ? '유성기 소리를 켜 둔 채엿다. 마지막 초가 꺼질 때, 곡조도 함께 끈겻다.' : '소리는 끄고 잇섯다. 그래서 — 등 뒤의 소리를 듯지 못하엿을 것이다.',
+        (phone ? '독자는 손바닥만 한 전화기를 들고 잇섯다' : '독자는 책상 우의 화면 압헤 안저 잇섯다') + (night ? '. 방 안은 어두웟다고 한다.' : '. 해가 아즉 지지 안앗는데도, 방 안은 어두웟다고 한다.'),
+        STORY ? '독자가 마지막으로 투고함에 너은 원고는 이러케 시작한다 — 「' + STORY + '」' : '독자는 일곱째 원고지를 비워 둔 채, 일곱째 초를 껏다.',
+        '독자를 마지막으로 본 사람은 — 이 기사를 닑고 잇는 이다.',
+        '본보는 이 사람을 보신 이의 제보를 기다린다. 본보 심인계로.'
+      ],
+      cap: '독자의 마지막 모습 — 사진은 남지 안앗고, 화면에 비친 얼굴만 남앗다.',
+      at: when, mins: mins
+    };
+  }
+  function thud() {   /* 윤전기가 한 번 내려앉는 소리 */
+    if (!playing) return; var t = AC.currentTime + .05, o = AC.createOscillator(), g = AC.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(38, t + .35);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.9, t + .01); g.gain.exponentialRampToValueAtTime(.001, t + .6);
+    o.connect(g); g.connect(sfx); o.start(t); o.stop(t + .7);
+  }
+  function type(el, text, speed, done) {   /* 활자를 하나씩 박음 */
+    var i = 0; el.textContent = '';
+    (function step() {
+      if (i >= text.length) { if (done) done(); return; }
+      el.textContent += text.charAt(i++); if (i % 2 === 0) key();
+      setTimeout(step, reduce ? 0 : speed + (text.charAt(i - 1) === '.' ? speed * 6 : 0));
+    })();
+  }
+  var HX = $('#hx');
+  /* 순서: 여섯 초가 다 꺼짐 → 아모도 켜지 안은 일곱째 초 · 「당신의 괴담」 원고지 → 원고를 넣거나 건너뛰면 일곱째 초가 혼자 꺼짐 → 캄캄 · 전화 · 호외(독자 행방불명) — 이것이 마지막 */
+  function ending() { setMode('quiet'); showEnd(); }
+  var STORY = '', finaled = false;
+  function finale() {
+    if (finaled) return; finaled = true;
+    var sv = $('.cb-row a.seven'); if (sv) sv.classList.remove('on');
+    breath();
+    var ec = $('#end'); if (ec) ec.classList.add('snuff');
+    setTimeout(hxShow, 1800);
+  }
+  function hxShow() {
+    setMode('quiet');
+    var r = report();
+    try { sessionStorage.setItem('yk-np-missing', JSON.stringify({ at: r.at, mins: r.mins, t: Date.now() })); } catch (e) {}
+    if (!HX) return;
+    HX.hidden = false; D.body.classList.add('hx-on');
+    var call = $('#hxCall'), sheet = $('#hxSheet');
+    sheet.classList.remove('on', 'done'); call.classList.remove('hx-faded'); call.textContent = ''; $('#hxH').textContent = ''; $('#hxSub').textContent = ''; $('#hxTx').innerHTML = ''; $('#hxCap').textContent = '';
+    requestAnimationFrame(function () { HX.classList.add('on'); });
+    setTimeout(function () { ring(2); }, 1800);
+    setTimeout(function () { type(call, '편집국에 전화가 왓소. 수화기 저편에서는 — 활자 박는 소리만 들리오.', 55); }, 2200);
+    setTimeout(function () {
+      call.classList.add('hx-faded'); thud();
+      $('#hxDate').textContent = r.date; sheet.classList.add('on');
+      setTimeout(function () { type($('#hxH'), r.h, 90, function () {
+        type($('#hxSub'), r.sub, 35, function () {
+          var tx = $('#hxTx'), k = 0;
+          (function next() {
+            if (k >= r.tx.length) { $('#hxCap').textContent = r.cap; sheet.classList.add('done'); return; }
+            var line = r.tx[k++], p = D.createElement('p'); if (line.indexOf('마지막으로 본 사람은') > -1) p.className = 'hx-you'; tx.appendChild(p);
+            type(p, line, 28, function () { setTimeout(next, p.className ? 1400 : 350); });
+          })();
+        });
+      }); }, 700);
+    }, 7600);
+  }
+  function showEnd() {
+    end.classList.add('on');
+    setTimeout(function () { end.classList.add('show'); end.scrollIntoView({ behavior: 'auto', block: 'start' }); }, 60);
     setTimeout(function () { $('.cb-row a.seven').classList.add('on'); bell(); }, 5200);
     setTimeout(function () { setMode('room'); }, 8000);
   }
+
   var T = $('#wgT'), Nn = $('#wgN');
   T.addEventListener('input', function () { Nn.textContent = T.value.length; key(); });
   $('#wgB').addEventListener('click', function () {
     var m = $('#wgM');
     if (!T.value.trim()) { T.placeholder = '빈 원고지는 투고함에 들어가지 안소.'; T.focus(); return; }
     $('#wg').classList.add('sent'); $('#post').classList.add('on'); breath();
-    m.innerHTML = '봉투가 투고함에 드러갓소.<br><small>제칠화는 당신의 이약이오. — 다만 이 투고함은 아즉 열어 보는 이가 업서, 창을 닫으면 원고도 사라지오.</small>';
+    m.innerHTML = '봉투가 투고함에 드러갓소.<br><small>제칠화는 당신의 이약이오. 그런데 — 일곱째 초가 흔들리오.</small>';
+    var t1 = T.value.trim().replace(/\s+/g, ' '); STORY = t1.length > 40 ? t1.slice(0, 40) + '…' : t1;
+    setTimeout(finale, 5000);
+  });
+  if ($('#wgSkip')) $('#wgSkip').addEventListener('click', function () { STORY = ''; finale(); });
+  if ($('#hxGo')) $('#hxGo').addEventListener('click', function () {
+    HX.classList.remove('on'); D.body.classList.remove('hx-on');
+    setTimeout(function () { HX.hidden = true; }, 900);
+    $('#relight').click();
   });
   $('#relight').addEventListener('click', function () {
     for (var k = 1; k <= 6; k++) lit[k] = 1;
@@ -502,6 +620,7 @@
     $$('.cb-row a').forEach(function (a) { a.classList.remove('out', 'on'); });
     $$('.sc').forEach(function (s) { s.classList.remove('out'); var b = $('.blow', s); if (s.classList.contains('ok')) b.disabled = false; });
     D.documentElement.style.setProperty('--lit', 6); $('#left').textContent = 6; ghosted = false;
+    ORDER = []; T_IN = Date.now(); STORY = ''; finaled = false; var ec0 = $('#end'); if (ec0) ec0.classList.remove('snuff'); T.value = ''; Nn.textContent = 0; if (HX) { HX.hidden = true; HX.classList.remove('on'); $('#hxSheet').classList.remove('on', 'done'); }
     end.classList.remove('on', 'show'); $('#wg').classList.remove('sent'); $('#post').classList.remove('on'); setMode('room');
     $('#gate').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   });

@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<title>경성야록 — 신문 더미 아래로</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Serif+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<!--
+  경성야록 오프닝 「신문 더미 아래로」 (1012)
+  오늘 자 신문 맨 우에서 시작해, 동아일보 지면 더미를 거꾸로 파 내려감.
+  · 종이 색: 오늘의 흰 종이 → 누런 옛 종이 / 맨 우 몃 해는 컬러 인쇄의 옅은 빛
+  · 빈 곳 두 군데는 실제로 신문이 나오지 못한 때: 1940. 8. 10 폐간 ~ 1945. 12. 1 복간 · 1936. 8 ~ 1937. 6 무기 정간(일장기 말소)
+  · 내려가며 사건 본편 네 장(백백교 · 손긔졍 · 죽첨정 · 마리아)이 비죽 나와 잇다가 오른편에 모임
+  · 마지막에 네 장이 포개져 한 장의 지면으로 펼쳐지고 → index.html#yarok=press (메인이 종이색에서 걷히며 시작)
+  숫자를 고치려면 아래 KEY(시각표) · CASES(네 장) · GAPS(빈 곳)만 보면 됨
+-->
+<style>
+:root{--room:#070605;--paper:#e8dcc3;--ink:#1d150e;--dim:#8d8270;
+  --myeongjo:"Nanum Myeongjo","Noto Serif KR","Batang",serif;--serif:"Noto Serif KR","Nanum Myeongjo",serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--room);color:#d9d0c0;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:none}
+body{font-family:var(--myeongjo)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.skip{position:fixed;right:22px;top:18px;z-index:40;font-size:12px;letter-spacing:.2em;color:#6d6458;text-decoration:none;transition:color .3s}
+.skip:hover{color:#d9d0c0}
+
+/* 입구 */
+#gate{position:fixed;left:0;right:0;top:0;height:50%;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:9vh;text-align:center;transition:opacity 1s ease,transform 1.4s cubic-bezier(.5,0,.2,1)}
+#gate.gone{opacity:0;transform:translateY(-6vh);pointer-events:none}
+#gate .k{font-family:var(--serif);font-weight:500;font-size:12px;letter-spacing:.6em;color:#8d8270;margin-bottom:22px;padding-left:.6em}
+#gate h1{font-weight:800;font-size:clamp(26px,3.4vw,40px);letter-spacing:.06em;line-height:1.55;color:#ebe2d0}
+#gate h1 small{display:block;font-size:.46em;font-weight:400;letter-spacing:.24em;color:#9b907d;margin-top:10px}
+#gate .go{display:flex;gap:26px;margin-top:34px;align-items:baseline}
+#gate .go button{font-size:15px;letter-spacing:.32em;padding:10px 4px 8px 14px;border-bottom:1px solid #ebe2d0;color:#ebe2d0;transition:letter-spacing .4s}
+#gate .go button:hover{letter-spacing:.42em}
+#gate .go .q{font-size:12px;border-bottom-color:#5b5246;color:#7d7363}
+
+/* 깊이 · 해 */
+#depth{position:fixed;z-index:10;pointer-events:none;text-align:right;opacity:0;transition:opacity .8s}
+#depth.on{opacity:1}
+#depth .y{font-family:var(--serif);font-weight:300;font-size:clamp(44px,5.4vw,76px);letter-spacing:.02em;line-height:1;color:#ece3d1;font-variant-numeric:tabular-nums}
+#depth .md{font-family:var(--serif);font-size:13px;letter-spacing:.3em;color:#8d8270;margin-top:10px;min-height:1em}
+#depth .era{font-family:var(--myeongjo);font-size:12.5px;letter-spacing:.18em;color:#6f6656;margin-top:6px;min-height:1em}
+
+/* 꺼낸 네 장 */
+.slip{position:fixed;z-index:12;left:0;top:0;height:24px;display:flex;align-items:center;gap:10px;padding:0 12px;white-space:nowrap;
+  background:repeating-linear-gradient(0deg,rgba(60,45,30,.05) 0 1px,transparent 1px 3px),var(--c,#d6c49c);color:#2a2016;
+  font-family:var(--myeongjo);font-size:12.5px;font-weight:700;letter-spacing:.08em;box-shadow:0 6px 14px rgba(0,0,0,.55);transform-origin:0 50%;will-change:transform}
+.slip b{font-family:var(--serif);font-weight:500;font-size:11px;letter-spacing:.12em;color:#6b5a40}
+
+#line{position:fixed;left:50%;transform:translateX(-50%);z-index:15;text-align:center;white-space:nowrap;padding:10px 22px;background:rgba(7,6,5,.86);box-shadow:0 0 30px 18px rgba(7,6,5,.86);font-family:var(--myeongjo);font-size:clamp(14px,1.3vw,17px);letter-spacing:.2em;color:#d9cdb5;opacity:0;transition:opacity 1s;pointer-events:none}
+#line.on{opacity:1}
+
+/* 마지막: 펼쳐지는 한 장 (메인 index.html 의 시작 장면과 같은 종이) */
+#page{position:fixed;z-index:30;left:0;top:0;width:0;height:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(60,45,30,.035) 0 1px,transparent 1px 3px),#e8dcc3;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+@media (prefers-reduced-motion:reduce){#gate{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="cv" aria-hidden="true"></canvas>
+<a class="skip" href="index.html" id="skip">건너뛰기</a>
+
+<section id="gate" aria-label="경성야록 입구">
+  <p class="k">京城野錄</p>
+  <h1>오늘 자 신문 아래로,<small>지면 더미를 거슬러 내려가 보시압</small></h1>
+  <div class="go"><button type="button" id="goS">내려가기</button><button type="button" id="goQ" class="q">소리 없이</button></div>
+</section>
+
+<div id="depth" aria-live="off"><p class="y">2026</p><p class="md"></p><p class="era"></p></div>
+<p id="line"></p>
+<div id="page"></div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const MAIN='index.html';
+const cv=$('cv'),cx=cv.getContext('2d');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── 날자 → 해(소수) ── */
+const NOW=new Date();
+const yd=(y,m,d)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5/365.25;
+const TODAY=yd(NOW.getFullYear(),NOW.getMonth()+1,NOW.getDate());
+
+/* ── 실제로 신문이 나오지 못한 때 (우에서 아래로) ── */
+const GAPS=[
+  {a:yd(1945,12,1),b:yd(1940,8,10),len:1100,t1:'1940. 8. 10  —  1945. 12. 1',t2:'강제 폐간 · 신문이 나오지 못한 다섯 해'},
+  {a:yd(1937,6,3),b:yd(1936,8,29),len:950,t1:'1936. 8  —  1937. 6',t2:'무기 정간 · 손긔졍 선수 가슴의 일장기를 지운 뒤'}
+];
+const BOTTOM=yd(1920,4,1);              // 창간
+const P=900;                            // 한 해 = 900px (지면 한 장 ≈ 3px)
+
+/* 해 → 더미 속 깊이(px) */
+function pos(y){let p=0,top=TODAY;
+  for(const g of GAPS){ if(y>=g.a){return p+(top-y)*P} p+=(top-g.a)*P;
+    if(y>=g.b){return p+(g.a-y)/(g.a-g.b)*g.len} p+=g.len; top=g.b }
+  return p+(top-y)*P}
+/* 깊이 → 해 · 빈 곳인가 */
+function yearAt(q){let p=0,top=TODAY;
+  for(const g of GAPS){const n=(top-g.a)*P; if(q<=p+n)return {y:top-(q-p)/P,gap:null}; p+=n;
+    if(q<=p+g.len)return {y:g.a-(q-p)/g.len*(g.a-g.b),gap:g}; p+=g.len; top=g.b}
+  return {y:top-(q-p)/P,gap:null}}
+
+/* ── 사건 본편 네 장 (사이트 사건 면의 날자) ── */
+const CASES=[
+  {y:yd(1937,6,3),name:'백백교',d:'1937. 6',c:'#d3bf95'},
+  {y:yd(1936,8,11),name:'손긔졍',d:'1936. 8',c:'#d0bb8f'},
+  {y:yd(1933,5,17),name:'죽첨정',d:'1933. 5',c:'#cdb68a'},
+  {y:yd(1931,8,4),name:'부산 마리아',d:'1931. 8',c:'#c9b184'}
+];
+CASES.forEach(c=>c.p=pos(c.y));
+
+/* ── 시각표 (초, 해) — 여기만 고치면 빠르기가 바뀜 ── */
+const KEY=[
+  [0,TODAY],[1.0,TODAY-1.4],[3.0,1946.5],[3.5,yd(1945,12,1)],     // 오늘 → 해방 직후까지 촤르르르
+  [4.7,yd(1940,8,10)],                                             // 빈 곳 (폐간) 천천히 지나감
+  [5.6,1937.75],[6.1,CASES[0].y-.004],                              // 백백교 — 그리고 바로 아래 정간
+  [7.0,yd(1936,8,29)],[7.35,CASES[1].y-.004],                       // 정간 지나 손긔졍
+  [8.35,CASES[2].y-.004],                                           // 죽첨정
+  [9.2,1931.75],[9.75,CASES[3].y-.002]                              // 마리아 — 멈춤
+];
+const KT=KEY.map(k=>k[0]),KP=KEY.map(k=>pos(k[1]));
+const END=KT[KT.length-1];
+/* 단조 3차 보간 (Fritsch–Carlson): 되돌아가지 안코 매끄럽게 */
+const M=(()=>{const n=KT.length,d=[],m=new Array(n).fill(0);
+  for(let i=0;i<n-1;i++)d.push((KP[i+1]-KP[i])/(KT[i+1]-KT[i]));
+  for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+  for(let i=0;i<n-1;i++){if(d[i]===0){m[i]=m[i+1]=0;continue}const a=m[i]/d[i],b=m[i+1]/d[i],s=a*a+b*b;if(s>9){const t=3/Math.sqrt(s);m[i]=t*a*d[i];m[i+1]=t*b*d[i]}}
+  m[0]=0;m[n-1]=0;return m})();
+function camAt(t){if(t<=0)return KP[0];if(t>=END)return KP[KP.length-1];
+  let i=0;while(KT[i+1]<t)i++;const h=KT[i+1]-KT[i],s=(t-KT[i])/h,s2=s*s,s3=s2*s;
+  return (2*s3-3*s2+1)*KP[i]+(s3-2*s2+s)*h*M[i]+(-2*s3+3*s2)*KP[i+1]+(s3-s2)*h*M[i+1]}
+
+/* ── 종이 색: 오늘의 흰 종이 → 옛 누런 종이 ── */
+const COL=[[2026,[238,235,228]],[2000,[231,224,208]],[1975,[222,208,180]],[1955,[213,195,158]],[1920,[192,166,120]]];
+function col(y){for(let i=0;i<COL.length-1;i++){const[a,ca]=COL[i],[b,cb]=COL[i+1];if(y<=a&&y>=b){const k=(a-y)/(a-b);return ca.map((v,j)=>v+(cb[j]-v)*k)}}return y>2026?COL[0][1]:COL[COL.length-1][1]}
+const hash=n=>{n=Math.imul(n^61^(n>>>16),9);n^=n>>>4;n=Math.imul(n,0x27d4eb2d);n^=n>>>15;return (n>>>0)/4294967296};
+
+/* ── 화면 ── */
+let W=0,H=0,DPR=1,SX=0,SW=0,YC=0,narrow=false;
+function layout(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  narrow=W<720;SW=Math.min(W*(narrow?.78:.5),760);SX=(W-SW)/2;YC=Math.round(H*(narrow?.56:.5));
+  const dp=$('depth');
+  if(narrow){dp.style.cssText+=';left:0;right:0;top:'+(H*.12)+'px;text-align:center'}
+  else{dp.style.left='';dp.style.right=(W-SX+44)+'px';dp.style.top=(YC-48)+'px';dp.style.textAlign='right'}
+  slotPos();}
+addEventListener('resize',()=>{layout();draw(true)});
+
+/* ── 소리 (파일 없이) ── */
+let ac=null,sound=false,rif=null,drone=null;
+function audio(){if(ac)return ac;try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){ac=null}return ac}
+function noiseBuf(sec){const b=ac.createBuffer(1,ac.sampleRate*sec|0,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
+function startBed(){if(!sound||!audio())return;
+  const n=ac.createBufferSource();n.buffer=noiseBuf(2);n.loop=true;const f=ac.createBiquadFilter();f.type='bandpass';f.Q.value=.8;f.frequency.value=900;
+  const g=ac.createGain();g.gain.value=0;n.connect(f);f.connect(g);g.connect(ac.destination);n.start();rif={f,g};
+  const o=ac.createOscillator();o.type='sine';o.frequency.value=49;const og=ac.createGain();og.gain.value=0;o.connect(og);og.connect(ac.destination);o.start();drone={g:og}}
+function bed(v,inGap){if(!rif)return;const t=ac.currentTime,k=inGap?0:Math.min(1,v/2600);
+  rif.g.gain.setTargetAtTime(k*.16,t,.06);rif.f.frequency.setTargetAtTime(500+k*2600,t,.08);
+  drone.g.gain.setTargetAtTime(inGap?.07:0,t,.4)}
+function hit(type){if(!sound||!audio())return;const t=ac.currentTime;
+  if(type==='slip'){const n=ac.createBufferSource();n.buffer=noiseBuf(.25);const f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=2200;const g=ac.createGain();
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.22);n.connect(f);f.connect(g);g.connect(ac.destination);n.start(t)}
+  if(type==='thud'){const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(38,t+.35);
+    g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.62);
+    const n=ac.createBufferSource();n.buffer=noiseBuf(.12);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;const ng=ac.createGain();ng.gain.setValueAtTime(.3,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.12);n.connect(f);f.connect(ng);ng.connect(ac.destination);n.start(t)}
+  if(type==='open'){const n=ac.createBufferSource();n.buffer=noiseBuf(1.3);const f=ac.createBiquadFilter();f.type='bandpass';f.Q.value=.6;f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(3200,t+1.1);
+    const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.14,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+1.2);n.connect(f);f.connect(g);g.connect(ac.destination);n.start(t)}}
+
+/* ── 그리기 ── */
+let cam=KP[0],vel=0,stage='gate',topOff=0;   // topOff: 입구에서 더미 꼭대기가 화면 아래쪽에 놓이게
+const GAPPX=3;
+function draw(force){
+  const c=cx;c.setTransform(DPR,0,0,DPR,0,0);
+  const blur=Math.min(1,Math.max(0,(Math.abs(vel)/60-6)/34));        // 빠르면 줄이 번져 한 덩어리로
+  c.fillStyle='#070605';c.fillRect(0,0,W,H);
+  const camY=cam-topOff;                         // 화면 가운데 줄(YC)에 오는 깊이
+  const q0=camY-YC-6,q1=camY+(H-YC)+6;
+  /* 더미: 빈 곳은 건너뜀 */
+  let p=0,top=TODAY,segs=[];
+  for(const g of GAPS){const n=(top-g.a)*P;segs.push([p,p+n,top]);p+=n+g.len;top=g.b}
+  segs.push([p,p+(top-BOTTOM)*P,top]);
+  for(const[s0,s1,yt]of segs){const a=Math.max(s0,q0),b=Math.min(s1,q1);if(a>=b)continue;
+    const yTop=YC+(s0-camY);                        // 이 토막의 꼭대기
+    const y0=YC+(a-camY),y1=YC+(b-camY);
+    /* 번진 바탕 */
+    if(blur>0){const cTop=col(yt-(a-s0)/P),cBot=col(yt-(b-s0)/P),gr=c.createLinearGradient(0,y0,0,y1);
+      gr.addColorStop(0,`rgba(${cTop.map(Math.round)},${.3*blur})`);gr.addColorStop(1,`rgba(${cBot.map(Math.round)},${.3*blur})`);c.fillStyle=gr;c.fillRect(SX,y0,SW,y1-y0)}
+    /* 한 장 한 장 */
+    {const i0=Math.ceil((a-s0)/GAPPX),i1=Math.floor((b-s0)/GAPPX);const al=1-blur*.78;
+      for(let i=i0;i<=i1;i++){const pp=s0+i*GAPPX,y=YC+(pp-camY),yr=yt-(pp-s0)/P,key=Math.round(yr*400)+i*7;
+        const h1=hash(key),h2=hash(key+11),h3=hash(key+29),cc=col(yr),br=.55+.45*h1;
+        const l=SX+(h2-.5)*10,r=SX+SW+(h3-.5)*14-(yr<1960?4:0)*h1;
+        c.fillStyle=`rgba(${Math.round(cc[0]*br)},${Math.round(cc[1]*br)},${Math.round(cc[2]*br)},${al})`;
+        c.fillRect(l,y,r-l,h1>.86?2:1);
+        /* 맨 우 몃 해: 컬러 인쇄의 옅은 빛 */
+        if(yr>1996&&h2>.78){const k=Math.min(1,(yr-1996)/18)*.5*al;c.fillStyle=h3>.5?`rgba(90,170,200,${k})`:`rgba(200,90,130,${k})`;c.fillRect(r-34-h1*80,y,20+h3*40,1)}
+      }}
+    /* 해 눈금 */
+    const fy=Math.floor(yt-(a-s0)/P),ly=Math.ceil(yt-(b-s0)/P);
+    c.font=`400 11px "Noto Serif KR",serif`;c.textAlign='right';c.textBaseline='middle';
+    for(let Y=fy;Y>=ly;Y--){const yy=YC+(s0+(yt-Y)*P-camY);if(yy<y0-1||yy>y1+1)continue;
+      const al=(1-blur)*.8;if(al<.05)continue;c.fillStyle=`rgba(141,130,112,${al})`;c.fillRect(SX-26,yy,14,1);if(!narrow)c.fillText(Y,SX-32,yy)}
+    /* 더미 양끝 그늘 */
+    const sh=c.createLinearGradient(SX-8,0,SX+SW+8,0);sh.addColorStop(0,'rgba(7,6,5,.75)');sh.addColorStop(.07,'rgba(7,6,5,0)');sh.addColorStop(.9,'rgba(7,6,5,0)');sh.addColorStop(1,'rgba(7,6,5,.6)');
+    c.fillStyle=sh;c.fillRect(SX-8,Math.max(0,yTop<y0?y0:yTop),SW+16,y1-Math.max(0,y0))}
+  /* 오늘 자 — 꼭대기 표 */
+  {const yy=YC+(0-camY);if(yy>-20&&yy<H+20){c.font='500 12px "Noto Serif KR",serif';c.textAlign='left';c.textBaseline='middle';c.fillStyle='rgba(236,227,209,.85)';
+    const d=`${NOW.getFullYear()}. ${NOW.getMonth()+1}. ${NOW.getDate()}  오늘 자`;c.fillRect(SX+SW+8,yy,22,1);if(!narrow)c.fillText(d,SX+SW+36,yy);else{c.textAlign='center';c.fillText(d,W/2,yy-16)}}}
+  /* 빈 곳 글 */
+  for(const g of GAPS){const gp=pos(g.a),mid=YC+(gp+g.len/2-camY);if(mid<-60||mid>H+60)continue;
+    const k=Math.max(0,1-Math.abs(mid-YC)/(H*.42));if(k<=0)continue;
+    c.textAlign='center';c.textBaseline='middle';c.fillStyle=`rgba(217,205,181,${k*.95})`;c.font=`300 ${narrow?16:20}px "Noto Serif KR",serif`;c.fillText(g.t1,W/2,mid-14);
+    c.fillStyle=`rgba(141,130,112,${k})`;c.font=`400 ${narrow?12.5:14}px "Nanum Myeongjo",serif`;c.fillText(g.t2,W/2,mid+16);
+    /* 흩날리는 먼지 몃 알 */
+    for(let i=0;i<26;i++){const h=hash(i*97+(gp|0)),yy=YC+(gp+h*g.len-camY),xx=SX+hash(i*31+5)*SW;c.fillStyle=`rgba(200,185,150,${.25*k*hash(i+3)})`;c.fillRect(xx,yy,1.2,1.2)}}
+  /* 비죽 나온 네 장 (아직 안 꺼낸 것) */
+  for(const cs of CASES){if(cs.got)continue;const yy=YC+(cs.p-camY);if(yy<-20||yy>H+20)continue;const al=Math.max(.15,1-blur);
+    c.fillStyle=`rgba(${hexRGB(cs.c)},${al})`;c.fillRect(SX-4,yy-1,SW+58,3);
+    c.font='700 12px "Nanum Myeongjo",serif';c.textAlign='left';c.textBaseline='middle';c.fillStyle=`rgba(236,227,209,${al})`;if(!narrow)c.fillText(cs.name+'  '+cs.d,SX+SW+64,yy)}
+  /* 지금 깊이 — 가는 실 */
+  if(stage!=='gate'){c.fillStyle='rgba(236,227,209,.18)';c.fillRect(0,YC,SX-40,1);c.fillRect(SX+SW+(narrow?6:200),YC,W,1)}
+}
+function koNum(n){const d=['','일','이','삼','사','오','륙','칠','팔','구'];const t=Math.floor(n/10),o=n%10;return (t?(t>1?d[t]:'')+'십':'')+d[o]}
+function hexRGB(h){const n=parseInt(h.slice(1),16);return [(n>>16)&255,(n>>8)&255,n&255].join(',')}
+
+/* ── 해 표시 ── */
+const dY=$('depth').querySelector('.y'),dMD=$('depth').querySelector('.md'),dEra=$('depth').querySelector('.era');
+let lastShow=0;
+function showYear(now,force){if(!force&&now-lastShow<55)return;lastShow=now;const r=yearAt(cam),y=r.y,Y=Math.floor(y);
+  dY.textContent=Y;const doy=(y-Y)*365.25,dt=new Date(Date.UTC(Y,0,1)+doy*864e5);
+  dMD.textContent=Math.abs(vel)<900?`${dt.getUTCMonth()+1}월 ${dt.getUTCDate()}일`:'';
+  dEra.textContent=Y<=1945?'소화 '+(Y-1925)+' 년':''}
+
+/* ── 꺼낸 장 모으기 ── */
+const slots=[];
+function slotPos(){CASES.forEach((cs,k)=>{const sx=narrow?W/2-90:Math.min(W-200,SX+SW+70),sy=narrow?H*.8+k*30-60:H*.28+k*36;cs.sx=sx;cs.sy=sy;if(cs.el)cs.el.style.transform=`translate(${sx}px,${sy}px)`})}
+function grab(cs){cs.got=true;const el=document.createElement('div');el.className='slip';el.style.setProperty('--c',cs.c);el.innerHTML=`${cs.name}<b>${cs.d}</b>`;document.body.appendChild(el);cs.el=el;
+  const fx=SX+SW*.35,fy=YC-12;el.animate([{transform:`translate(${fx}px,${fy}px) scaleX(2.4)`,opacity:.2},{transform:`translate(${cs.sx}px,${cs.sy}px) scaleX(1)`,opacity:1}],{duration:reduce?1:620,easing:'cubic-bezier(.3,.7,.2,1)',fill:'forwards'});
+  hit('slip')}
+
+/* ── 흐름 ── */
+let t=0,last=0,boost=0,raf=0,done=false;
+function loop(now){raf=requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000||0);last=now;
+  if(stage==='down'){boost*=.9;t+=dt*(1+boost);const nc=camAt(t);vel=(nc-cam)/Math.max(dt,1e-3);cam=nc;
+    const g=yearAt(cam).gap;bed(Math.abs(vel),!!g);
+    for(const cs of CASES)if(!cs.got&&cam>=cs.p-1)grab(cs);
+    if(t>=END)arrive()}
+  else{vel*=.85}
+  if(stage==='gate'){topOff=Math.max(0,topOff)}
+  draw();if(stage!=='gate')showYear(now)}
+function begin(withSound){if(stage!=='gate')return;sound=withSound;if(sound){audio();if(ac&&ac.state==='suspended')ac.resume();startBed()}
+  $('gate').classList.add('gone');stage='down';$('depth').classList.add('on');
+  /* 입구에서 아래쪽에 놓여 잇든 더미 꼭대기를 가운데로 끌어올리며 시작 */
+  const from=topOff;topOff=0;cam=KP[0]-from;KP[0]=cam;KT[0]=0;
+  if(reduce){t=END;cam=KP[KP.length-1];CASES.forEach(cs=>{if(!cs.got)grab(cs)});arrive();return}
+  t=0}
+function arrive(){if(stage!=='down')return;stage='stop';vel=0;bed(0,false);hit('thud');showYear(performance.now(),true);
+  setTimeout(()=>{const l=$('line');l.style.top=(narrow?H*.9:YC+64)+'px';l.textContent=koNum(NOW.getFullYear()-1931)+' 년 치 더미에서 꺼낸 네 장 — 오늘 밤의 지면이 되오';l.classList.add('on')},500);
+  setTimeout(merge,reduce?600:2300)}
+function merge(){if(done)return;done=true;stage='open';$('line').classList.remove('on');$('depth').classList.remove('on');
+  const cxm=W/2-90,cym=YC-12;
+  CASES.forEach((cs,k)=>cs.el&&cs.el.animate([{transform:`translate(${cs.sx}px,${cs.sy}px)`},{transform:`translate(${cxm}px,${cym+(k-1.5)*1.5}px) rotate(${(k-1.5)*.6}deg)`}],{duration:reduce?1:700,easing:'cubic-bezier(.5,0,.2,1)',fill:'forwards',delay:k*70}));
+  cv.animate([{opacity:1},{opacity:.25}],{duration:900,fill:'forwards'});
+  setTimeout(openPage,reduce?50:1000)}
+function openPage(){hit('open');
+  /* 메인(index.html)이 첫 장면에서 덮는 종이와 같은 자리 · 같은 폭 */
+  const Z=W<760?1:Math.max(1,Math.min(1.2,W/1100)),pw=Math.min(1100*Z,W*.96),pl=(W-pw)/2;
+  const pg=$('page');CASES.forEach(cs=>cs.el&&cs.el.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards',delay:250}));
+  pg.animate([{left:(W/2-90)+'px',top:(YC-12)+'px',width:'180px',height:'24px',transform:'perspective(900px) rotateX(70deg)'},
+              {left:pl+'px',top:'0px',width:pw+'px',height:H+'px',transform:'perspective(900px) rotateX(0deg)',boxShadow:'0 0 0 rgba(0,0,0,0)'}],
+             {duration:reduce?1:1250,easing:'cubic-bezier(.6,0,.2,1)',fill:'forwards'});
+  setTimeout(()=>{location.href=MAIN+'#yarok=press'},reduce?200:1450)}
+
+/* 바퀴 · 끌기 · 화살표로 더 빨리 */
+const push=v=>{if(stage==='down')boost=Math.min(3,boost+v)};
+addEventListener('wheel',e=>{if(stage==='gate'&&e.deltaY>0){begin(false);return}push(Math.max(0,e.deltaY)/400)},{passive:true});
+let ty=null;addEventListener('touchstart',e=>{ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchmove',e=>{if(ty==null)return;const d=ty-e.touches[0].clientY;ty=e.touches[0].clientY;if(d>0)push(d/160)},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' '||e.key==='PageDown')push(.6);if(e.key==='Escape')location.href=MAIN});
+$('goS').addEventListener('click',()=>begin(true));
+$('goQ').addEventListener('click',()=>begin(false));
+
+/* 시작: 입구에선 더미 꼭대기가 화면 아래쪽 */
+layout();topOff=H*(narrow?.14:.12);cam=KP[0];
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{last=performance.now();raf=requestAnimationFrame(loop)});
+setTimeout(()=>{if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}},1200);
+window.__ykOpen={pos,yearAt,camAt,KEY,begin};
+})();
+</script>
+</body>
+</html>

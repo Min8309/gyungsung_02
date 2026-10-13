@@ -1,0 +1,11 @@
+/* 경성야록 · 백백교 — 엔딩 : 병에서 끗까지 지면 바깥이 희게 바래고, 흰 지면 위 글씨는 또렷하게 */
+.bb-bleach{position:fixed;inset:0;z-index:0;pointer-events:none;background:#f1ebdd;opacity:calc(var(--p,0) * .85);transition:opacity .4s linear}
+.archive-page{z-index:1}
+.bb-fin .bf-k{color:#5a4d3c!important;font-size:13px!important}
+.bb-fin .bf-lines li{color:#1a140e!important;font-size:23px!important;text-shadow:0 0 1px rgba(26,20,14,.25)}
+.bb-fin .bf-big{color:#0f0b07!important;font-size:52px!important;font-weight:700}
+.bb-fin .bf-why{color:#3a3128!important;font-size:16px!important}
+.bb-fin .bf-end{color:#4a3f31!important;font-size:17px!important}
+.bb-fin .bf-snow{opacity:.13!important}
+.bb-thaw .th-in p{color:#1e1913!important;font-size:21px!important;font-weight:700}
+.bb-fin + .bridge.bb-thaw{height:calc(150vh / var(--ykz,1))!important}

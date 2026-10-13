@@ -101,6 +101,7 @@
     var k = words(), a = k[0], b = k[1], sd = S.seed;
     var place = pick(PLACE[S.topic], sd);
     var head = a ? pick(HEAD[S.style], sd)(a, b) : NOKW[S.style];
+    var ph = window.HGP ? HGP.snapshot(!a && !(S.mode === 'story' && story()), 0) : null; if (ph && ph.head) head = ph.head;
     var p1 = '【경성】 ' + DATE_KO + ' 밤, ' + place + '에서 ' + (a ? a + '에 관한 ' : '') + '이상한 소식이 본사에 날아드럿다.';
     var p2 = S.mode === 'story' && story()
       ? '소식을 전한 독자의 말을 그대로 옴기면 이러하다. 「' + story() + '」'
@@ -111,7 +112,7 @@
     return {
       style: S.style, tone: S.tone, topic: S.topic, kick: KICK[S.style], head: head, sub: pick(SUB[S.tone], sd), body: [p1, p2, wit, p3],
       cap: '삽화 · ' + TOPIC_KO[S.topic] + ' · 재현 그림', w: pick(WEATHER[S.topic], sd + 1), ad: pick(ADS[S.topic], sd + 2), f: pick(FORTUNE, sd + name.length),
-      by: '투고 · ' + name + '생', no: issueNo()
+      by: '투고 · ' + name + '생', no: issueNo(), ph: ph
     };
   }
 
@@ -126,9 +127,10 @@
     $('#hgBody').innerHTML = d.body.map(function (p) { return '<p' + (/^「/.test(p) ? ' class="wit"' : '') + '>' + esc(p) + '</p>'; }).join('');
     var A = $('#hgArt'), src = art(d.topic);
     A.className = 'sh-art' + (src ? '' : ' none'); A.innerHTML = src ? '<img alt="" src="' + src + '">' : '';
-    $('#hgCap').textContent = d.cap; $('#hgW').textContent = d.w; $('#hgAd').textContent = d.ad; $('#hgF').textContent = d.f; $('#hgBy').textContent = d.by;
+    $('#hgCap').textContent = d.cap; if (window.HGP) HGP.render(d); $('#hgW').textContent = d.w; $('#hgAd').textContent = d.ad; $('#hgF').textContent = d.f; $('#hgBy').textContent = d.by;
   }
   function live() { if (printed) return; render(compose()); }
+  window.ykHgLive = function () { unprint(); live(); };
   function readSheet() {
     var d = {}; for (var k in cur) d[k] = cur[k];
     d.head = $('#hgHead').textContent.trim(); d.sub = $('#hgSub').textContent.trim();
@@ -247,18 +249,21 @@
     if (line.trim()) out.push(line); return out;
   }
   function draw() {
-    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
+    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { return window.HGP ? HGP.load(readSheet().ph) : null; }).then(function (PHD) {
       var d = readSheet(), W = 1400, P = 80, SERIF = '"Noto Serif KR", serif';
       var dark = d.style === 'horror', bg = dark ? '#1f1a15' : '#f2e9d4', ink = dark ? '#e6dac0' : '#1e1913';
       var acc = dark ? '#c9a46a' : (ACC[d.tone] || ink), red = '#8a2a21';
       var c = document.createElement('canvas'), x = c.getContext('2d');
       var hs = d.style === 'breaking' ? 112 : 92, mainW = W - P * 2, artW = Math.round(mainW * .36), bodyW = mainW - artW - 36, colW = (bodyW - 28) / 2, lh = 44;
+      var L3 = PHD && PHD.l === 3, stripW = (mainW - 48) / 3, stripPH = Math.round(stripW * 3 / 4), stripH = L3 ? stripPH + 185 : 0;
+      if (L3) { artW = 0; bodyW = mainW; colW = (bodyW - 28) / 2; }
       x.font = '900 ' + hs + 'px ' + SERIF; var HL = wrap(x, d.head, mainW);
       x.font = '700 34px ' + SERIF; var SL = wrap(x, d.sub, mainW);
       x.font = '400 28px ' + SERIF; var BL = [];
       d.body.forEach(function (p, i) { wrap(x, (i ? '　' : '') + p, colW).forEach(function (l) { BL.push(l); }); BL.push(null); });
       var half = Math.ceil(BL.length / 2), artH = Math.round(artW * 3.3 / 4) + 40;
-      var top = P + 150 + 50 + HL.length * hs * 1.1 + 70 + SL.length * 48 + 40;
+      if (PHD && !L3) artH = PHD.l === 2 ? Math.round(artW * 3 / 4) * 2 + 130 : Math.round(artW * 3 / 4) + 100; if (L3) artH = 0;
+      var top = P + 150 + 50 + HL.length * hs * 1.1 + 70 + SL.length * 48 + 40 + stripH;
       var mainH = Math.max(half * lh, artH), H = Math.round(top + mainH + 40 + 190 + 80);
       c.width = W; c.height = H; x = c.getContext('2d');
       x.fillStyle = bg; x.fillRect(0, 0, W, H);
@@ -283,14 +288,25 @@
       y += 66; x.font = '700 34px ' + SERIF;
       SL.forEach(function (l) { x.fillText(l, P, y); y += 48; });
       y -= 18; x.fillRect(P, y, mainW, 1.5); y += 56;
+      /* 세 컷 사진 이야기 */
+      if (L3) {
+        var lab3 = ['一 · 발단', '二 · 사건', '三 · 반전'];
+        PHD.imgs.forEach(function (im, i) {
+          var sx = P + i * (stripW + 24), sy = y - 24;
+          HGP.photo(x, im, PHD.sp, sx, sy, stripW, stripPH, i === 2);
+          x.font = '900 24px ' + SERIF; x.fillStyle = acc; x.fillText(lab3[i], sx, sy + stripPH + 38); x.fillStyle = ink;
+          x.font = '400 22px ' + SERIF; wrap(x, PHD.caps[i] || '', stripW).slice(0, 3).forEach(function (l, k) { x.fillText(l, sx, sy + stripPH + 72 + k * 30); });
+        });
+        y += stripH; x.fillRect(P, y - 40, mainW, 1.5);
+      }
       /* 본문 두 단 + 삽화 */
       var colTop = y; x.font = '400 28px ' + SERIF;
       BL.forEach(function (l, i) { var col = i < half ? 0 : 1, row = col ? i - half : i; if (l) x.fillText(l, P + col * (colW + 28), colTop + row * lh); });
-      x.globalAlpha = .4; x.fillRect(P + colW + 13, colTop - 30, 1.2, half * lh); x.fillRect(P + bodyW + 18, colTop - 30, 1.2, mainH); x.globalAlpha = 1;
+      x.globalAlpha = .4; x.fillRect(P + colW + 13, colTop - 30, 1.2, half * lh); if (!L3) x.fillRect(P + bodyW + 18, colTop - 30, 1.2, mainH); x.globalAlpha = 1;
       var ax = P + bodyW + 36, ay = colTop - 30, ah = Math.round(artW * 3.3 / 4);
       var finish = function () {
-        x.strokeRect(ax, ay, artW, ah);
-        x.font = '400 20px ' + SERIF; x.fillText(d.cap || '', ax, ay + ah + 30);
+        if (!PHD) { x.strokeRect(ax, ay, artW, ah);
+        x.font = '400 20px ' + SERIF; x.fillText(d.cap || '', ax, ay + ah + 30); }
         /* 아래 세 칸 */
         var by = colTop - 30 + mainH + 40; x.fillRect(P, by, mainW, 3);
         var bw = mainW / 3, heads = ['자정의 날씨', '광고', '독자 운세'], texts = [d.w, d.ad, d.f];
@@ -307,6 +323,17 @@
         x.save(); x.translate(W - P - 70, by + 118); x.rotate(.17); x.strokeStyle = 'rgba(138,42,33,.8)'; x.lineWidth = 5; x.strokeRect(-36, -58, 72, 116); x.fillStyle = 'rgba(138,42,33,.85)'; x.font = '900 40px ' + SERIF; x.textAlign = 'center'; x.fillText('발', 0, -8); x.fillText('행', 0, 42); x.restore();
         return c;
       };
+      if (PHD) {
+        if (!L3) {
+          var pw = artW, phh = Math.round(artW * 3 / 4);
+          PHD.imgs.forEach(function (im, i) {
+            var py = ay + i * (phh + 70);
+            HGP.photo(x, im, PHD.sp, ax, py, pw, phh, i === 0);
+            x.font = '400 20px ' + SERIF; wrap(x, (PHD.caps[i] || '') + (i === PHD.imgs.length - 1 ? ' (사진 · 재현)' : ''), pw).slice(0, 2).forEach(function (l, k) { x.fillText(l, ax, py + phh + 28 + k * 26); });
+          });
+        }
+        return finish();
+      }
       var src = art(d.topic);
       if (src) return new Promise(function (ok) { var im = new Image(); im.onload = function () { x.save(); x.filter = 'grayscale(1) sepia(.35) contrast(1.15)' + (dark ? ' brightness(.8)' : ''); var r = Math.max(artW / im.width, ah / im.height), iw = im.width * r, ih = im.height * r; x.beginPath(); x.rect(ax, ay, artW, ah); x.clip(); x.drawImage(im, ax + (artW - iw) / 2, ay + (ah - ih) / 2, iw, ih); x.restore(); ok(finish()); }; im.onerror = function () { ok(finish()); }; im.src = src; });
       x.save(); x.beginPath(); x.rect(ax, ay, artW, ah); x.clip(); x.fillStyle = dark ? 'rgba(230,218,192,.08)' : 'rgba(30,25,19,.06)'; x.fillRect(ax, ay, artW, ah); x.fillStyle = ink;
@@ -339,8 +366,8 @@
   $('#shmX').addEventListener('click', closeShare);
   M.addEventListener('click', function (e) { if (e.target === M) closeShare(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !M.hidden) closeShare(); });
-  function enc(d) { var s = JSON.stringify({ s: d.style, t: d.tone, p: d.topic, k: d.kick, h: d.head, u: d.sub, b: d.body, c: d.cap, w: d.w, a: d.ad, f: d.f, y: d.by, n: d.no }); return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-  function dec(z) { try { var s = decodeURIComponent(escape(atob(z.replace(/-/g, '+').replace(/_/g, '/')))); var o = JSON.parse(s); return { style: o.s, tone: o.t, topic: o.p, kick: o.k, head: o.h, sub: o.u, body: o.b || [], cap: o.c, w: o.w, ad: o.a, f: o.f, by: o.y, no: o.n }; } catch (e) { return null; } }
+  function enc(d) { var s = JSON.stringify({ s: d.style, t: d.tone, p: d.topic, k: d.kick, h: d.head, u: d.sub, b: d.body, c: d.cap, w: d.w, a: d.ad, f: d.f, y: d.by, n: d.no, ph: d.ph || null }); return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function dec(z) { try { var s = decodeURIComponent(escape(atob(z.replace(/-/g, '+').replace(/_/g, '/')))); var o = JSON.parse(s); return { ph: o.ph || null, style: o.s, tone: o.t, topic: o.p, kick: o.k, head: o.h, sub: o.u, body: o.b || [], cap: o.c, w: o.w, ad: o.a, f: o.f, by: o.y, no: o.n }; } catch (e) { return null; } }
   function linkOf(d) { return location.href.split('#')[0].split('?')[0] + '#h=' + enc(d); }
   function copyText(t) {
     return new Promise(function (ok, no) {

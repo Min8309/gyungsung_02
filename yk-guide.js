@@ -10,7 +10,7 @@
   if (window.__ykGuide) return; window.__ykGuide = true;
   var D = document, W = window;
   var $ = function (s, r) { return (r || D).querySelector(s); };
-  function H(o, k) { return '<span class="ykg-hj" tabindex="0" data-o="' + o.replace(/"/g, '&quot;') + '" data-k="' + k.replace(/"/g, '&quot;') + '">' + o + '</span>'; }
+  function H(o, k) { o = touchy(o); k = touchy(k); return '<span class="ykg-hj" tabindex="0" data-o="' + o.replace(/"/g, '&quot;') + '" data-k="' + k.replace(/"/g, '&quot;') + '">' + o + '</span>'; }
 
   /* ── 면마다 짚을 곳 ── (sel: 가리킬 것 / 없으면 가운데 쪽지) */
   var CASE_END = [
@@ -87,9 +87,7 @@
     bb: { test: isCase('baekbaekgyo'), steps: [
       { t: ['백백교 지면 보는 법', '백백교 페이지 보는 법'], b: ['소화 십이 년, 「흰 옷」을 내건 한 교단의 이야기요. 신도들은 가진 것을 바쳣고, 식구를 내노앗소 — 그리고 오래도록, 아모도 그 안을 말할 수 업섯소. 이 지면은 그 일이 실제로 일어난 차례대로 한 장씩 내려가오.', '1937년, 「흰 옷」을 내건 한 교단의 이야기예요. 신도들은 가진 것을 바쳤고, 식구를 내놓았어요 — 그리고 오랫동안, 아무도 그 안을 말할 수 없었어요. 이 페이지는 그 일이 실제로 일어난 순서대로 한 장씩 내려가요.'] },
       { sel: '.case-brief', t: ['물음 셋 · 표 셋', '물음 셋 · 표시 세 가지'], b: ['우선 이 지면이 쫏는 물음 셋이오. 셋재 칸은 봉해 두엇소 — 끗에서 드러나지만, 눌러 먼저 뜻어 볼 수도 잇소.<br>지면 곳곳에는 작은 표가 부터 잇소.<br>▸ — 누르는 곳<br>↓ — 천천히 내리는 곳<br>◐ — 마우스를 대고 기다리는 곳', '먼저 이 페이지가 쫓는 물음 셋이에요. 셋째 칸은 봉해 두었어요 — 끝에서 드러나지만, 눌러서 먼저 뜯어 볼 수도 있어요.<br>페이지 곳곳에는 작은 표시가 붙어 있어요.<br>▸ — 누르는 곳<br>↓ — 천천히 내리는 곳<br>◐ — 마우스를 대고 기다리는 곳'] },
-      { sel: '#refuge .rf-map', t: ['▸ 서장 · 쉰세 곳의 불', '▸ 서장 · 53곳의 불'], b: ['「살 곳은 쉰세 곳뿐」이라 한 피난처요. 단추를 누르고 잇스면 바친 만큼 불이 켜지오. 이 지면을 내려가는 동안 — 가장자리에 무언가 하나식 늘어나거든, 왼편 아래 단추로 멈출 수 잇소.', '「살 곳은 53곳뿐」이라던 피난처예요. 버튼을 누르고 있으면 바친 만큼 불이 켜져요. 페이지를 내려가는 동안 — 가장자리에 무언가 하나씩 늘어나면, 왼쪽 아래 버튼으로 멈출 수 있어요.'] },
       { sel: '#who .wh6', t: ['대원님, 전용해', '대원님, 전용해'], b: ['이 지면의 주인공이오. 얼굴을 남기지 안은 교주 — 아버지와 형제, 열여섯 개의 가명, 그가 한 일이 인물 카드에 적혀 잇소.', '이 페이지의 주인공이에요. 얼굴을 남기지 않은 교주 — 아버지와 형제, 열여섯 개의 가명, 그가 한 일이 인물 카드에 적혀 있어요.'] },
-      { sel: '#who .mk-wall', t: ['▸ 가면 뒤의 일홈', '▸ 가면 뒤의 이름'], b: ['벽에 걸린 가면을 하나식 눌러 벗기시압. 가면마다 그가 내세운 일홈이 나오오.', '벽에 걸린 가면을 하나씩 눌러 벗겨 보세요. 가면마다 그가 내세운 이름이 나와요.'] },
       { sel: '#obit .ob6', t: ['▸ 제일장 · 쓰지 못한 부고', '▸ 1장 · 쓰지 못한 부고'], b: ['교조인 아버지의 죽음을 숨긴 데서 이 교단이 시작되오. 흰 종이를 누르면 그 아래 쓰다 만 부고가 들춰지고, 다 읽고 한 번 더 누르면 — 흰 칠이 다시 덥히오.<br>오른편 우의 ？ 표를 누르면, 언제든 그 장치의 설명만 다시 볼 수 잇소.', '교조인 아버지의 죽음을 숨긴 데서 이 교단이 시작돼요. 흰 종이를 누르면 그 아래 쓰다 만 부고가 들춰지고, 다 읽고 한 번 더 누르면 — 흰 칠이 다시 덮여요.<br>오른쪽 위의 ？ 표시를 누르면, 언제든 그 장치 설명만 다시 볼 수 있어요.'] },
       { sel: '#ledger .l6-give', t: ['▸ 제이장 · 헌납 장부', '▸ 2장 · 헌납 장부'], b: ['「독립이 되는 날」 벼슬을 준다며 재산을 바치게 한 장부요. 바칠 것을 하나씩 누르면 벼슬 사다리가 올라가고, 오른편 임명장에 벼슬이 적히오. 다섯을 다 바치면 — 맨 우에 한 줄이 더 적히오.', '「독립이 되는 날」 벼슬을 준다며 재산을 바치게 한 장부예요. 바칠 것을 하나씩 누르면 벼슬 사다리가 올라가고, 오른쪽 임명장에 벼슬이 적혀요. 다섯 개를 다 바치면 — 맨 위에 한 줄이 더 적혀요.'] },
       { sel: '#house .hs6', t: ['▸ 제삼장 · 흐터진 한 집', '▸ 3장 · 흩어진 한 집'], b: ['한 집 식구를 여러 곳에 나누어 살게 한 까닭을 직접 해 보는 칸이오. 방석 네 장을 지부로 나누고, 한 사람을 떠나보내 보시압 — 남은 식구가 엇지 되는지 보이오.', '한 집 식구를 여러 곳에 나누어 살게 한 이유를 직접 해 보는 칸이에요. 방석 네 장을 지부로 나누고, 한 사람을 떠나보내 보세요 — 남은 식구가 어떻게 되는지 보여요.'] },
@@ -97,31 +95,42 @@
       { sel: '#mute', t: ['제오장 · 쉰세 날의 침묵', '5장 · 53일의 침묵'], b: ['그 뒤 쉰세 날 동안, 이 일은 어느 신문에도 실릴 수 업섯소. 날자 줄을 따라 — 보도 금지가 풀리기까지를 읽으시압.', '그 뒤 53일 동안, 이 일은 어느 신문에도 실릴 수 없었어요. 날짜 줄을 따라 — 보도 금지가 풀리기까지를 읽어 보세요.'] },
       { sel: '#mountain .mt-poster', t: ['◐ 제륙장 · 얼굴 업는 수배', '◐ 6장 · 얼굴 없는 수배'], b: ['어두운 숲에서는 마우스가 등불이오. 얼굴 자리가 긁혀 나간 수배지에 손을 대고 잠시 기다려 보시압.', '어두운 숲에서는 마우스가 등불이에요. 얼굴 자리가 긁혀 나간 수배지에 마우스를 대고 잠시 기다려 보세요.'] },
       { sel: '#land .l6w', t: ['▸ 제칠장 · 세어 보시오', '▸ 7장 · 세어 보세요'], b: ['산비탈을 누를 때마다 흰 표지 하나가 꼬치오 — 땅이 내노은 한 사람이오. 다섯을 세면, 산비탈이 스스로 세기 시작하오. (표지는 상징이오)', '산비탈을 누를 때마다 흰 표식 하나가 꽂혀요 — 땅이 내놓은 한 사람이에요. 다섯을 세면, 산비탈이 스스로 세기 시작해요. (표식은 상징이에요)'] },
-      { sel: '#land .lm6', t: ['▸ 그 불은 엇지 되엇소', '▸ 그 불은 어떻게 되었나'], b: ['서장에서 켠 피난처의 불이 아즉 타고 잇소. 「등불을 끄시압」을 눌러 보시압.', '서장에서 켠 피난처의 불이 아직 타고 있어요. 「등불 끄기」를 눌러 보세요.'] },
       { sel: '#dossier .ds-list', t: ['▸ 조서 · 먹줄을 거드시압', '▸ 조서 · 먹줄을 걷어 보세요'], b: ['신문이 다 적지 못한 것을 조서가 남겻소. 검은 먹줄을 누르면 글이 드러나오. 엽헤 당시 신문 지면은 손을 대면 가까이 보이오.', '신문이 다 적지 못한 것을 조서가 남겼어요. 검은 먹줄을 누르면 글이 드러나요. 옆의 당시 신문은 마우스를 대면 가까이 보여요.'] },
-      { sel: '#judge .jd6', t: ['▸ 판정 · 장부의 어느 줄에', '▸ 판정 · 장부의 어느 줄에'], b: ['당신이 그때의 신도엿다면 — 물음 넷에 답하시압. 물음과 판정은 편집국이 지은 것이오.', '당신이 그때의 신도였다면 — 질문 넷에 답해 보세요. 질문과 판정은 편집국이 지은 거예요.'] },
       { sel: '#jar .jr-grid', t: ['↓ 제구장 · 병 · 칠십사 년', '↓ 9장 · 병 · 74년'], b: ['그는 땅에 묻히지 아넛소. 휠을 천천히 내리면 오른편 해가 한 줄씩 넘어가고 — 왼편 병 속의 세월도 함께 흐르오. 끗까지 따라가 보시압.', '그는 땅에 묻히지 않았어요. 휠을 천천히 내리면 오른쪽 해가 한 줄씩 넘어가고 — 왼쪽 병 속의 세월도 함께 흘러요. 끝까지 따라가 보세요.'] },
       { sel: '.archive-radio .rx', t: ['닫힌 무리의 주파수', '닫힌 무리의 주파수'], b: ['라듸오를 켜고 다이알을 돌리면, 그 뒤 일홈을 바꾸어 나타난 다른 닫힌 무리들이 잡히오.', '라디오를 켜고 다이얼을 돌리면, 그 뒤 이름을 바꾸어 나타난 다른 닫힌 무리들이 잡혀요.'] }
     ].concat(CASE_END) },
     seek: { test: function () { return $('.sk-page'); }, steps: [
-      { t: ['심인 광고면 보는 법', '심인 광고면 보는 법'], b: ['녯 신문엔 집 나간 이를 찻는 「심인」 광고가 실렷소. 이 면에선 경성야록이 사람을 찻소. 광고는 모다 지어낸 것이니 — 마음 놋코 손을 대시압.', '옛 신문엔 집 나간 사람을 찾는 「심인」 광고가 실렸어요. 이 면에선 경성야록이 사람을 찾습니다. 광고는 모두 지어낸 것이니 — 마음 놓고 눌러 보세요.'] },
-      { sel: '#adCrew', t: ['▸ 동료를 차즘', '▸ 동료를 찾음'], b: ['그 사람이 당신이면 「제가 그 사람이오」를 누르시압. 자수서가 나오오 — 죄목을 솔직히 고를수록, 돌아오는 것이 달라지오.', '그 사람이 당신이면 「제가 그 사람이오」를 누르세요. 자수서가 나옵니다 — 죄목을 솔직하게 고를수록, 돌아오는 것이 달라져요.'] },
-      { sel: '#adReader', t: ['▸ 독자를 차즘', '▸ 독자를 찾음'], b: ['「여기 잇소」를 누르면 통지서가 나오오. 마지막으로 어듸까지 읽엇는지 — 정직하게 적으시압.', '「여기 잇소」를 누르면 통지서가 나와요. 마지막으로 어디까지 읽었는지 — 솔직하게 적어 보세요.'] },
-      { sel: '#adCat', t: ['◐ 활자 상자 우의 고양이', '◐ 활자 상자 위의 고양이'], b: ['이 광고는 가만히 두지 마시압. 소리를 켜 두면 더 조쿠.', '이 광고는 가만히 두지 마세요. 소리를 켜 두면 더 좋아요.'] },
-      { sel: '.sk-low', t: ['▸ 광고면 아래칸', '▸ 광고면 아래칸'], b: ['네 칸 모다 손댈 데가 잇소. 부고에는 단추가, 수배에는 시계가, 사과에는 숨은 줄이, 마지막 칸에는 — 문이 잇소. 여러 번 해 보시압.', '네 칸 모두 손댈 곳이 있어요. 부고에는 버튼이, 수배에는 시계가, 사과에는 숨은 줄이, 마지막 칸에는 — 문이 있어요. 여러 번 해 보세요.'] }
+      { t: ['심인 광고면 보는 법', '심인 광고면 보는 법'], b: ['녯 신문엔 집 나간 이를 찻는 「심인」 광고가 실렷소. 이 면에선 경성야록이 사람 · 물건 · 고양이까지 찻소. 광고는 모다 지어낸 B급 연출이니 — 마음 놋코 아모 데나 눌러 보시압.', '옛 신문엔 집 나간 사람을 찾는 「심인」 광고가 실렸어요. 이 페이지에선 경성야록이 사람 · 물건 · 고양이까지 찾아요. 광고는 모두 지어낸 B급 연출이니 — 마음 놓고 아무 데나 눌러 보세요.'] },
+      { sel: '#skSnd', t: ['♪ 유성기 · 심인계 행진곡', '♪ 유성기 · 심인계 행진곡'], b: ['이 면 어듸든 처음 누르는 순간 유성기가 돌며 병맛 행진곡이 흐르오. 끄고 싶으면 이 단추를 한 번, 다시 켜려면 또 한 번. 고양이 · 이불 · 문 두드림에도 소리가 잇스니 켜 두시기를 권하오.', '페이지 아무 곳이나 처음 누르면 배경 음악(병맛 행진곡)이 나와요. 끄려면 이 버튼을 한 번, 다시 켜려면 또 한 번. 고양이 · 이불 · 문 두드림에도 소리가 있으니 켜 두는 걸 추천해요.'] },
+      { sel: '.sk-board', t: ['審人係 금일 실적', '심인계 오늘의 실적'], b: ['이 면에서 무엇이든 차저낼 때마다 「차즘」이 하나 오르고 「못 차즘」이 하나 주오. 이불 속 동료 · 독자의 단서 넷 · 추보 셋 · 고양이 · 문 두드린 이 · 부활한 긔계 · 도망 · 정정… 몃 개나 차즐 수 잇겟소?', '이 페이지에서 뭔가를 찾아낼 때마다 「찾음」이 하나 오르고 「못 찾음」이 하나 줄어요. 이불 속 동료 · 독자 단서 4개 · 추가 소식 3개 · 고양이 · 문 두드린 사람 · 부활한 기계 · 도망 · 정정… 몇 개나 찾을 수 있을까요?'] },
+      { sel: '#skNp', t: ['급고 — 납량란 독자', '긴급 — 납량란 독자'], b: ['납량란을 끗까지 보고 넘어온 이에게만 뜨는 광고요. 「그 사람, 나요」를 누르시압.', '납량란을 끝까지 보고 넘어온 사람에게만 뜨는 광고예요. 「그 사람, 나요」를 눌러 보세요.'] },
+      { sel: '#crewPh', t: ['▸ 동료를 차즘 · 이불', '▸ 동료를 찾음 · 이불'], b: ['사진 속 이불을 누르시압. 한 번 누를 때마다 이불 속에서 다른 대답이 나오고, 넷째엔 사진이 바뀌오. 다섯 번 흔들면 — 스스로 자수하오.', '사진 속 이불을 눌러 보세요. 누를 때마다 이불 속에서 다른 대답이 나오고, 네 번째엔 사진이 바뀌어요. 다섯 번 흔들면 — 스스로 자수해요.'] },
+      { sel: '#adCrew .sk-go', t: ['▸ 제가 그 사람이오 · 자수서', '▸ 제가 그 사람이오 · 자수서'], b: ['자수서에 일홈 · 잘하는 일 · 「죄목」 · 자수 동긔를 적어 부치시압. 죄목을 만히 고를수록 판결이 무거워지오 (형벌은 모다 야근). 「광고 다시 걸기(탈옥)」로 처음부터 다시 할 수 잇소.', '자수서에 이름 · 잘하는 일 · 「죄목」 · 자수 동기를 적어 보내세요. 죄목을 많이 고를수록 판결이 무거워져요 (형벌은 전부 야근). 「광고 다시 걸기(탈옥)」로 처음부터 다시 할 수 있어요.'] },
+      { sel: '#readPh', t: ['▸ 독자를 차즘 · 단서 넷', '▸ 독자를 찾음 · 단서 4개'], b: ['사진 속 신문 · 찻잔 · 떡 · 창을 하나씩 누르시압. 떡은 세 번까지 먹을 수 잇고, 다 먹으면 사진이 바뀌오. 창을 누르면 — 밧게 무엇이 지나가오. 넷을 다 모으면 독자가 어듸 잇는지 추리가 나오오.', '사진 속 신문 · 찻잔 · 떡 · 창문을 하나씩 눌러 보세요. 떡은 세 번까지 먹을 수 있고, 다 먹으면 사진이 바뀌어요. 창문을 누르면 — 밖에 뭔가 지나가요. 4개를 다 모으면 독자가 어디 있는지 추리가 나와요.'] },
+      { sel: '#adReader .sk-go', t: ['▸ 여기 잇소 · 통지서', '▸ 여기 있어요 · 통지서'], b: ['「처음 왓소 / 전에 왓섯소」를 고르고, 마지막으로 읽다 만 곳과 소식 바들 곳을 적으시압. 「지금 이 칸」을 고르면 수색대가 놀라오. (실제로 메일은 가지 안소.)', '「처음 왔어요 / 전에 왔었어요」를 고르고, 마지막으로 읽다 만 곳과 소식 받을 곳을 적어 보세요. 「지금 이 칸」을 고르면 수색대가 놀라요. (실제로 메일은 가지 않아요.)'] },
+      { sel: '.sk-upb', t: ['▸ 추보 보기 — 작은 광고 셋', '▸ 추가 소식 — 작은 광고 3개'], b: ['원고 한 장 · 어제의 나 · 우산 — 작은 광고 밋헤 「추보 보기」가 잇소. 누르면 그 뒤 소식이 실리오. 셋 다 열어 보시압.', '원고 한 장 · 어제의 나 · 우산 — 작은 광고 밑에 「추보 보기」 버튼이 있어요. 누르면 그 뒤 소식이 나와요. 셋 다 열어 보세요.'] },
+      { sel: '#adCat', t: ['◐ 활자 상자 우의 고양이', '◐ 활자 상자 위의 고양이'], b: ['마우스를 대면 고양이 귀가 빼꼼, 누르면 「ㄱ」 활자를 물고 튀어나와 냐옹 하오. 다섯 번 누르면 — 고양이는 차즈오. ㄱ은 아즉이오.', '마우스를 대면 고양이 귀가 빼꼼, 누르면 「ㄱ」 활자를 물고 튀어나와 냐옹 해요. 다섯 번 누르면 — 고양이는 찾아요. ㄱ은 아직이에요.'] },
+      { sel: '#adObit', t: ['▸ 부고 · 분향하기', '▸ 부고 · 분향하기'], b: ['「분향하기」를 누를 때마다 향이 하나씩 오르고 조문객 말이 바뀌오. 열 번까지 피워 보시압 — 고인(긔계)에게 무슨 일이 생기오.', '「분향하기」를 누를 때마다 향이 하나씩 오르고 문구가 바뀌어요. 열 번까지 피워 보세요 — 고인(기계)에게 무슨 일이 생겨요.'] },
+      { sel: '#adWanted', t: ['▸ 현상 수배 · 마감', '▸ 현상 수배 · 마감'], b: ['시계는 오늘 자정까지 남은 시간이오. 「도망가기」를 누를 때마다 마감이 더 빨리 쫏아오고, 여섯 번째엔 — 잡히오.', '시계는 오늘 자정까지 남은 시간이에요. 「도망가기」를 누를 때마다 마감이 더 빨리 쫓아오고, 여섯 번째엔 — 잡혀요.'] },
+      { sel: '#adSorry', t: ['▸ 사과 · 정정의 정정', '▸ 사과 · 정정의 정정'], b: ['「문제의 사진」 아래 칸을 누를 때마다 정정이 하나씩 더 실리오. 여섯 번 끗까지 눌러 보시압.', '「문제의 사진」 칸을 누를 때마다 정정이 하나씩 더 실려요. 여섯 번 끝까지 눌러 보세요.'] },
+      { sel: '#adKnock', t: ['▸ 자정에 문 두드린 이', '▸ 자정에 문 두드린 사람'], b: ['이 칸을 두드리시압 (소리를 켜 두면 더 조쿠). 셋째부터는 저쪽에서도 두드리오. 넷째엔 두드린 이를 차즈오.', '이 칸을 두드려 보세요 (소리를 켜 두면 더 좋아요). 세 번째부터는 저쪽에서도 두드려요. 네 번째엔 두드린 사람을 찾아요.'] },
+      { sel: '.sk-foot .more', t: ['다 보앗거든', '다 봤으면'], b: ['맨 아래 「본지로 도라가시압」으로 첫 화면에 도라가오. 옛말 글자는 어듸서든 마우스를 대면 오늘 말로 바뀌오. 이 안내는 우의 「보는 법」 책갈피로 언제든 다시 보오.', '맨 아래 「본지로 돌아가기」로 첫 화면에 돌아가요. 옛말 글자는 어디서든 마우스를 대면 현대어로 바뀌어요. 이 안내는 위의 「보는 법」 책갈피로 언제든 다시 볼 수 있어요.'] }
     ]},
     np: { wait: function () { return !D.body.classList.contains('locked'); }, test: function () { return $('#gate') && $('#cbar') && $('.fl'); }, steps: [
-      { t: ['자정의 백물어 보는 법', '자정의 백물어 보는 법'], b: ['봉투 여섯 장, 촛불 여섯 자루. 한 장을 다 보면 초를 하나 끄시오. 장면마다 손대는 법이 다르니 — 그림을 그냥 지나치지 마시압. 끄는 차례는 마음대로요.', '봉투 여섯 장, 촛불 여섯 자루. 한 장을 다 보면 초를 하나 끄세요. 장면마다 다루는 법이 다르니 — 그림을 그냥 지나치지 마세요. 끄는 순서는 자유예요.'] },
-      { sel: '#snd', t: ['유성기', '유성기'], b: ['소리를 켜고 보시기를 권하오. 장면에 따라 곡조가 달라지오.', '소리를 켜고 보시길 권해요. 장면에 따라 음악이 달라집니다.'] },
-      { sel: '#cbar', t: ['남은 초', '남은 초'], b: ['아직 켜진 초가 몃 자루인지 보이오. 초를 누르면 그 봉투로 건너가오.', '아직 켜진 초가 몇 개인지 보여요. 초를 누르면 그 봉투로 건너갑니다.'] },
-      { sel: '#ep1 .sf', t: ['초 끄기 · 원문 확인', '초 끄기 · 원문 확인'], b: ['장면을 다 보면 오른편 단추가 「후— 초를 끄시오」로 바뀌오. 왼편 「원문 확인」을 열면 — 무엇이 진짜 긔록이고 무엇이 편집국의 연출인지 갈라 보이오.', '장면을 다 보면 오른쪽 버튼이 「후— 초를 끄시오」로 바뀌어요. 왼쪽 「원문 확인」을 열면 — 무엇이 진짜 기록이고 무엇이 편집국의 연출인지 구분해 보여 줍니다.'] },
-      { q: 1, sel: '#dev', t: ['봉투 1 · 사진', '봉투 1 · 사진'], b: ['서두르지 마시압. 기다리는 이에게만 보이는 것이 잇소.', '서두르지 마세요. 기다리는 사람에게만 보이는 것이 있어요.'] },
-      { q: 1, sel: '#bill', t: ['봉투 2 · 벽보', '봉투 2 · 벽보'], b: ['벽보의 귀퉁이를 눈여겨보시압.', '벽보의 귀퉁이를 눈여겨보세요.'] },
-      { q: 1, sel: '#fogStage', t: ['봉투 3 · 안개', '봉투 3 · 안개'], b: ['손으로 거더 내야 보이는 산이오.', '손으로 걷어 내야 보이는 산이에요.'] },
-      { q: 1, sel: '#room', t: ['봉투 4 · 불 꺼진 방', '봉투 4 · 불 꺼진 방'], b: ['촛불을 들고, 구석구석 비추어 보시압. 다 차즈면 — 방이 대답하오.', '촛불을 들고, 구석구석 비춰 보세요. 다 찾으면 — 방이 대답합니다.'] },
-      { q: 1, sel: '#ledger', t: ['봉투 5 · 취조 긔록', '봉투 5 · 취조 기록'], b: ['뭇고 싶은 것을 적어 무러 보시압. 세 번까지.', '묻고 싶은 것을 적어 물어보세요. 세 번까지.'] },
-      { q: 1, sel: '#s6', t: ['봉투 6 · 철길', '봉투 6 · 철길'], b: ['누를 것 업소. 잠시 머무르시압.', '누를 것은 없어요. 잠시 머물러 주세요.'] },
-      { t: ['그리고 —', '그리고 —'], b: ['꺼진 초를 두고 떠낫다가, 다시 그 장면으로 도라가 보는 이도 잇다 하오. 여섯을 다 끈 뒤의 일은 — 말하지 안겟소.', '꺼진 초를 두고 떠났다가, 다시 그 장면으로 돌아가 보는 사람도 있다고 해요. 여섯을 다 끈 뒤의 일은 — 말하지 않겠습니다.'] }
+      { t: ['자정의 백물어 보는 법', '자정의 백물어 보는 법'], b: ['녯날 밤 노리 — 초를 켜 두고 괴담 한 편에 초 하나씩 끄던 「백물어」요. 여긔엔 봉투 여섯 장 · 촛불 여섯 자루. 장면을 끗까지 보고 초를 하나씩 끄시압. 끄는 차례는 마음대로요. 불을 끄고, 소리를 켜고 보시기를 권하오.', '옛날 밤 놀이 — 초를 켜 두고 괴담 한 편마다 초 하나씩 끄던 「백물어」예요. 여기엔 봉투 6장 · 촛불 6개. 장면을 끝까지 보고 초를 하나씩 끄세요. 순서는 자유예요. 불을 끄고, 소리를 켜고 보길 추천해요.'] },
+      { sel: '#snd', t: ['유성기 · 소리', '유성기 · 소리'], b: ['소리를 켜고 끄는 단추요. 장면마다 곡조가 바뀌고, 소리로만 알 수 잇는 것도 잇소. 이 면은 소리를 켜 두어야 아모것도 놋치지 안소.', '소리를 켜고 끄는 버튼이에요. 장면마다 음악이 바뀌고, 소리로만 알 수 있는 것도 있어요. 이 페이지는 소리를 켜 둬야 아무것도 놓치지 않아요.'] },
+      { sel: '#cbar', t: ['남은 초', '남은 초'], b: ['왼쪽 아래 막대는 아직 켜진 초요. 초 하나를 누르면 그 봉투로 바로 건너가오. 아래 봉투를 다 끄고 우에 초가 남으면 — 「남은 초는 우에 잇소」 쪽지가 떠서 알려 주오.', '왼쪽 아래 막대는 아직 켜진 초예요. 초 하나를 누르면 그 봉투로 바로 가요. 아래 봉투를 다 끄고 위에 초가 남으면 — 「남은 초는 위에 있어요」 쪽지가 떠서 알려 줘요.'] },
+      { sel: '#ep1 .sf', t: ['봉투마다 아래 두 단추', '봉투마다 아래 버튼 두 개'], b: ['왼편 「원문 확인」은 그 이약이가 실린 진짜 지면 · 날자 · 출처를 여는 서랍이오. 오른편 초 단추는 장면을 끗내야 「후— 초를 끄시오」로 바뀌오. 장면을 건너뛰면 초를 끌 수 업소.', '왼쪽 「원문 확인」은 그 이야기가 실린 진짜 신문 · 날짜 · 출처를 여는 서랍이에요. 오른쪽 초 버튼은 장면을 끝내야 「후— 초를 끄시오」로 바뀌어요. 장면을 건너뛰면 초를 끌 수 없어요.'] },
+      { sel: '#dev', t: ['봉투 一 · 현상실', '봉투 1 · 현상실'], b: ['사진이 약품 속에서 떠오르는 중이오. 화면을 내리지 말고 — 기다리시압. 기다리는 이에게만 보이는 것이 잇소.', '사진이 약품 속에서 떠오르는 중이에요. 화면을 내리지 말고 — 기다려 보세요. 기다리는 사람에게만 보이는 것이 있어요.'] },
+      { sel: '#bill', t: ['봉투 二 · 벽보', '봉투 2 · 벽보'], b: ['「귀신 파오」 벽보의 귀퉁이를 잡아 뜨드시압. 벽보 뒤에 무엇이 부터 잇는지 — 보시오.', '「귀신 파오」 벽보의 귀퉁이를 잡아 뜯어 보세요. 벽보 뒤에 무엇이 붙어 있는지 — 확인해 보세요.'] },
+      { sel: '#fogStage', t: ['봉투 三 · 안개', '봉투 3 · 안개'], b: ['안개 낀 산이오. 마우스로 그림을 문질러 안개를 거더 내시압. 충분히 거드면 이약이가 이어지오.', '안개 낀 산이에요. 마우스로 그림을 문질러 안개를 걷어 내세요. 충분히 걷으면 이야기가 이어져요.'] },
+      { sel: '#room', t: ['봉투 四 · 불 꺼진 방', '봉투 4 · 불 꺼진 방'], b: ['마우스가 곳 촛불이오. 방 안 구석구석을 비추어 숨은 것 넷을 차즈시압 (오른편 우 귀퉁이에 몃 개 차잣는지 나오오). 넷을 다 차즈면 — 방이 대답하오.', '마우스가 곧 촛불이에요. 방 안 구석구석을 비춰 숨은 것 4개를 찾아보세요 (오른쪽 위에 몇 개 찾았는지 나와요). 4개를 다 찾으면 — 방이 대답해요.'] },
+      { sel: '#ledger', t: ['봉투 五 · 취조 긔록', '봉투 5 · 취조 기록'], b: ['대답하지 안는 협의자의 취조 긔록이오. 아래 칸에 뭇고 십흔 것을 적어 무르시압 — 세 번까지 무를 수 잇소. 세 번째 대답을 끗까지 보시압.', '대답하지 않는 혐의자의 취조 기록이에요. 아래 칸에 묻고 싶은 것을 적어 물어보세요 — 세 번까지 물을 수 있어요. 세 번째 대답을 끝까지 보세요.'] },
+      { sel: '#s6', t: ['봉투 六 · 철길', '봉투 6 · 철길'], b: ['누를 것 업소. 한 사람의 죽음이오 — 잠시 머무르시압. 소리를 들으며 기다리면 단추가 「초를 끄고, 잠시 묵념」으로 열리오.', '누를 것은 없어요. 한 사람의 죽음이에요 — 잠시 머물러 주세요. 소리를 들으며 기다리면 버튼이 「초를 끄고, 잠시 묵념」으로 열려요.'] },
+      { t: ['끈 봉투로 도라가면', '끈 봉투로 돌아가면'], b: ['초를 끈 봉투로 다시 가 보시압. 그림 압헤 「꺼진 초 압헤 손을 대 보시오」가 보이면 — 눌러 보시압. 무엇이 다시 켜지는지는 직접 보시오.', '초를 끈 봉투로 다시 가 보세요. 그림 앞에 「꺼진 초 앞에 손을 대 보시오」가 보이면 — 눌러 보세요. 무엇이 다시 켜지는지는 직접 확인하세요.'] },
+      { t: ['첫 그림으로 도라가면', '첫 그림으로 돌아가면'], b: ['초를 몃 개 끈 뒤에 맨 우 첫 그림으로 올라가 촛불을 세어 보시압. 꺼진 초가 — 언제나 꺼져 잇는 것은 아니오.', '초를 몇 개 끈 뒤에 맨 위 첫 그림으로 올라가 촛불을 세어 보세요. 꺼진 초가 — 항상 꺼져 있는 건 아니에요.'] },
+      { t: ['여섯을 다 끈 뒤', '6개를 다 끈 뒤'], b: ['무엇이 오는지는 말하지 안켓소. 다만 세 가지만 — ① 화면을 닫지 마시압. ② 원고지가 나오면 당신의 괴담을 적어 투고하거나, 「쓰지 안코」 단추로 넘어가시압. ③ 그 뒤에 나오는 것은 끗까지 읽고, 맨 아래 단추 둘을 놋치지 마시압.', '무엇이 오는지는 말하지 않을게요. 다만 세 가지만 — ① 화면을 닫지 마세요. ② 원고지가 나오면 나만의 괴담을 적어 투고하거나, 「쓰지 않고」 버튼으로 넘어가세요. ③ 그 뒤에 나오는 것은 끝까지 읽고, 맨 아래 버튼 두 개를 놓치지 마세요.'] },
+      { t: ['그리고 —', '그리고 —'], b: ['보는 도중 다른 창에 다녀오거든 — 이 창의 이름(탭)을 한 번 보시압. 다 보고 나면 「초를 다시 켜기」로 처음부터 할 수 잇소. 이 안내는 우의 「보는 법」 책갈피로 언제든 다시 보오.', '보는 도중 다른 창에 다녀오면 — 이 창의 이름(탭)을 한 번 보세요. 다 보고 나면 「초를 다시 켜기」로 처음부터 할 수 있어요. 이 안내는 위의 「보는 법」 책갈피로 언제든 다시 볼 수 있어요.'] }
     ]},
     nr: { wait: function () { return D.body.classList.contains('nr-in'); }, test: function () { return $('#desk') && $('#gateForm'); }, steps: [
       { t: ['자정의 편집국', '자정의 편집국'], b: ['긔자만 드나드는 방이오. 녯 신문 긔사를 원고로 너흐면, 오늘 독자가 읽을 지면으로 다시 엮어 주오.', '기자만 드나드는 방이에요. 옛 신문 기사를 원고로 넣으면, 오늘 독자가 읽을 지면으로 다시 엮어 줍니다.'] },
@@ -130,6 +139,7 @@
     ]},
     hg: { test: function () { return $('#hgSheet') && $('.h2-desk'); }, steps: [
       { t: ['자정의 인쇄소', '자정의 인쇄소'], b: ['활자를 고르고, 종이와 잉크를 고르고, 몃 마디만 적으면 윤전기가 당신만의 호외 한 장을 찍어 주오.', '활자를 고르고, 종이와 잉크를 고르고, 몇 마디만 적으면 윤전기가 나만의 호외 한 장을 찍어 줍니다.'] },
+      { sel: '#hpPart', t: ['▸ 사진관 · 건판 서랍', '▸ 사진관 · 사진 서랍'], b: ['괴담 · 일상 · 사건 · 진기 · 인물 · 동물 — 서랍을 열어 사진을 고르시압. 판짜기를 「한 장 / 두 장 / 세 컷 이야기」로 고르면, 세 컷은 발단 → 사건 → 반전으로 이어지오. 「심령 합성」을 고르면 마지막 사진에 업던 것이 박히오. 고르기 어려우면 「아모거나 세 컷」.', '괴담 · 일상 · 사건 · 진기 · 인물 · 동물 — 서랍을 열어 사진을 골라 보세요. 판짜기를 「한 장 / 두 장 / 세 컷 이야기」로 고르면, 세 컷은 발단 → 사건 → 반전으로 이어져요. 「심령 합성」을 고르면 마지막 사진에 없던 것이 찍혀요. 고르기 어려우면 「아무거나 세 컷」.'] },
       { sel: '.h2-desk', t: ['작업대 네 칸', '작업대 네 칸'], b: ['활자 서랍(무슨 이약이) → 종이(지면 꼴) → 잉크(분위기) → 원고. 칸마다 바꿀 때마다 오른편 교정쇄가 바로 바뀌오.', '활자 서랍(무슨 이야기) → 종이(신문 꼴) → 잉크(분위기) → 원고. 바꿀 때마다 오른쪽 교정쇄가 바로 바뀝니다.'] },
       { sel: '#hgReroll', t: ['▸ 제목 다시 뽑기', '▸ 제목 다시 뽑기'], b: ['마음에 안 들면 몃 번이고 다시 뽑으시압.', '마음에 안 들면 몇 번이고 다시 뽑아 보세요.'] },
       { sel: '#hgCens', t: ['▸ 검열관 부르기', '▸ 검열관 부르기'], b: ['그 시절 신문엔 이런 사람이 잇섯소. 불러 보시압 — 무엇을 가져갈지는 그 사람 마음이오.', '그 시절 신문엔 이런 사람이 있었어요. 불러 보세요 — 무엇을 가져갈지는 그 사람 마음이에요.'] },
@@ -153,6 +163,28 @@
       { sel: '#lit', t: ['불 켜진 관', '불 켜진 관'], b: ['다녀간 관마다 불이 켜지오. 모든 관을 돌면 상뎜 할인권을 드리오.', '다녀간 관마다 불이 켜집니다. 모든 관을 돌면 상점 할인권을 드려요.'] }
     ]}
   };
+  /* ── 전체 안내: 사이트 한 바퀴 (어느 면에서든 책갈피 → 「경성야록 전체 안내」) ── go: 그 면으로 가는 길 */
+  var FULL = [
+    { t: ['경성야록 전체 안내', '경성야록 전체 안내'], b: ['경성야록은 1920~30년대 동아일보에 실린 실화 사건을, 자정에 다시 펴 보는 신문이오. 이 안내는 신문 전체의 지도요. 면마다 장치가 다르니, 그 면에 드러가서는 우의 「보는 법」 책갈피를 다시 누르시압.', '경성야록은 1920~30년대 동아일보에 실린 실제 사건을 자정에 다시 펼쳐 보는 신문이에요. 이 안내는 사이트 전체 지도예요. 페이지마다 장치가 다르니, 각 페이지에 들어가면 위의 「보는 법」 책갈피를 다시 눌러 보세요.'] },
+    { t: ['읽는 법 세 가지', '읽는 법 세 가지'], b: ['① 옛 맞춤법 글자에 마우스를 대면 오늘 말로 바뀌오. ② 장치 귀퉁이의 작은 「？」를 누르면 그 장치 보는 법만 한 장 나오오. ③ ▸ 표는 누르는 곳, ↓ 표는 천천히 내려 읽는 곳이오.', '① 옛 맞춤법 글자에 마우스를 대면 오늘 말로 바뀌어요. ② 장치 귀퉁이의 작은 「？」를 누르면 그 장치 설명만 한 장 나와요. ③ ▸ 표는 누르는 곳, ↓ 표는 천천히 내려 읽는 곳이에요.'] },
+    { go: 'index.html', t: ['一 · 본지 (첫 화면)', '1 · 본지 (첫 화면)'], b: ['신문 펼침면 한 장이오. 사회 · 경제 · 문화예술 면을 골라 보고, 긔사를 누르면 사건 본편으로 드러가오. 사진마다 움직이는 장치가 숨어 잇소. 전화긔로 보면 一~六 면을 옆으로 넘기는 신문이 되오.', '신문 펼침면 한 장이에요. 사회 · 경제 · 문화예술 면을 골라 보고, 기사를 누르면 사건 본편으로 들어가요. 사진마다 움직이는 장치가 숨어 있어요. 휴대폰으로 보면 1~6면을 옆으로 넘기는 신문이 돼요.'] },
+    { go: 'case-jukcheomjeong/index.html', t: ['二 · 사건 본편 네 편', '2 · 사건 본편 4편'], b: ['죽첨정 골목의 어린 주검 · 부산 마리아 참살사건 · 손긔졍, 지워진 가슴 · 백백교 사건. 장마다 장치가 다르고, 다 지나면 취재 수첩에 도장이 찍히오. 호외 카드 · 축음긔 · 출처는 모든 본편에 잇소.', '죽첨정 골목의 어린 주검 · 부산 마리아 참살사건 · 손기정, 지워진 가슴 · 백백교 사건. 장마다 장치가 다르고, 끝까지 읽으면 취재 수첩에 도장이 찍혀요. 호외 카드 · 축음기 · 출처는 모든 본편에 있어요.'] },
+    { t: ['네 편을 다 읽으면', '4편을 다 읽으면'], b: ['자정의 전보가 오오. 전보 속 암호는 편집국 문을 여는 열쇠요. 읽는 차례는 마음대로이나, 처음이라면 본지 → 사건 넷 → 편집국 순을 권하오.', '자정의 전보가 와요. 전보 속 암호가 편집국 문을 여는 열쇠예요. 읽는 순서는 자유지만, 처음이라면 본지 → 사건 4편 → 편집국 순서를 추천해요.'] },
+    { go: 'newsroom.html', t: ['三 · 자정의 편집국', '3 · 자정의 편집국'], b: ['긔자만 드나드는 방이오. 녯 긔사를 원고로 너흐면 오늘 말 풀이 · 라듸오 원고 · 삽화로 엮어 주오. 문은 전보의 암호로 열리오.', '기자만 드나드는 방이에요. 옛 기사를 넣으면 현대어 풀이 · 라디오 원고 · 삽화로 만들어 줘요. 문은 전보의 암호로 열려요.'] },
+    { go: 'fair.html', t: ['四 · 경성사건박람회', '4 · 경성사건박람회'], b: ['전차를 타고 정문부터 출구까지 도는 부록 박람회요. 사건에서 태어난 소설 · 노래 · 무대를 관마다 걸어 두엇소.', '전차를 타고 정문부터 출구까지 도는 부록 박람회예요. 사건에서 나온 소설 · 노래 · 무대를 관마다 전시해 뒀어요.'] },
+    { go: 'hogoe.html', t: ['五 · 독자 호외 인쇄소', '5 · 독자 호외 인쇄소'], b: ['활자 서랍 · 종이 · 잉크를 고르고 몃 마디 적으면, 윤전긔가 당신만의 호외 한 장을 찍어 주오. 찍은 호외는 본지 빨랫줄에 널리오.', '활자 · 종이 · 잉크를 고르고 몇 마디 적으면, 윤전기가 나만의 호외 한 장을 찍어 줘요. 찍은 호외는 본지 빨랫줄에 걸려요.'] },
+    { go: 'shop.html', t: ['六 · 광고칸의 세 문 — 상뎜', '6 · 광고칸의 세 문 — 상점'], b: ['본지 맨 아래 광고칸은 문이 셋이오. 첫째 「오려 가시오」는 그 시절 진짜 광고를 진렬한 상뎜 — 마음에 드는 광고를 오려 스크랩첩에 모으시압.', '본지 맨 아래 광고칸에는 문이 셋 있어요. 첫째 「오려 가시오」는 그 시절 진짜 광고를 모아 둔 상점 — 마음에 드는 광고를 오려서 스크랩첩에 모아 보세요.'] },
+    { go: 'seek.html', t: ['七 · 둘째 문 — 사람을 차즘', '7 · 둘째 문 — 사람을 찾음'], b: ['녯 심인 광고를 비튼 B급 광고면이오. 사진 속 이불을 흔들고, 단서를 모으고, 부고에 향을 피우시압. 차저낸 만큼 「심인계 실적」이 오르오. 유성긔에선 병맛 행진곡이 흐르오.', '옛 「사람 찾음」 광고를 비튼 B급 광고면이에요. 사진 속 이불을 흔들고, 단서를 모으고, 부고에 향을 피워 보세요. 찾아낸 만큼 「심인계 실적」이 올라가요. 배경 음악은 병맛 행진곡이에요.'] },
+    { go: 'napryang.html', t: ['八 · 셋째 문 — 납량란 「자정의 백물어」', '8 · 셋째 문 — 납량란 「자정의 백물어」'], b: ['불을 끄고 소리를 켜고 보시압. 봉투 여섯 장 · 촛불 여섯 자루 — 한 장을 다 보면 초를 하나 끄오. 여섯을 다 끈 뒤의 일은 — 말하지 안켓소. 끝까지 가 본 이는 심인 광고면을 다시 보시압.', '불을 끄고 소리를 켜고 보세요. 봉투 6장 · 촛불 6개 — 한 장을 다 보면 초를 하나 꺼요. 6개를 다 끈 뒤의 일은 — 말하지 않을게요. 끝까지 간 사람은 심인 광고 페이지를 다시 가 보세요.'] },
+    { t: ['九 · 숨은 것 — 식자실', '9 · 숨은 것 — 식자실'], b: ['본지 긔사 우에 마우스를 머물면 식자공이 떨어뜨린 소지품이 떠오르오. 넷을 모으면 1934년 경성 활판 인쇄소 「식자실」의 문이 열리오 — 10분 동안 귀신을 피해 수수께끼를 푸는 3D 놀이요. 24번 서랍을 풀면 지하 자료실 · 암실까지 이어지오.', '본지 기사 위에 마우스를 머물면 식자공이 떨어뜨린 소지품이 나타나요. 4개를 모으면 1934년 경성 인쇄소 「식자실」 문이 열려요 — 10분 동안 귀신을 피하며 수수께끼를 푸는 3D 게임이에요. 24번 서랍을 풀면 지하 자료실 · 암실까지 이어져요.'] },
+    { t: ['식자실 조작', '식자실 조작'], b: ['컴퓨터 — WASD 이동 · 마우스 시점 · E 조사 · Tab 수첩 · F 손전등. 전화긔 — 왼쪽 조이스틱 이동 · 화면 끌어 시점 · 손 단추로 줍기. 소리를 켜면 쇠 긁는 소리가 먼저 귀신을 알리오.', '컴퓨터 — WASD 이동 · 마우스 시점 · E 조사 · Tab 수첩 · F 손전등. 휴대폰 — 왼쪽 조이스틱 이동 · 화면 드래그로 시점 · 손 버튼으로 줍기. 소리를 켜면 쇠 긁는 소리가 귀신을 먼저 알려 줘요.'] },
+    { t: ['그 밧게 숨은 것', '그 밖에 숨은 것'], b: ['지면 맨 끗 판권 줄에 거꾸로 박힌 활자가 하나 잇다는 소문이오. 납량란에선 꺼진 초를 두고 떠낫다 도라와 보시압.', '지면 맨 끝 판권 줄에 거꾸로 박힌 활자가 하나 있다는 소문이에요. 납량란에선 꺼진 초를 두고 나갔다가 다시 돌아와 보세요.'] },
+    { t: ['길을 일흐면', '길을 잃으면'], b: ['어느 면에서든 우에 걸린 책갈피 「보는 법」을 누르면 — 「이 면 보는 법」과 「경성야록 전체 안내」를 고를 수 잇소. 모든 면 맨 아래엔 「본지로 도라가기」가 잇소. 그럼 — 자정의 지면으로.', '어느 페이지에서든 위에 걸린 책갈피 「보는 법」을 누르면 — 「이 페이지 보는 법」과 「경성야록 전체 안내」를 고를 수 있어요. 모든 페이지 맨 아래엔 「본지로 돌아가기」가 있어요. 그럼 — 자정의 신문으로.'] }
+  ];
+  var BASE = /\/(case-[a-z]+|sikjasil|radio-device|case)\//.test(location.pathname) ? '../' : '';
+  /* 전화긔(손가락)로 볼 때는 「마우스」 말을 손가락 말로 */
+  var TOUCH = !!(W.matchMedia && matchMedia('(hover: none)').matches);
+  function touchy(x) { return !TOUCH ? x : x.replace(/마우스 휠을 아래로 굴리면/g, '화면을 우로 밀면').replace(/마우스를 머물면/g, '손가락을 대고 잇스면').replace(/마우스를 대면/g, '손가락으로 누르면').replace(/마우스를 대고/g, '손가락으로 눌러 보고').replace(/마우스를 대 보고/g, '손가락으로 눌러 보고').replace(/마우스로/g, '손가락으로'); }
   var page = null; for (var k in PAGES) if (PAGES[k].test()) { page = k; break; }
   if (!page) return;
   function vis(s) { if (!s.sel || s.sel === '.ykg-tab') return true; if (s.q2) return !!D.querySelector('.ykg-q'); var e = $(s.sel); if (!e) return false; var r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; }
@@ -163,7 +195,7 @@
     SS.splice(SS.length && !SS[0].sel ? 1 : 0, 0, QS);   // 첫 장(인사) 바로 다음 — 초반에 알려 둠
   }
   var STEPS = PAGES[page].steps.filter(function (s) { return !s.sel || $(s.sel) || s.sel === '.ykg-tab' || s.q2; });
-  var KEY = ((page === 'jk' || page === 'maria' || page === 'sk' || page === 'bb') ? 'yk-guide3-' : 'yk-guide2-') + page;
+  var KEY = ((page === 'jk' || page === 'maria' || page === 'sk' || page === 'bb') ? 'yk-guide3-' : (page === 'seek' || page === 'np') ? 'yk-guide4-' : 'yk-guide2-') + page;
 
   /* ── 모양 ── */
   var css = D.createElement('style');
@@ -192,7 +224,15 @@
   '.ykg-f button{font-family:"Noto Serif KR",serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;padding:7px 14px 6px;border:1px solid #1e1913;background:none;color:#1e1913;cursor:pointer}' +
   '.ykg-f .ykg-next{background:#1e1913;color:#ece2cb}' +
   '.ykg-f .ykg-skip{border-color:transparent;color:#6e6250;padding-left:4px;padding-right:4px}' +
-  '.ykg-hj{cursor:help}';
+  '.ykg-hj{cursor:help}' +
+  '.ykg-gol{margin:12px 0 0}' +
+  '.ykg-go,.ykg-full{display:inline-block;font-family:"Noto Serif KR",serif;font-weight:700;font-size:13px;letter-spacing:.1em;color:#1e1913;background:none;border:0;border-bottom:1px solid #1e1913;padding:0 0 2px;cursor:pointer;text-decoration:none}' +
+  '.ykg-go:hover,.ykg-full:hover{color:#5a2e22;border-color:#5a2e22}' +
+  '.ykg-menu{position:fixed;z-index:2147482500;width:250px;padding:14px 14px 10px;background:#ece2cb;color:#1e1913;box-shadow:0 18px 40px -12px #000,inset 0 0 0 5px #ece2cb,inset 0 0 0 6px #3a3128;font-family:"Nanum Myeongjo","Noto Serif KR",serif}' +
+  '.ykg-menu .ykg-k{margin:0 0 8px}' +
+  '.ykg-menu button{display:block;width:100%;text-align:left;margin:0 0 6px;padding:9px 10px 8px;border:1px solid #3a3128;background:none;color:#1e1913;font-family:"Noto Serif KR",serif;font-weight:800;font-size:14px;letter-spacing:.06em;cursor:pointer}' +
+  '.ykg-menu button small{display:block;margin-top:3px;font-family:"Nanum Myeongjo",serif;font-weight:400;font-size:11.5px;letter-spacing:0;color:#5a4e3e}' +
+  '.ykg-menu button:hover{background:#1e1913;color:#ece2cb}.ykg-menu button:hover small{color:#cbbd9d}';
   D.head.appendChild(css);
 
   function hjBind(root) {
@@ -207,7 +247,21 @@
   var tab = D.createElement('button');
   tab.type = 'button'; tab.className = 'ykg-tab'; tab.innerHTML = '<i>讀者</i><b><span>보</span><span>는</span><span>법</span></b>'; if (PAGES[page].rib) tab.style.cssText = PAGES[page].rib; tab.setAttribute('aria-label', '이 페이지 보는 법');
   D.body.appendChild(tab);
-  tab.addEventListener('click', function () { start(); });
+  var menu = null;
+  function closeMenu() { if (menu) { menu.remove(); menu = null; } }
+  tab.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (menu) { closeMenu(); return; }
+    menu = D.createElement('div'); menu.className = 'ykg-menu';
+    menu.innerHTML = '<p class="ykg-k">' + H('讀者 案內', '보는 법') + '</p>' +
+      '<button type="button" data-m="page">' + H('이 면 보는 법', '이 페이지 보는 법') + '<small>' + H('지금 보는 면의 장치를 하나씩', '지금 페이지의 장치를 하나씩') + '</small></button>' +
+      '<button type="button" data-m="full">' + H('경성야록 전체 안내', '경성야록 전체 안내') + '<small>' + H('신문 전체를 한 바퀴 · 가는 길까지', '사이트 전체를 한 바퀴 · 바로 가기 포함') + '</small></button>';
+    var r = tab.getBoundingClientRect(), z = ratio();
+    menu.style.left = Math.max(8, r.left / z) + 'px'; menu.style.top = (r.bottom / z + 6) + 'px';
+    D.body.appendChild(menu); hjBind(menu);
+    menu.addEventListener('click', function (ev) { var b = ev.target.closest('button[data-m]'); if (!b) return; var m = b.dataset.m; closeMenu(); start(m === 'full' ? 'full' : undefined); });
+  });
+  D.addEventListener('click', function (e) { if (menu && !menu.contains(e.target) && e.target !== tab) closeMenu(); });
   function paperEdge() {
     if (PAGES[page].rib) return;
     var cands = ['.spread', '.shop-page', '.archive-page', 'main'], el = null;
@@ -224,13 +278,14 @@
     D.body.appendChild(p); var r = p.getBoundingClientRect().left / 100; p.remove(); return r || 1;
   }
 
-  var veil, hole, card, hush, i = 0, ALL = STEPS, one = false;
+  var veil, hole, card, hush, i = 0, ALL = STEPS, one = false, full = false;
   function start(only) {
     if (veil) return;
     W.ykGuideOn = true; D.documentElement.classList.add('ykg-run');
     i = 0;
+    full = only === 'full';
     one = !!(only && typeof only === 'object' && only.t);
-    STEPS = one ? [only] : ALL.filter(function (x) { return !x.q && vis(x); });
+    STEPS = full ? FULL : one ? [only] : ALL.filter(function (x) { return !x.q && vis(x); });
     veil = D.createElement('div'); veil.className = 'ykg-veil'; veil.setAttribute('role', 'dialog'); veil.setAttribute('aria-modal', 'true'); veil.setAttribute('aria-label', '보는 법');
     hole = D.createElement('div'); hole.className = 'ykg-hole none';
     card = D.createElement('div'); card.className = 'ykg-card';
@@ -243,14 +298,14 @@
   }
   function end() {
     W.ykGuideOn = false; D.documentElement.classList.remove('ykg-run');
-    if (!one) try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    if (!one && !full) try { localStorage.setItem(KEY, '1'); } catch (e) {}
     if (!veil) return;
     clearInterval(hush); unreveal();
     D.removeEventListener('keydown', key); W.removeEventListener('resize', place);
     card.classList.remove('on'); var v = veil; veil = null; setTimeout(function () { v.remove(); }, 350);
   }
   function key(e) { if (e.key === 'Escape') end(); if (e.key === 'ArrowRight' || e.key === 'Enter') go(1); if (e.key === 'ArrowLeft') go(-1); }
-  function go(d) { var n = i + d; if (n < 0) return; if (n >= STEPS.length) { var o = one; end(); if (!o) { W.ykGuideOn = true; W.scrollTo({ top: 0, behavior: 'smooth' }); var t0 = Date.now(), wt = setInterval(function () { if (W.scrollY < 40 || Date.now() - t0 > 3500) { clearInterval(wt); setTimeout(function () { W.ykGuideOn = false; }, 300); } }, 100); } return; } i = n; show(); }
+  function go(d) { var n = i + d; if (n < 0) return; if (n >= STEPS.length && full) { end(); return; } if (n >= STEPS.length) { var o = one; end(); if (!o) { W.ykGuideOn = true; W.scrollTo({ top: 0, behavior: 'smooth' }); if (W.ykDeckGo) W.ykDeckGo(0); var t0 = Date.now(), wt = setInterval(function () { if (W.scrollY < 40 || Date.now() - t0 > 3500) { clearInterval(wt); setTimeout(function () { W.ykGuideOn = false; }, 300); } }, 100); } return; } i = n; show(); }
   var shown = null;
   function unreveal() { if (shown) { shown.style.opacity = ''; shown = null; } }
   function show() {
@@ -259,20 +314,25 @@
     Array.prototype.forEach.call(D.querySelectorAll('.mr-modal'), function (m) { m.hidden = true; });   // 안내 중엔 저절로 뜨는 호외 카드를 닫아 둠
     card.classList.remove('on', 'over'); card.style.width = '';
     card.innerHTML =
-      '<p class="ykg-k">' + (one ? H('讀者 案內 · 이 장치', '보는 법 · 이 장치') : H('讀者 案內 · ' + (i + 1) + ' / ' + STEPS.length, '보는 법 · ' + (i + 1) + ' / ' + STEPS.length)) + '</p>' +
+      '<p class="ykg-k">' + (one ? H('讀者 案內 · 이 장치', '보는 법 · 이 장치') : full ? H('全體 案內 · ' + (i + 1) + ' / ' + STEPS.length, '전체 안내 · ' + (i + 1) + ' / ' + STEPS.length) : H('讀者 案內 · ' + (i + 1) + ' / ' + STEPS.length, '보는 법 · ' + (i + 1) + ' / ' + STEPS.length)) + '</p>' +
       '<p class="ykg-t">' + H(s.t[0], s.t[1]) + '</p><p class="ykg-b">' + H(s.b[0], s.b[1]) + '</p>' +
+      (full && s.go ? '<p class="ykg-gol"><a class="ykg-go" href="' + BASE + s.go + '">' + H('이 면으로 가 보기 →', '이 페이지로 가 보기 →') + '</a></p>' : '') +
+      (!full && !one && last ? '<p class="ykg-gol"><button type="button" class="ykg-full">' + H('경성야록 전체 안내도 보기 →', '경성야록 전체 안내도 보기 →') + '</button></p>' : '') +
       '<div class="ykg-f"><span class="ykg-dots">' + (one ? '' : STEPS.map(function (_, n) { return '<i class="' + (n === i ? 'on' : '') + '"></i>'; }).join('')) + '</span>' +
       (last || one ? '' : '<button type="button" class="ykg-skip">' + H('건너뛰기', '건너뛰기') + '</button>') +
       (i ? '<button type="button" class="ykg-prev">' + H('앞', '이전') + '</button>' : '') +
       '<button type="button" class="ykg-next">' + (one ? H('다 알앗소', '알겠어요') : last ? H('다 알앗소', '시작하기') : H('다음', '다음')) + '</button></div>';
     hjBind(card);
     card.querySelector('.ykg-next').addEventListener('click', function () { go(1); });
+    var fb = card.querySelector('.ykg-full'); if (fb) fb.addEventListener('click', function () { end(); setTimeout(function () { start('full'); }, 400); });
+    var gl = card.querySelector('.ykg-go'); if (gl) gl.addEventListener('click', function () { end(); });
     var sk = card.querySelector('.ykg-skip'); if (sk) sk.addEventListener('click', end);
     var pv = card.querySelector('.ykg-prev'); if (pv) pv.addEventListener('click', function () { go(-1); });
     var t = s.sel && (s.sel === '.ykg-tab' ? tab : $(s.sel));
     if (t && s.reveal) { t.style.opacity = '1'; shown = t; }
     var inFixed = function (e) { while (e && e !== D.body) { var ps = getComputedStyle(e).position; if (ps === 'fixed' || ps === 'sticky') return true; e = e.parentElement; } return false; };
-    if (t && s.sel !== '.ykg-tab' && !inFixed(t)) {
+    if (t && s.sel !== '.ykg-tab' && W.ykDeckReveal && W.ykDeckReveal(t, 90)) { /* 폰 본지 : 그 면으로 넘겨서 보여 줌 */ }
+    else if (t && s.sel !== '.ykg-tab' && !inFixed(t)) {
       var vh = W.innerHeight, r0 = t.getBoundingClientRect(), chh = Math.max(230, (card.offsetHeight || 230) * ratio());
       var want = (r0.height + 16 + chh < vh - 24) ? Math.max(12, (vh - r0.height - 16 - chh) / 2) : Math.max(12, (vh - r0.height) / 2);
       W.scrollBy({ top: r0.top - want, behavior: 'instant' });
@@ -311,7 +371,7 @@
   /* ── 부분 안내: 장치 귀퉁이의 작은 「？」 — 누르면 그 장치 설명 한 장만 ── */
   (function () {
     if (page === 'jk' || page === 'maria' || page === 'sk' || page === 'bb') return;   // 사건 지면은 이미 ？ 표가 잇음
-    var SKIP = { '.ykg-tab': 1, '#cbar': 1, '#snd': 1, '.masthead .hj, header .hj': 1, '.sb-tab': 1, '#lit': 1, '#ep1 .sf': 1, '.sp-grid .vt': 1, '#staff': 1 };
+    var SKIP = { '.ykg-tab': 1, '#cbar': 1, '#snd': 1, '.masthead .hj, header .hj': 1, '.sb-tab': 1, '#lit': 1, '#ep1 .sf': 1, '.sp-grid .vt': 1, '#staff': 1, '#adCrew .sk-go': 1, '#adReader .sk-go': 1, '.sk-upb': 1, '.sk-foot .more': 1, '#skNp': 1 };
     var qs = D.createElement('style');
     qs.textContent =
       '.ykg-q{position:absolute;top:-10px;right:-10px;z-index:40;width:21px;height:21px;padding:0;border-radius:50%;border:1px solid rgba(58,49,40,.5);background:rgba(236,226,203,.82);color:#3a3128;' +
@@ -325,6 +385,8 @@
       '.ykg-q.dk:hover{background:rgba(11,9,7,.9)}.ykg-q.dk:after{background:#eadfc4;color:#1e1913}' +
       '.ykg-q{position:absolute!important;margin:0!important;flex:none!important;min-width:0!important;letter-spacing:0!important}.ykg-q:not(.in){top:-10px!important;right:-10px!important;left:auto!important}.ykg-q.in{top:6px!important;right:6px!important;left:auto!important;bottom:auto!important}body.ykg-quiet .ykg-q{opacity:0;pointer-events:none}';
     D.head.appendChild(qs);
+    /* 심인 광고면은 종이가 밝아서 ？가 묻힘 → 먹색으로 또렷하게 */
+    if (page === 'seek') { var qx = D.createElement('style'); qx.textContent = '.ykg-q{opacity:1!important;width:25px!important;height:25px!important;background:#1e1913!important;color:#f1e6cc!important;border:1px solid #1e1913!important;font-size:13px!important;box-shadow:0 0 0 3px rgba(241,230,204,.9),0 2px 6px rgba(0,0,0,.35)!important}.ykg-q:before{border-color:rgba(241,230,204,.45)!important}.ykg-q:hover{background:#5a2e22!important;border-color:#5a2e22!important}'; D.head.appendChild(qx); }
     var dark = page === 'np';
     function fixedUp(e) { while (e && e !== D.body) { var p = getComputedStyle(e).position; if (p === 'fixed' || p === 'sticky') return true; e = e.parentElement; } return false; }
     function mark() {
@@ -353,5 +415,5 @@
     var go0 = function () { setTimeout(function () { if (veil) return; if (WAIT && !WAIT()) { W.ykGuideOn = false; var wt = setInterval(function () { if (WAIT()) { clearInterval(wt); W.ykGuideOn = true; setTimeout(function () { if (!veil) start(); }, 1600); } }, 400); return; } start(); }, 1400); };
     if (D.readyState === 'complete') go0(); else W.addEventListener('load', go0);
   }
-  W.ykGuide = start;
+  W.ykGuide = start; W.ykGuideFull = function () { start('full'); };
 })();

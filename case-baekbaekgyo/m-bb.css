@@ -1,0 +1,12 @@
+/* 경성야록 · 백백교 본편 — 폰에서만 쓰는 이 지면만의 손질 (공통 틀은 ../yk-m.css) */
+@media (max-width:600px){
+  html body .bridge,html body .bb-fin + .bridge.bb-thaw{margin-left:0!important;margin-right:0!important}
+}
+@media (max-width:600px){
+  /* 밤의 활동사진 — 그림을 자르지 않고 영화처럼 위아래 검은 띠 */
+  html body .n6-i{object-fit:contain!important}
+  html body .bb-night.ng6{padding-left:0!important;padding-right:0!important}
+  html body .n6-tag span{font-size:18px!important}
+  html body .n6-sub b{font-size:22px!important}
+  html body .n6-sub p{font-size:15px!important}
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>경성야록 · PC·모바일 확장 미리보기</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#030706;color:#ddd0b7;font-family:serif}main{width:min(100%,440px);margin:24px auto;padding:12px}h1{font-size:24px;line-height:1.4}p{line-height:1.7}button,input{font:inherit;min-height:48px;border:1px solid #796448;border-radius:4px;background:#251e15;color:#efdfbc;padding:10px 12px}button:disabled{opacity:.4}button:not(:disabled):active{background:#614c2e}input{width:100%;letter-spacing:.25em}header{border-bottom:1px solid #514331;padding-bottom:12px}.note{font-size:13px;color:#ad9b80}.toolbar{display:flex;gap:8px;margin:16px 0}#result{border-left:3px solid #936540;padding:0 12px}#result:empty{display:none}.gm-expansion h2{font-size:22px}.gm-expansion [data-clues]{padding:8px 12px;border:1px solid #574936;background:#171811}.gm-expansion [data-feedback]{color:#dda778}.gm-expansion [data-next],.gm-expansion [data-hint]{width:100%;margin:6px 0}.gm-expansion header{display:flex;gap:8px;align-items:center;justify-content:space-between}.gm-expansion [data-expansion-timer]{white-space:nowrap}@media(max-width:480px){main{margin:0 auto;padding:12px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>지하의 세 방<br>PC·모바일 확장 미리보기</h1><p class="note">자료실 → 암실 → 윤전기실<br>전체 10분 · 퍼즐을 풀어 다음 방으로 이동</p></header>
+<p class="note">독립 퍼즐 모듈의 체험 화면입니다. 넓어진 3D 공간·조이스틱 탐색·귀신·호외 카드 이미지는 이 미리보기에 아직 포함되지 않았습니다.</p>
+<p><a href="./archive-preview.html" style="color:#d8bb80">3D 자료실·편집실·암실 미리보기</a></p>
+<div class="toolbar"><button id="start">미리보기 시작</button><button id="restart" hidden>처음부터 다시 시작</button></div>
+<div id="result" role="status"></div><div id="game"></div>
+</main>
+<script src="./room-puzzles.js"></script><link rel="stylesheet" href="./room-puzzles.css">
+<script src="./mobile-expansion.js"></script>
+<script>
+(function(){
+  var instance=null, startedAt=null;
+  var host=document.getElementById('game'),result=document.getElementById('result');
+  function begin(){
+    if(instance)instance.destroy();
+    result.textContent='';startedAt=performance.now();
+    instance=new GyeongMobileExpansion.Expansion({
+      // This preview owns one clock; room changes only read its remaining time.
+      getRemainingSeconds:function(){return Math.max(0,600-(performance.now()-startedAt)/1000)},
+      // Desktop users can preview the same mobile puzzle UI without changing the original game.
+      isMobile:function(){return true},
+      onComplete:function(){result.textContent='세 방을 통과했습니다. 원본 게임에 연결하면 이 지점에서 호외 출력으로 이어집니다.'},
+      onTimeout:function(){result.textContent='10분이 끝났습니다. 다시 시작해 다른 기록을 살펴보세요.'}
+    });
+    instance.start(host);
+    document.getElementById('start').hidden=true;
+    document.getElementById('restart').hidden=false;
+  }
+  document.getElementById('start').addEventListener('click',begin);
+  document.getElementById('restart').addEventListener('click',begin);
+})();
+</script>
+</body>
+</html>

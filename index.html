@@ -273,8 +273,10 @@ if(location.hash.indexOf('#yarok=')===0)document.documentElement.classList.add('
 @media (prefers-reduced-motion:reduce){ .mol-stamp{animation:none} .tl-dot::before{transition:none} }
 </style>
 <meta charset="UTF-8">
-<script src="yk-zoom.js?v=2" data-yk-main></script><!-- 화면 배율 120% -->
+<script src="yk-zoom.js?v=11" data-yk-main></script><!-- 화면 배율 120% -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light only">
 <title>경성야록 京城野錄 · 시즌 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2250,6 +2252,7 @@ html::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
 <link rel="stylesheet" href="nr-main.css?v=5">
 <link rel="stylesheet" href="hg-main.css?v=3">
 <link rel="stylesheet" href="ad-banner.css?v=3">
+<link rel="stylesheet" href="m-index.css?v=11">
 
 </head>
 
@@ -3733,7 +3736,7 @@ document.querySelectorAll('.hj').forEach(el=>{
     for(var i=0;i<KEY.length;i++) if(t.indexOf(KEY[i][0])>-1) return href(KEY[i][1]); return ''; };
 })();
 </script>
-<script src="sikjasil-egg.js"></script>
+<script src="sikjasil-egg.js?v=2"></script>
 <script id="yk-sohn-brush-js">
 (function () {
   var desk = document.querySelector('.c3 .visual.desk'); if (!desk) return;
@@ -3810,10 +3813,11 @@ document.querySelectorAll('.hj').forEach(el=>{
   document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.sec-btn, [data-sec], .secmore')) hardReset(); }, true);
 })();
 </script>
+<script src="m-index.js?v=4"></script>
 <script src="yk-reward.js?v=7"></script>
 <script src="nr-store.js?v=1"></script>
 <script src="nr-main.js?v=5"></script>
 <script src="hg-main.js?v=3"></script>
-<script src="yk-guide.js?v=17"></script>
+<script src="yk-guide.js?v=27"></script>
 </body>
 </html>

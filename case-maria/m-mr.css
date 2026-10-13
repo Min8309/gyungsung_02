@@ -1,0 +1,9 @@
+/* 경성야록 · 마리아 본편 — 폰에서만 쓰는 이 지면만의 손질 (공통 틀은 ../yk-m.css) */
+@media (max-width:600px){
+  html body .lt-grid{grid-template-columns:minmax(0,1fr)!important}
+  html body .lt-desk{position:relative!important;top:auto!important}
+  html body .lt-desk,html body .lt-report{min-width:0!important;margin:7px 0!important}
+  html body .lt-head,html body .lt-rhead,html body .lt-read-head,html body .lt-check-head{flex-wrap:wrap;gap:6px 10px!important}
+  html body .lt-mid{min-width:0!important}
+  html body .lt-check li{flex-wrap:wrap}
+}

@@ -491,11 +491,22 @@
     $('.mr-next', m).addEventListener('click', function () { show(i + 1); });
     m.addEventListener('click', function (e) { if (e.target === m) close(); });
     document.addEventListener('keydown', function (e) { if (m.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
-    /* 사건 요지를 지나면 한 번 저절로 펼침 (죽첨정 페이지와 같은 흐름) */
-    var shown = false, brief = $('.case-brief');
-    if (brief && 'IntersectionObserver' in window) {
-      var o2 = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting && e.boundingClientRect.top < 0 && !shown) { shown = true; open(); o2.disconnect(); } }); });
-      o2.observe(brief);
+    /* 저절로 펼치는 때: 사건을 끝까지 다 읽고 맨 끝(빈 자리)에 닿았을 때 한 번만.
+       보는 법 안내가 떠 잇는 동안, 다른 창이 열려 잇는 동안엔 절대 안 뜸 — 안내가 끝난 뒤 다시 거기 닿으면 그때 뜸. */
+    var KEYS = 'yk-behind-' + location.pathname.split('/').slice(-2, -1)[0], shown = false, endEl = $('#finale'), wait = null;
+    try { shown = !!sessionStorage.getItem(KEYS); } catch (e) {}
+    function busy() { return window.ykGuideOn || document.documentElement.classList.contains('ykg-run') || document.querySelector('.ykg-veil') || [].some.call(document.querySelectorAll('.mr-modal'), function (x) { return !x.hidden; }); }
+    if (endEl && 'IntersectionObserver' in window && !shown) {
+      var o2 = new IntersectionObserver(function (es) { es.forEach(function (e) {
+        clearTimeout(wait);
+        if (!e.isIntersecting || shown) return;
+        wait = setTimeout(function chk() {
+          var r = endEl.getBoundingClientRect(); if (shown || r.top > innerHeight * .75 || r.bottom < innerHeight * .25) return;
+          if (busy()) { wait = setTimeout(chk, 1200); return; }   // 안내 · 다른 창이 닫힐 때까지 기다렷다가
+          shown = true; try { sessionStorage.setItem(KEYS, '1'); } catch (x) {} open(); o2.disconnect();
+        }, 1800);
+      }); }, { threshold: 0.4 });
+      o2.observe(endEl);
     }
   })();
 
@@ -567,7 +578,7 @@
   function upd() {
     var r = f.getBoundingClientRect(), vh = window.innerHeight, total = r.height - vh;
     var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 1;
-    var n = Math.floor(p * (steps.length + 1.5));
+    var n = Math.floor(p * (steps.length + 1.5)) + (r.top < vh * .5 ? 2 : 0);
     steps.forEach(function (el, i) { el.classList.toggle('on', i < n || p > .97); });
   }
   window.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd); upd();
@@ -580,7 +591,7 @@
   function size() { if (!cv) return; var r = cv.getBoundingClientRect(); W = cv.width = Math.round(r.width); Hh = cv.height = Math.round(r.height); fl = []; for (var i = 0; i < 70; i++) fl.push({ x: Math.random() * W, y: Math.random() * Hh, r: .6 + Math.random() * 1.6, v: .25 + Math.random() * .5, d: Math.random() * 6 }); }
   function upd() {
     var r = t.getBoundingClientRect(), vh = window.innerHeight, p = (vh - r.top) / (r.height + vh); p = Math.max(0, Math.min(1, p));
-    var o = 1 - Math.min(1, Math.abs(p - .5) / .3); t.style.setProperty('--th-o', Math.max(0, o).toFixed(3));
+    var o = 1 - Math.min(1, Math.abs(p - .5) / .42); t.style.setProperty('--th-o', Math.max(0, o).toFixed(3));
     on = r.bottom > 0 && r.top < vh;
   }
   window.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', function () { size(); upd(); }); size(); upd();

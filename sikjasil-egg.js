@@ -62,7 +62,9 @@
 
   /* 식자실(게임) 틀 */
   '.ykq-room{position:fixed;inset:0;z-index:2147483001;background:#050606;opacity:0;transition:opacity 1s ease}' +
+  '@media(pointer:coarse){.ykq-type:hover,.ykq-type:focus-visible{animation:none}}' +
   '.ykq-room.on{opacity:1}' +
+  '.ykq-touch-room .ykq-up{top:max(8px,env(safe-area-inset-top));bottom:auto;right:max(8px,env(safe-area-inset-right));min-height:44px}' +
   '.ykq-room iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#050606}' +
   '.ykq-up{position:absolute;right:18px;bottom:16px;z-index:2;background:rgba(10,10,9,.55);border:1px solid rgba(207,196,173,.25);' +
     'color:#a59a83;font-family:var(--myeongjo,"Nanum Myeongjo",serif);font-size:12px;letter-spacing:.16em;padding:7px 12px;cursor:pointer}' +
@@ -128,7 +130,8 @@
   applyState(false);
 
   /* ── 입구 ── */
-  var canPlay = matchMedia('(hover: hover) and (pointer: fine)').matches && ('exitPointerLock' in document);
+  var touchPlay = matchMedia('(pointer: coarse)').matches;
+  var canPlay = touchPlay || ('exitPointerLock' in document);
 
   function openGate(byRelics) {
     var printed = getState() === 'printed';
@@ -152,7 +155,7 @@
         '<p class="ykq-g2"></p>' +
         (canPlay
           ? '<div class="ykq-btns"><button type="button" class="ykq-go">나려간다</button><button type="button" class="ykq-no">그만둔다</button></div>' +
-            '<p class="ykq-note">소리가 남 · 키보드와 마우스로 움직임 · ESC 를 누르면 손이 풀림</p>'
+            '<p class="ykq-note">' + (touchPlay ? '소리가 남 · 왼쪽 패드로 이동 · 화면을 밀어 둘러보기 · 가로 화면 권장' : '소리가 남 · 키보드와 마우스로 움직임 · ESC 를 누르면 손이 풀림') + '</p>'
           : '<div class="ykq-btns"><button type="button" class="ykq-no">알앗슴</button></div>' +
             '<p class="ykq-note">식자실은 책상 우의 전산기(PC)에서만 열리오.</p>') +
       '</div>';
@@ -182,6 +185,7 @@
     document.documentElement.classList.add('ykq-lock');
     var room = document.createElement('div');
     room.className = 'ykq-room';
+    if (touchPlay) room.classList.add('ykq-touch-room');
     room.innerHTML = '<iframe title="1934 경성 활판 인쇄소 식자실" allow="fullscreen; autoplay"></iframe>' +
                      '<button type="button" class="ykq-up">지면으로 올라가기</button>';
     var frame = room.querySelector('iframe');
@@ -281,6 +285,7 @@
   '.ykq-relic{position:absolute;z-index:6;padding:0;border:0;background:none;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .9s ease .25s,filter .3s}' +
   '.ykq-relic img{display:block;width:100%;height:auto;filter:grayscale(.8) sepia(.55) contrast(1.12) brightness(.95) drop-shadow(0 6px 6px rgba(20,12,4,.45))}' +
   '.ykq-host.ykq-live .ykq-relic,.ykq-relic:focus-visible{opacity:.8;pointer-events:auto}' +
+  '@media(pointer:coarse){.ykq-host .ykq-relic{opacity:.8;pointer-events:auto}.ykq-relic::after{opacity:.85}}' +
   '.ykq-relic:hover{opacity:1!important}' +
   '.ykq-relic:hover img{filter:grayscale(.6) sepia(.5) contrast(1.15) drop-shadow(0 0 7px rgba(138,42,33,.55))}' +
   '.ykq-relic::after{content:"";position:absolute;right:-6px;top:-6px;width:9px;height:9px;border-radius:50%;background:#8a2a21;opacity:0;animation:ykq-ping 1.8s ease-out infinite}' +
@@ -291,7 +296,9 @@
   '.ykq-tray{position:fixed;left:16px;bottom:16px;z-index:2147482990;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 10px;' +
     'background:rgba(231,219,194,.96);border:1px solid #3a3128;box-shadow:0 8px 22px -10px rgba(0,0,0,.6);' +
     'font-family:var(--myeongjo,"Nanum Myeongjo",serif);color:#1e1913;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}' +
+  '.ykq-tray{pointer-events:none}' +
   '.ykq-tray.on{opacity:1;transform:none}' +
+  '.ykq-tray.on .ykq-open{pointer-events:auto}' +
   '.ykq-tray .ykq-tt{font-size:11.5px;letter-spacing:.1em;line-height:1.5;max-width:13em}' +
   '.ykq-tray .ykq-tt b{display:block;font-family:var(--serif,"Noto Serif KR",serif);font-weight:900;font-size:13px;letter-spacing:.06em}' +
   '.ykq-slots{display:flex;gap:6px}' +
@@ -361,7 +368,7 @@
   }
   function nudgeTray() {
     tray.classList.add('on'); tray.classList.remove('nudge'); void tray.offsetWidth; tray.classList.add('nudge');
-    tray.querySelector('.ykq-cnt').textContent = '물건이 모자라오 · 지면을 스처 보시오 (' + NUM[got().length] + ' / 넷)';
+    tray.querySelector('.ykq-cnt').textContent = (touchPlay ? '지면의 물건 넷을 눌러 모으시오 (' : '물건이 모자라오 · 지면을 스처 보시오 (') + NUM[got().length] + ' / 넷)';
   }
 
   function place() {

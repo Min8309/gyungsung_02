@@ -2,13 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<script src="yk-zoom.js?v=2"></script><!-- 화면 배율 · 새로 열면 기록 초기화 -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="yk-zoom.js?v=11"></script><!-- 화면 배율 · 새로 열면 기록 초기화 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light only">
 <title>경성야록 · 납량란 — 자정의 백물어</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Serif+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="napryang.css?v=3">
+<link rel="stylesheet" href="napryang.css?v=9">
 </head>
 <body class="locked">
 <div class="dim" aria-hidden="true"></div>
@@ -29,11 +31,26 @@
   </span>
 </nav>
 
+<p class="up-note" id="upNote" aria-live="polite"></p>
+<div class="hx" id="hx" hidden role="dialog" aria-modal="true" aria-label="경성야록 호외">
+  <p class="hx-call" id="hxCall"></p>
+  <article class="hx-sheet" id="hxSheet">
+    <header class="hx-mast"><b>京城野錄</b><span class="hx-tag">號　外</span><span class="hx-date" id="hxDate"></span></header>
+    <h2 class="hx-h" id="hxH"></h2>
+    <p class="hx-sub" id="hxSub"></p>
+    <div class="hx-body">
+      <div class="hx-tx" id="hxTx"></div>
+      <figure class="hx-ph"><div class="hx-glass" aria-hidden="true"></div><figcaption id="hxCap"></figcaption></figure>
+    </div>
+    <p class="hx-note">※ 이 호외는 편집국이 지어낸 연출이오. 우에 적힌 시각 · 차례는 이 화면 안에서만 쓰고, 어듸에도 보내지 안앗소.</p>
+    <p class="hx-go"><a class="hx-seek" href="seek.html"><span class="hj" data-ko="심인계에 제보하러 가기">심인계로 제보하러 가기</span></a>　<button type="button" id="hxGo"><span class="hj" data-ko="초를 다시 켜고 처음부터">초를 다시 켜고 처음부터</span></button></p>
+  </article>
+</div>
 <!-- ═══ 대문 ═══ -->
 <section class="gate" id="gate">
   <div class="g-img">
-    <img src="assets/np/hero.jpg" alt="어두운 방, 낮은 상 위에 촛불 여섯 자루와 접힌 신문 (재현 그림)">
-    <span class="fl" style="--fx:32.35;--fy:34.8;--fw:3.3;--fh:11.89" data-n="1"><i></i></span><span class="fl" style="--fx:43.68;--fy:36.03;--fw:3.3;--fh:12.01" data-n="2"><i></i></span><span class="fl" style="--fx:55.49;--fy:36.76;--fw:3.3;--fh:11.27" data-n="3"><i></i></span><span class="fl" style="--fx:66.0;--fy:34.8;--fw:3.3;--fh:11.64" data-n="4"><i></i></span><span class="fl" style="--fx:72.94;--fy:36.03;--fw:3.3;--fh:10.78" data-n="5"><i></i></span><span class="fl" style="--fx:78.98;--fy:34.8;--fw:3.3;--fh:11.4" data-n="6"><i></i></span>
+    <div class="g-art"><img src="assets/np/hero.jpg" alt="어두운 방, 낮은 상 위에 촛불 여섯 자루와 접힌 신문 (재현 그림)">
+    <span class="fl" style="--fx:32.35;--fy:34.8;--fw:3.3;--fh:11.89" data-n="1"><i></i></span><span class="fl" style="--fx:43.68;--fy:36.03;--fw:3.3;--fh:12.01" data-n="2"><i></i></span><span class="fl" style="--fx:55.49;--fy:36.76;--fw:3.3;--fh:11.27" data-n="3"><i></i></span><span class="fl" style="--fx:66.0;--fy:34.8;--fw:3.3;--fh:11.64" data-n="4"><i></i></span><span class="fl" style="--fx:72.94;--fy:36.03;--fw:3.3;--fh:10.78" data-n="5"><i></i></span><span class="fl" style="--fx:78.98;--fy:34.8;--fw:3.3;--fh:11.4" data-n="6"><i></i></span></div>
     <div class="g-head"><p class="g-k">경성야록 · <span class="hj" data-ko="여름 괴담란">납량란</span></p>
     <h1><span class="hj" data-ko="자정의 백 가지 이야기">자정의 백물어</span></h1>
     <p class="g-def"><span class="hj" data-ko="촛불을 켜 두고 괴담을 한 편 할 때마다 초를 하나씩 끄던 밤 놀이">초를 켜 두고 괴담 한 편에 초 하나씩 끄던 밤 노리</span></p></div>
@@ -256,6 +273,7 @@
       <p class="wg-h"><b><span class="hj" data-ko="제7화 — 당신의 괴담">제칠화 — 당신의 괴담</span></b><span>일천 자 이내</span></p>
       <textarea id="wgT" maxlength="1000" spellcheck="false" placeholder="구십 년 만에 다시 모집하오." aria-label="당신의 괴담"></textarea>
       <p class="wg-f"><span><b id="wgN">0</b> / 1000</span><button type="button" id="wgB"><span class="hj" data-ko="봉투에 넣어 투고함으로">봉투에 너어 투고함으로</span></button></p>
+      <p class="wg-skip"><button type="button" id="wgSkip"><span class="hj" data-ko="쓰지 않고, 일곱째 초를 끄기">쓰지 안코, 일곱째 초를 끄기</span></button></p>
     </div>
     <div class="post" id="post">
       <img src="assets/np/v2_box.jpg" alt="벽에 걸린 나무 투고함 (재현 그림)">
@@ -272,7 +290,7 @@
 </footer>
 </div>
 
-<script src="napryang.js?v=3"></script>
-<script src="yk-guide.js?v=17"></script>
+<script src="napryang.js?v=10"></script>
+<script src="yk-guide.js?v=27"></script>
 </body>
 </html>
