@@ -40,6 +40,12 @@
     function canExplore() {
       return controls.isLocked && !game.gameEnded && !game.ending;
     }
+    var guideButton=document.createElement('button');guideButton.id='mobile-guide-button';guideButton.type='button';guideButton.textContent='플레이 안내';guideButton.setAttribute('aria-haspopup','dialog');panel.appendChild(guideButton);
+    var guide=document.createElement('dialog');guide.id='mobile-play-guide';guide.setAttribute('aria-labelledby','mobile-guide-title');
+    guide.innerHTML='<h2 id="mobile-guide-title">플레이 방법</h2><p>왼쪽 조이스틱으로 이동하고, 화면을 드래그해 둘러보세요. 물건을 바라본 뒤 오른쪽 픽업·조사 버튼을 누르면 퍼즐을 열 수 있습니다.</p><p>수첩: 모은 단서 확인 · 손전등: 밝히기 · 웅크리기: 낮은 곳 조사 · 집중: 자세히 보기 · 음향: 켜기/끄기</p><h3>현재 목표</h3><p data-mobile-goal></p><h3>소지품</h3><p data-mobile-inventory></p><p>안내를 보는 동안에도 전체 제한 시간은 계속 흐릅니다.</p><button type="button" data-guide-close>닫고 계속 플레이</button>';document.body.appendChild(guide);
+    guideButton.onclick=function(){if(!canExplore())return;reset();guide.querySelector('[data-mobile-goal]').textContent=(document.getElementById('archive-route-notice')?.hidden===false?document.getElementById('archive-route-notice').textContent:document.getElementById('exploration-objective')?.textContent)||'물건을 조사해 초록 단서를 찾으세요.';guide.querySelector('[data-mobile-inventory]').textContent=document.getElementById('inventory-items')?.textContent||'아직 모은 물건이 없습니다.';controls.unlock();guide.showModal();};
+    guide.querySelector('[data-guide-close]').onclick=function(){guide.close();};
+    guide.addEventListener('close',function(){if(!game.gameEnded&&!game.ending&&!document.hidden)controls.lock();});
     function sync() {
       panel.hidden = !canExplore();
       if (panel.hidden) reset();

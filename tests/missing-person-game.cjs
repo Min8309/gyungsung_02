@@ -15,8 +15,7 @@ await inspect([26.7,-2,-2.7],[28.12,-2.2,-2.7],'mobile_darkroom_curtain_0');awai
 for(const label of ['필름 세척','붉은 안전등 확인','현상액 침지'])await page.getByRole('button',{name:label,exact:true})[mobile?'tap':'click']();await page.waitForTimeout(3100);await page.getByRole('button',{name:'정착액 투입',exact:true})[mobile?'tap':'click']();await page.locator('.gp-room-effect').waitFor({state:'detached'});await page.getByRole('button',{name:'조사창 닫고 다음 장소로 이동',exact:true})[mobile?'tap':'click']();
 await inspect([33.7,-2,-2.7],[35,-2.2,-2.7],'mobile_darkroom_curtain_1');await page.getByRole('button',{name:'검은 커튼 젖히기',exact:true})[mobile?'tap':'click']();assert.equal(await page.evaluate(()=>!!game.gameEnded),false);
 await page.evaluate(()=>game.camera.position.set(35.4,-2,-2.7));
-await page.getByRole('button',{name:'안내 확인 · 초록 집게 사진 찾기',exact:true}).waitFor({state:'visible'});
-await page.getByRole('button',{name:'안내 확인 · 초록 집게 사진 찾기',exact:true})[mobile?'tap':'click']();
+if(!mobile){await page.getByRole('button',{name:'안내 확인 · 초록 집게 사진 찾기',exact:true}).waitFor({state:'visible'});await page.getByRole('button',{name:'안내 확인 · 초록 집게 사진 찾기',exact:true}).click();}
 assert.equal(await page.evaluate(()=>game.mobileDarkroom.missingPhotos.every(p=>p.geometry.parameters.width===.44&&p.geometry.parameters.height===.64)),true);
 assert.equal(await page.evaluate(()=>game.mobileDarkroom.group.children.find(o=>o.userData.clueId==='drying_missing_note').rotation.y),0);
 for(const [index,x] of [36,38.3,40.6].entries()){
