@@ -14,8 +14,8 @@ await page.locator('.mp-comparison img').first().evaluate(image=>image.decode())
 await page.locator('.mp-compare-photo').last().tap();assert.match(await page.locator('[role=status]').innerText(),/원본과 같아요/);
 await page.getByRole('button',{name:'초록 힌트 보기',exact:true}).tap();assert.equal(await page.locator('.mp-answer').count(),1);
 await page.getByRole('button',{name:'달라진 흔적 선택',exact:true}).tap();
-const bounds=await page.locator('#inspect-close').boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height);
+if(index<2){const bounds=await page.locator('#inspect-close').boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height);}else{await page.locator('.mp-final-photo.mp-flipped').waitFor();assert.match(await page.locator('.mp-final-back').innerText(),/당신의 것이었다/);if(process.env.ENDING_SCREENSHOT&&viewport.width===390){await page.waitForTimeout(2300);await page.screenshot({path:process.env.ENDING_SCREENSHOT});}}
 assert.equal(await page.evaluate(()=>{const e=document.querySelector('#inspect-interactive-view');return e.scrollWidth<=e.clientWidth}),true);
 }
-await page.getByRole('button',{name:'예고를 읽었습니다 · 창 닫고 계속 탐색',exact:true}).tap();assert.equal(await page.evaluate(()=>puzzleClosed&&space.missingPerson.teaserSeen&&rewardCount===1),true);console.log(`touch selection / hints / teaser / scrolling PASS ${viewport.width}x${viewport.height}`);await context.close();
+await page.getByRole('button',{name:'예고 확인 · 게임 종료',exact:true}).tap();assert.equal(await page.evaluate(()=>space.game.gameEnded&&space.missingPerson.teaserSeen&&rewardCount===1),true);console.log(`touch selection / hints / teaser / scrolling PASS ${viewport.width}x${viewport.height}`);await context.close();
 }}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

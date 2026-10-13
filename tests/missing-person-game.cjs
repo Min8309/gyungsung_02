@@ -22,10 +22,7 @@ await inspect([x,-2,-3.8],[x,-2,-5.42],'drying_missing_photo_'+index);
 await page.locator('.mp-compare-photo').last()[mobile?'tap':'click']();assert.match(await page.locator('.mp-puzzle [role="status"]').innerText(),/원본과 같아요/);
 await page.getByRole('button',{name:'초록 힌트 보기',exact:true})[mobile?'tap':'click']();assert.equal(await page.locator('.mp-answer').count(),1);
 await page.getByRole('button',{name:'달라진 흔적 선택',exact:true})[mobile?'tap':'click']();
-if(index<2)await page.locator('#inspect-close')[mobile?'tap':'click']();else{assert.match(await page.locator('.mp-puzzle blockquote').innerText(),/다음 시즌 예고/);await page.getByRole('button',{name:'예고를 읽었습니다 · 창 닫고 계속 탐색',exact:true})[mobile?'tap':'click']();}
+if(index<2)await page.locator('#inspect-close')[mobile?'tap':'click']();else{await page.locator('.mp-final-photo.mp-flipped').waitFor();assert.match(await page.locator('.mp-final-back').innerText(),/다음 시즌 예고.*당신의/s);assert.equal(await page.evaluate(()=>game.gameEnded),true);assert.equal(await page.evaluate(()=>game.playTimer.startedAt),null);await page.getByRole('button',{name:'예고 확인 · 게임 종료',exact:true})[mobile?'tap':'click']();assert.match(await page.locator('.mp-puzzle').innerText(),/게임이 종료되었습니다/);}
 }
-assert.equal(await page.evaluate(()=>game.mobileDarkroom.missingPerson.solved),true);assert.equal(await page.evaluate(()=>!!game.gameEnded||!!game.ending),false);await page.locator('#inspect-modal').waitFor({state:'hidden'});
-// The old corridor door ending callback must also keep exploration available.
-await page.evaluate(()=>window.dispatchEvent(new CustomEvent('door-unlocked')));assert.equal(await page.evaluate(()=>game.room.doorOpening),true);assert.equal(await page.evaluate(()=>!!game.gameEnded||!!game.ending),false);await page.getByRole('button',{name:'예고를 읽었습니다 · 창 닫고 계속 탐색',exact:true})[mobile?'tap':'click']();
-assert.deepEqual(errors,[]);assert.deepEqual(missing,[]);console.log((mobile?'mobile':'desktop')+' drying-room clues / wrong retry / all photos / teaser / continued exploration PASS');await context.close();}
+assert.equal(await page.evaluate(()=>game.mobileDarkroom.missingPerson.lastPhoto),2);assert.deepEqual(errors,[]);assert.deepEqual(missing,[]);console.log((mobile?'mobile':'desktop')+' all differences / photo flip / teaser / game ending PASS');await context.close();}
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
