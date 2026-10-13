@@ -9,6 +9,7 @@ class Puzzle{
  choose(photo,person){if(!Number.isInteger(photo)||photo<0||photo>2||person!=='difference')return false;if(!this.found.has(photo))this.lastPhoto=photo;this.found.add(photo);return true;}
  get solved(){return this.found.size===3;}
 }
+function canEnd(space){return Boolean(space.archive?.unlocked&&space.archive?.solved&&space.developed&&space.missingPerson.solved);}
 function render(space,index){
  const game=space.game,state=space.missingPerson,view=game.inspectViewRenderer.viewContainer;game.inspectViewRenderer.actionBar.replaceChildren();view.replaceChildren();game.interactionManager.inspectTagEl.textContent='乾燥室 · 초록 단서';
  const panel=document.createElement('section');panel.className='gm-expansion mp-puzzle';view.appendChild(panel);
@@ -16,6 +17,7 @@ function render(space,index){
  const touch=document.createElement('p');touch.className='mp-touch-guide';touch.textContent=navigator.maxTouchPoints>0?'모바일: 사진을 향해 조사 버튼을 누르고, 원본과 비교해 건조 사진의 달라진 곳을 터치하세요. 설명은 위아래로 스크롤할 수 있어요.':'사진을 조사한 뒤 원본과 건조 사진을 비교하세요.';panel.appendChild(touch);
  const help=document.createElement('p');help.className='gp-hints';help.textContent='초록 집게 사진 ① 입구 왼쪽 → ② 가운데 왼쪽 → ③ 안쪽 왼쪽. 각 사진의 원본과 건조본을 비교해 추가된 흔적 한 곳을 찾으세요. 잘못 골라도 다시 선택할 수 있어요.';panel.appendChild(help);
  const progress=document.createElement('p');progress.setAttribute('role','status');progress.textContent=`찾은 사진 ${state.found.size}/3`;panel.appendChild(progress);
+ if(state.solved&&!canEnd(space)){h.textContent='사진 퍼즐을 모두 해결했습니다.';help.textContent='엔딩까지 남은 필수 퍼즐: '+[!space.archive?.unlocked?'식자실 24번 서랍':null,!space.archive?.solved?'자료실 날짜 스탬프':null,!space.developed?'암실 사진 현상':null].filter(Boolean).join(' · ')+'. 앞선 퍼즐을 완료한 뒤 사진을 다시 조사하세요.';return;}
  if(state.solved){
   space.refreshNotice();space.removeMissingPerson();
   h.textContent='모든 퍼즐을 해결했습니다.';touch.hidden=true;help.hidden=true;progress.textContent='사진 3/3 완료 · 게임이 종료되었습니다.';
@@ -39,5 +41,5 @@ function render(space,index){
  const hint=document.createElement('button');hint.textContent='초록 힌트 보기';hint.onclick=()=>{progress.textContent=difference.hint;target.classList.add('mp-answer');};panel.appendChild(hint);
 
 }
-return{Puzzle,render,PHOTO_URLS,CREDIT,DIFFERENCES};
+return{Puzzle,render,PHOTO_URLS,CREDIT,DIFFERENCES,canEnd};
 });
