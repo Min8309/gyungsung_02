@@ -58,10 +58,9 @@ class DarkroomSpace{
   for(let i=0;i<6;i++)this.photo(41.85,f+1.55,-4.85+i*.83,-Math.PI/2,i);
  }
  missingPhotoTexture(index,empty=false){
-  const canvas=document.createElement('canvas');canvas.width=600;canvas.height=360;const c=canvas.getContext('2d');c.fillStyle='#b4a68a';c.fillRect(0,0,600,360);c.strokeStyle='#39c85a';c.lineWidth=12;c.strokeRect(8,8,584,344);c.fillStyle='#203d2a';c.font='bold 26px serif';c.textAlign='center';c.fillText('사진 '+(index+1)+' · 같은 검은 모자를 찾으세요',300,43);
-  for(let slot=0;slot<3;slot++){const person=(slot+index)%3,x=110+slot*190;if(empty&&person===0){c.fillStyle='#4a6047';c.font='20px serif';c.fillText('빈 자리',x,290);continue;}c.fillStyle='#36372f';c.beginPath();c.ellipse(x,295,60,70,0,0,Math.PI*2);c.fill();c.fillStyle='#786f5b';c.beginPath();c.ellipse(x,155,40,52,0,0,Math.PI*2);c.fill();c.fillStyle='#22251e';if(person===0){c.fillRect(x-36,89,72,43);c.fillRect(x-55,124,110,13);}else if(person===1){c.fillStyle='#e4d6b5';c.fillRect(x-40,207,80,25);c.fillRect(x-12,225,25,70);}else{c.strokeStyle='#22251e';c.lineWidth=5;for(const dx of[-18,18]){c.beginPath();c.arc(x+dx,156,15,0,Math.PI*2);c.stroke();}c.beginPath();c.moveTo(x-4,156);c.lineTo(x+4,156);c.stroke();}}
-  const portrait=document.createElement('canvas');portrait.width=440;portrait.height=640;const p=portrait.getContext('2d');p.fillStyle='#b4a68a';p.fillRect(0,0,440,640);p.drawImage(canvas,0,160,440,264);p.strokeStyle='#39c85a';p.lineWidth=6;p.strokeRect(8,8,424,624);p.fillStyle='#203d2a';p.font='bold 24px serif';p.textAlign='center';p.fillText(empty?'빈 자리만 남았다':'신문사 보관 사진 '+(index+1),220,95);p.font='20px serif';p.fillText('가까이에서 사진을 조사하세요',220,540);
-  return new this.T.CanvasTexture(portrait);
+  const canvas=document.createElement('canvas');canvas.width=440;canvas.height=640;const c=canvas.getContext('2d'),texture=new this.T.CanvasTexture(canvas);
+  const background=()=>{c.fillStyle='#b4a68a';c.fillRect(0,0,440,640);c.strokeStyle='#39c85a';c.lineWidth=6;c.strokeRect(8,8,424,624);c.fillStyle='#203d2a';c.textAlign='center';c.font='bold 24px serif';c.fillText(empty?'그는 사진 밖으로 나왔다':'신문사 보관 사진 '+(index+1),220,95);c.font='20px serif';c.fillText('가까이에서 사진을 조사하세요',220,520);c.font='17px serif';c.fillText(window.GyeongMissingPerson.CREDIT,220,565);};background();
+  const image=new Image();image.onload=()=>{background();const width=416,height=width*image.height/image.width,y=(640-height)/2;c.drawImage(image,12,y,width,height);if(empty){c.fillStyle='#b4a68a';c.fillRect(12,y,width/3,height);c.fillStyle='#203d2a';c.font='20px serif';c.fillText('빈 자리',12+width/6,320);}texture.needsUpdate=true;};image.src=window.GyeongMissingPerson.PHOTO_URLS[index];return texture;
  }
  buildMissingPerson(){
   this.missingIntroShown=false;
