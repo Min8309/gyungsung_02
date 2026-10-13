@@ -4,6 +4,7 @@
 class EditingPuzzle{
  constructor(){this.paper=false;this.x=0;this.y=0;this.rotation=1;this.revealed=false;this.solved=false;this.failures=0;}
  collect(){this.paper=true;}
+ alignWithGuide(){if(!this.paper)return false;this.x=2;this.y=1;this.rotation=0;return this.align();}
  align(){this.revealed=this.paper&&this.x===2&&this.y===1&&this.rotation===0;return this.revealed;}
  stamp(code){if(this.solved)return false;if(!this.revealed||String(code)!=='1124'){this.failures++;return false;}this.solved=true;return true;}
 }
@@ -22,9 +23,9 @@ function render(quest){
  function button(label,fn){const b=document.createElement('button');b.textContent=label;b.style.minHeight='48px';b.disabled=quest.phase!=='playing'||quest.solved.has(quest.room.id);b.onclick=()=>{quest.tick();if(quest.phase!=='playing')return;fn();quest.render();};actions.appendChild(b);return b;}
  quest.hintLevels??={archive:0,darkroom:0};
  const hints=quest.room.id==='archive'?[
-  '서랍의 천공 먹지를 먼저 얻으세요. 방향 버튼 또는 드래그로 초록 격자 모서리에 맞춘 뒤 대조합니다.',
-  '먹지는 가로 2, 세로 1, 회전 0°가 정답 위치입니다. 시작 회전 90°에서 회전 버튼을 세 번 누르면 0°가 됩니다.',
-  '드러난 十·一·二·四는 11월 24일입니다. 날짜 스탬프를 1124로 맞추고 서류함 봉인에 찍으세요.'
+  '① 먹지 얻기 → ② 먹지 한 번에 맞추기 → ③ 날짜 1124 입력 → ④ 스탬프 찍기. 순서대로 누르면 됩니다.',
+  '초록 메모의 발행일은 11월 24일입니다. 월 두 자리 11과 일 두 자리 24를 붙이면 1124입니다.',
+  '완료 후 조사창을 닫고 자료실 끝의 暗室 표지와 검은 커튼으로 가세요. 커튼을 조사해 열쇠로 철문을 열고 인화 작업대를 조사하세요.'
  ]:[
   '벽의 현상사 메모를 읽으세요. 맑은 물 → 붉은 안전등 → 현상액 → 정착액 순서입니다.',
   '현상액에 담근 뒤 최소 3초 기다려 윤전기와 인물이 드러나면 정착액을 넣으세요. 일반 전등을 켜면 실패합니다.',
@@ -32,6 +33,7 @@ function render(quest){
  ];
  const hintBox=document.createElement('aside');hintBox.className='gp-hints';hintBox.dataset.puzzleHints='';hintBox.setAttribute('aria-label','퍼즐 도움말');const heading=document.createElement('strong');heading.textContent='초록 메모 · 퍼즐 힌트';hintBox.appendChild(heading);
  for(let i=0;i<=quest.hintLevels[quest.room.id];i++){const p=document.createElement('p');p.textContent=hints[i];hintBox.appendChild(p);}host.querySelector('[data-prompt]').after(hintBox);
+ if(quest.room.id==='archive'){host.querySelector('[data-clues]').hidden=true;const details=document.createElement('details');details.className='gp-guide';const summary=document.createElement('summary');summary.textContent='풀이 방법 · 다음 장소 안내';details.appendChild(summary);for(const hint of hints.slice(1)){const p=document.createElement('p');p.textContent=hint;details.appendChild(p);}hintBox.appendChild(details);}
  const hintButton=host.querySelector('[data-hint]');hintButton.textContent=quest.hintLevels[quest.room.id]<2?'다음 힌트 보기':'힌트 모두 표시됨';hintButton.disabled=quest.hintLevels[quest.room.id]>=2;hintButton.onclick=()=>{quest.hintLevels[quest.room.id]=Math.min(2,quest.hintLevels[quest.room.id]+1);quest.render();};
  const artifact=document.createElement('div');artifact.className='gp-artifact';actions.before(artifact);
  if(quest.room.id==='archive'){
@@ -39,16 +41,20 @@ function render(quest){
   const grid=artifact.querySelector('.gp-grid');for(const c of ['京','日','報','禁','押','十','一','封','密','二','四','印','黑','未','見','止']){const span=document.createElement('span');span.textContent=c;grid.appendChild(span);}
   const carbon=artifact.querySelector('.gp-carbon');carbon.hidden=!state.paper;carbon.style.transform=`translate(${state.x*12}px,${state.y*12}px) rotate(${state.rotation*90}deg)`;
   if(state.revealed){carbon.classList.add('aligned');feedback.textContent='구멍 사이에 十 · 一 · 二 · 四가 보인다. 발행일 표기는 월/일 네 자리이다.';}else feedback.textContent=state.paper?`먹지 위치: 가로 ${state.x}, 세로 ${state.y} · 회전 ${state.rotation*90}°. 네 모서리의 초록 기준선에 맞추시오.`:'책상 서랍 틈에 구겨진 먹지가 끼어 있다.';
-  if(!state.paper)button('서랍 틈의 천공 먹지 획득',()=>{state.collect();quest.emit('item-acquired',{id:'perforated_carbon',name:'천공 기름종이',desc:'검열문의 초록 격자와 맞추는 구멍 뚫린 먹지.'});});
-  else{
-   for(const [label,dx,dy]of[['먹지 왼쪽',-1,0],['먹지 오른쪽',1,0],['먹지 위',0,-1],['먹지 아래',0,1]])button(label,()=>{state.x=Math.max(-3,Math.min(3,state.x+dx));state.y=Math.max(-3,Math.min(3,state.y+dy));state.revealed=false;});
-   button('먹지 90도 회전',()=>{state.rotation=(state.rotation+1)%4;state.revealed=false;});button('격자 모서리 대조',()=>{if(!state.align())state.failures++;});
-   const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.maxLength=4;input.placeholder='월/일';input.setAttribute('aria-label','날짜 스탬프 네 자리');input.value=quest.stampDraft||'0000';input.oninput=()=>{input.value=input.value.replace(/[^0-9]/g,'').slice(0,4);quest.stampDraft=input.value;};actions.appendChild(input);
-   for(let digit=0;digit<4;digit++)for(const [direction,step]of[['증가',1],['감소',-1]])button(`날짜 ${digit+1}번째 자리 ${direction}`,()=>{const values=(quest.stampDraft||'').replace(/[^0-9]/g,'').slice(0,4).padStart(4,'0').split('');values[digit]=String((Number(values[digit])+step+10)%10);quest.stampDraft=values.join('');});
-   button('서류함 봉인에 스탬프 찍기',()=>{if(state.stamp(input.value))quest.submit('1124');else quest.puzzleMessage='봉인이 움직이지 않는다. 먹지의 정렬과 월/일 표기를 확인하시오.';});
-   let origin=null;carbon.onpointerdown=e=>{origin={x:e.clientX,y:e.clientY};carbon.setPointerCapture(e.pointerId);};carbon.onpointerup=e=>{if(!origin||quest.phase!=='playing'||state.solved)return;state.x=Math.max(-3,Math.min(3,state.x+Math.round((e.clientX-origin.x)/30)));state.y=Math.max(-3,Math.min(3,state.y+Math.round((e.clientY-origin.y)/30)));state.revealed=false;origin=null;quest.render();};
+  if(state.solved){
+   artifact.hidden=true;hintBox.hidden=true;host.querySelector('[data-prompt]').hidden=true;
+   feedback.textContent='✓ 자료실 완료! 암실 철문 열쇠를 얻었습니다. 조사창을 닫고 자료실 끝의 暗室 표지·검은 커튼을 찾아가세요. 커튼을 조사해 철문을 연 뒤, 안쪽 인화 작업대에서 필름 세척 → 붉은 안전등 → 현상액 → 3초 기다리기 → 정착액 순서로 진행하세요.';
+  }else if(!state.paper)button('① 서랍 틈의 천공 먹지 얻기',()=>{state.collect();quest.emit('item-acquired',{id:'perforated_carbon',name:'천공 기름종이',desc:'검열문의 초록 격자와 맞추는 구멍 뚫린 먹지.'});});
+  else if(!state.revealed){
+   button('② 먹지 한 번에 맞추기',()=>state.alignWithGuide());
+   feedback.textContent='먹지를 얻었습니다. “먹지 한 번에 맞추기”를 누르면 날짜가 드러납니다.';
+  }else{
+   feedback.textContent='발행일은 11월 24일입니다. 아래에 1124를 입력하고 스탬프를 찍으세요. 입력이 어려우면 “단서 날짜 넣기”를 누르세요.';
+   const label=document.createElement('label');label.className='gp-date-label';label.textContent='③ 날짜 스탬프 (월 11 + 일 24)';
+   const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.maxLength=4;input.placeholder='1124';input.setAttribute('aria-label','날짜 스탬프 네 자리');input.value=quest.stampDraft||'';input.oninput=()=>{input.value=input.value.replace(/[^0-9]/g,'').slice(0,4);quest.stampDraft=input.value;};label.appendChild(input);actions.appendChild(label);
+   button('단서 날짜 1124 넣기',()=>{quest.stampDraft='1124';});
+   button('④ 서류함 봉인에 스탬프 찍기',()=>{if(state.stamp(input.value))quest.submit('1124');else quest.puzzleMessage='괜찮아요. 11월 24일을 네 자리 1124로 입력해 다시 찍으세요. 먹지를 다시 맞출 필요는 없습니다.';});
   }
-  if(state.solved)feedback.textContent='서류함에서 암실 철문 열쇠를 얻었다. “보지 말아야 할 것을 보았구나”';
  }else{
   quest.emit('safe-light',{safe:state.safe});const image=document.createElement('div');image.className='gp-latent stage-'+state.stage+(state.burned?' burned':'');image.tabIndex=0;image.setAttribute('aria-label','잠상 인화지 — 트레이로 드래그하거나 아래 처리 버튼을 누르세요');image.innerHTML='<div class="gp-press">輪轉機<br><span>14</span><i></i></div>';artifact.appendChild(image);
   if(state.burned)feedback.textContent='인화지가 새까맣게 타버렸다. 약품을 다시 채우고 새 인화지로 시작하시오.';

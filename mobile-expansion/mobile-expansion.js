@@ -6,10 +6,10 @@
 })(typeof window === 'object' ? window : globalThis, function () {
   'use strict';
   const ROOMS = [
-    { id: 'archive', title: '地下 編輯室 · 어려움', name: '지하 편집실', difficulty: 3,
+    { id: 'archive', title: '地下 資料室 · 쉬움', name: '지하 자료실', difficulty: 1,
       description: '붉은 압수 도장이 찍힌 검열문과 천공 먹지를 대조하시오.',
       clues: ['책상 서랍 틈에 천공 먹지가 끼어 있다.', '초록 격자 모서리: 먹지를 오른쪽 두 칸, 아래 한 칸으로 밀고 글자가 정방향이 되도록 회전하시오.', '도장 규정: 발행일은 월/일 네 자리. 먹지 구멍으로 드러나는 글자를 월과 일로 나누시오.', '먹줄 아래 글자는 격자와 구멍이 맞을 때만 드러난다.'],
-      prompt: '먹지를 획득하고 정렬한 뒤 날짜 스탬프로 서류함 봉인을 푸시오.',
+      prompt: '날짜를 찾아 암실 열쇠를 얻으세요.',
       answer: '1124', reward: '1124 · 암실 철문 열쇠',
       hint: '먹지 회전을 0도로 맞추고 오른쪽 두 칸, 아래 한 칸. 十一月은 11월, 二十四日은 24일.' },
     { id: 'darkroom', title: '寫眞 暗室 · 매우 어려움', name: '암실', difficulty: 4,

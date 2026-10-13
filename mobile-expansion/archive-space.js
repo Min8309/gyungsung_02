@@ -11,7 +11,7 @@ class ArchiveSpace{
   this.materials=this.makeMaterials();this.cutDoorway();this.buildEntrance();this.buildStairs();this.buildArchive();this.buildEditingProps();this.installMovement();this.installInspection();
   this.onSolved=e=>{if(e.detail?.puzzleKey==='puzzle_a')this.unlocked=true;};window.addEventListener('puzzle-solved',this.onSolved);
   this.quest=new window.GyeongMobileExpansion.Expansion({getRemainingSeconds:()=>game.playTimer.startedAt===null?600:Math.max(0,600-(performance.now()-game.playTimer.startedAt)/1000),isMobile:()=>true});
-  const render=this.quest.render.bind(this.quest);this.quest.render=()=>{render();const next=this.quest.host?.querySelector('[data-next]');if(next)next.style.display='none';};
+  const render=this.quest.render.bind(this.quest);this.quest.render=()=>{render();const next=this.quest.host?.querySelector('[data-next]');if(next){next.hidden=!this.quest.solved.has(this.quest.room.id);next.textContent='조사창 닫고 다음 장소로 이동';next.onclick=()=>this.game.interactionManager.closeInspect();}};
   this.quest.on('puzzle-solved',detail=>{if(detail.room==='archive'){this.solved=true;game.sharedInventory.addItem({id:'darkroom_iron_key',name:'암실 철문 열쇠',desc:'1124 날짜 스탬프로 봉인을 푼 서류함에서 얻은 열쇠.'});this.updateNotice();this.playPuzzleEffect('editing');}});
   this.quest.on('item-acquired',item=>game.sharedInventory.addItem(item));
   this.originalFog={color:this.scene.fog.color.clone(),density:this.scene.fog.density};
@@ -74,6 +74,10 @@ class ArchiveSpace{
   const table=this.box(2.1,.14,1.1,22,f+.92,-2.7,wood,true);for(const dx of[-.9,.9])for(const dz of[-.42,.42])this.box(.09,.92,.09,22+dx,f+.46,-2.7+dz,iron,true);
   const dossier=this.box(.62,.06,.48,22,f+1.03,-2.7,paper);dossier.userData={isInteractable:true,clueId:'mobile_archive_records',type:'mobile_archive_records',name:'지하 편집실 검열문 대조 작업대',description:'붉은 압수 도장이 찍힌 검열 기사 대장과 회전식 날짜 스탬프. 서랍 틈의 천공 먹지를 맞춰야 한다.'};
   this.editingData=dossier.userData;this.markPuzzle(22,f+1.065,-2.7,.7,.55);const label=this.sign('檢閱 · 퍼즐',.6,.16,true);label.rotation.x=-Math.PI/2;label.position.set(22,f+1.067,-2.7);label.userData=dossier.userData;this.group.add(label);
+  for(const [x,z,text] of [[20,-5.15,'발행일 11월 24일'],[22.6,-2.7,'날짜 스탬프 1124']]){
+   const note=this.sign(text,1.4,.35,true);note.position.set(x,f+1.65,z);
+   note.userData={isInteractable:true,type:'mobile_archive_hint',clueId:'archive_date_note_'+x,name:'편집자의 초록 날짜 메모',description:'검열 기사 발행일은 11월 24일. 날짜 스탬프에는 월 두 자리 11과 일 두 자리 24를 이어 1124를 넣으세요. 중앙 책상에서 먹지를 얻고 한 번에 맞춘 뒤 스탬프를 찍으면 암실 열쇠가 나옵니다.'};this.group.add(note);
+  }
   const exit=this.sign('植字室 ←',1.1,.28);exit.rotation.y=Math.PI/2;exit.position.set(14.13,f+2.95,-2.7);this.group.add(exit);
   this.light(16.5,f+3.15,-2.7,16);this.light(21.2,f+3.4,-2.7,22);this.light(25.8,f+3.15,-2.7,14);
   this.rubble=new this.T.InstancedMesh(new this.T.BoxGeometry(1,1,1),dark,42);for(let i=0;i<42;i++){transform.position.set(14.8+(i%12)*1.04,f+.03,i%2?-.9:-4.5);transform.scale.set(.04+(i%4)*.035,.035,.07+(i%3)*.025);transform.rotation.set(i,.5*i,i*.7);transform.updateMatrix();this.rubble.setMatrixAt(i,transform.matrix);}this.group.add(this.rubble);
@@ -103,7 +107,7 @@ class ArchiveSpace{
   };
  }
  updateDoor(delta){if(!this.open||this.progress>=1)return;this.progress=Math.min(1,this.progress+delta/1.1);this.hinge.rotation.y=-this.progress*Math.PI/2;if(this.progress===1)this.room.colliders=this.room.colliders.filter(b=>b!==this.doorCollider);}
- updateNotice(){this.notice.hidden=this.zone==='main';document.querySelector('.location-title').textContent=this.zone==='archive'?'京城日報 地下資料室':this.zone==='stairs'?'京城日報 地下階段':this.originalLocationTitle;this.notice.textContent=this.zone==='stairs'?'地下階段 · 아래로 이어지는 자료실':this.solved?'地下編輯室 · 암실 철문 열쇠 확보':'地下編輯室 · 중앙 책상의 검열문과 먹지를 조사하시오';}
+ updateNotice(){this.notice.hidden=this.zone==='main';document.querySelector('.location-title').textContent=this.zone==='archive'?'京城日報 地下資料室':this.zone==='stairs'?'京城日報 地下階段':this.originalLocationTitle;this.notice.textContent=this.zone==='stairs'?'地下階段 · 아래로 이어지는 자료실':this.solved?'자료실 완료 · 끝의 暗室 표지·검은 커튼 조사 → 철문 열기':'자료실 · 초록 날짜 메모를 읽고 중앙 책상 조사';}
  playPuzzleEffect(kind){
   if(kind==='editing')this.typewriterSheet.visible=true;const element=document.createElement('div');element.className='gp-room-effect';element.setAttribute('role','status');const caption=document.createElement('p');caption.textContent=kind==='editing'?'타자기 롤러가 헛돈다…\n보지 말아야 할 것을 보았구나':'핏자국 14 — 붉은 안전등이 깨졌다';element.appendChild(caption);
   if(kind==='develop'&&!this.game.interactionManager.isInspecting&&this.game.playerControls.controls.isLocked){const image=document.createElement('img');image.src='./assets/ghosts/shroud.png';image.alt='인화지 뒤편의 일그러진 그림자';element.appendChild(image);}
@@ -121,6 +125,10 @@ class ArchiveSpace{
     const view=this.game.inspectViewRenderer.viewContainer,bar=this.game.inspectViewRenderer.actionBar;view.replaceChildren();bar.replaceChildren();
     const text=document.createElement('p');text.textContent=this.open?'문이 열렸다. 좁은 계단을 내려가 지하 자료실로 가시오.':this.unlocked?'24번 서랍의 쇠빗장이 풀리며 자료실의 봉인이 열렸다. 아래로 이어지는 계단이 보인다.':'자료실 문은 봉인되어 있다. 식자실의 24번 서랍 암호를 먼저 풀어야 한다.';view.appendChild(text);
     if(!this.open){const b=document.createElement('button');b.className='inspect-action-btn';b.textContent='자료실 문 열기';b.disabled=!this.unlocked;b.onclick=()=>{this.open=true;this.game.soundManager.playMetalDoorOpen();this.game.interactionManager.closeInspect();};bar.appendChild(b);}
+   }
+   if(e.detail.type==='mobile_archive_hint'){
+    const view=this.game.inspectViewRenderer.viewContainer;view.replaceChildren();this.game.inspectViewRenderer.actionBar.replaceChildren();
+    const p=document.createElement('p');p.className='gp-hints';p.textContent='풀이: 중앙 책상 조사 → 먹지 얻기 → 한 번에 맞추기 → 날짜 1124 입력 → 스탬프 찍기. 열쇠를 얻으면 자료실 끝 暗室 표지의 검은 커튼을 조사하세요.';view.appendChild(p);
    }
    if(e.detail.type==='mobile_archive_records'){
     const view=this.game.inspectViewRenderer.viewContainer;this.game.inspectViewRenderer.actionBar.replaceChildren();

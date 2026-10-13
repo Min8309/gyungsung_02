@@ -6,3 +6,22 @@
 
 /* Shared green palette for original and expanded puzzle inspection screens. */
 .inspect-card{background:#0d2019;border-color:#43875d}.inspect-card button,.gm-expansion [data-next]{background:#143322;color:#ddf7e5;border:1px solid #3ca861}.inspect-card button:hover,.gm-expansion [data-next]:hover{background:#225b38}.inspect-card input{border-color:#3ca861}.inspect-card .inspect-title,.inspect-card .inspect-tag{color:#91ecaa}.gm-expansion{border-color:#43875d!important;background:#0c1d16!important;color:#d7eddf!important}.gm-expansion h2{color:#91ecaa}
+
+/* Keep the inspection heading and close button reachable on short desktop and touch screens. */
+#inspect-modal:has(.gm-expansion){padding:10px;box-sizing:border-box}
+#inspect-modal:has(.gm-expansion) .inspect-card{box-sizing:border-box;max-height:calc(100dvh - 20px);width:min(680px,100%);padding:16px;display:flex;flex-direction:column;overflow:hidden}
+#inspect-modal:has(.gm-expansion) .inspect-header,#inspect-modal:has(.gm-expansion) .inspect-footer{flex-shrink:0;margin-bottom:8px}
+#inspect-modal:has(.gm-expansion) #inspect-desc{display:none}
+#inspect-modal:has(.gm-expansion) #inspect-interactive-view{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px;margin-bottom:10px;width:100%;box-sizing:border-box;scrollbar-gutter:stable}
+.gm-expansion{width:100%;box-sizing:border-box;padding:12px!important;overflow-wrap:anywhere}
+.gm-expansion h2{font-size:20px;margin:10px 0}.gm-expansion p{margin:8px 0;line-height:1.6}
+.gm-expansion .gp-hints{padding:10px;margin:10px 0;font-size:14px}
+.gp-guide summary{cursor:pointer;color:#91ecaa;padding:8px 0}
+.gm-expansion [data-actions]{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+.gm-expansion [data-actions]>*{min-width:0;box-sizing:border-box}
+.gm-expansion [data-actions] button{white-space:normal;font:inherit;font-size:14px}
+.gp-date-label{grid-column:1/-1;display:grid;gap:6px;font-size:14px}
+.gp-date-label input{width:100%;box-sizing:border-box}
+.gp-ledger{box-sizing:border-box;width:100%;padding:12px;margin:auto}.gp-ledger p{font-size:14px}.gp-grid{padding:8px;font-size:16px}
+.gm-expansion [data-next],.gm-expansion [data-hint]{min-height:44px;padding:8px 12px;font:inherit;font-size:14px;margin:6px 0;white-space:normal}
+@media(max-width:480px){.gm-expansion [data-actions]{grid-template-columns:1fr}#inspect-modal:has(.gm-expansion) .inspect-card{padding:10px}.gp-artifact{margin:8px 0}}
