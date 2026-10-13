@@ -110,3 +110,5 @@ PC 전체 동선 검증: 위 브라우저 검증 명령에 `GAME_TEST_PLATFORM=d
 검증: `node --test tests/missing-person.test.cjs`, 정적 서버 실행 후 `GAME_TEST_URL=http://127.0.0.1:8000 node tests/missing-person-game.cjs`. 브라우저 검증은 PC·모바일의 자료실·현상·건조방 흐름, 오답·힌트·세 사진 완료·예고·창 닫기와 탐색 유지, 기존 철문 엔딩 진입 방지를 확인합니다. 관찰 위치만 소품 앞으로 옮기며 정답이나 완료 상태를 강제하지 않습니다.
 
 모바일 사진 퍼즐은 인물 이름 표기, 48px 이상 터치 버튼, 세로·가로 화면 배치와 터치 안내를 제공합니다. `node tests/missing-person-touch.cjs`로 390×844, 360×640, 844×390, 667×375 화면의 터치 선택·힌트·완료 버튼·스크롤을 확인합니다. `GAME_TEST_PLATFORM=mobile GAME_TEST_URL=http://127.0.0.1:8000 node tests/missing-person-game.cjs`는 실제 게임 흐름의 버튼을 터치로 검증합니다. 실제 iOS Safari·Android 기기의 음향·성능은 별도 확인이 필요합니다.
+
+사진 건조방에 처음 들어오면 초록 단서의 위치와 풀이 안내가 조사창으로 한 번 표시됩니다. 안내 확인 후 탐색으로 복귀하며 재입장에는 반복하지 않습니다. 사진사의 메모는 입구 쪽 왼쪽 벽의 첫 퀴즈 사진 옆에 붙어 있고 정방향으로 읽힙니다. 퀴즈 사진 프레임은 주변 사진과 같은 0.48×0.68 크기이며, 세로 인화지와 초록 집게를 사용합니다. 현재 임시 인물 이미지는 `darkroom-space.js`의 `missingPhotoTexture`에서 생성하며 이후 세 사진 교체 지점으로 사용할 수 있습니다.

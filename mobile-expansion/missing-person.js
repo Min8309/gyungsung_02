@@ -21,7 +21,7 @@ function render(space,index){
   const teaser=document.createElement('blockquote');teaser.textContent='“우리는 그를 사진 속에서 찾았다. 그런데 사진 밖의 발자국은… 네 사람의 것이었다.”\n다음 시즌 예고 — 새벽의 윤전기: 아직 인쇄되지 않은 실종자';panel.appendChild(teaser);
   const close=document.createElement('button');close.textContent='예고를 읽었습니다 · 창 닫고 계속 탐색';close.onclick=()=>{state.teaserSeen=true;game.interactionManager.closeInspect();};panel.appendChild(close);return;
  }
- if(index===undefined){const p=document.createElement('p');p.textContent='입구를 지나 왼쪽 벽의 초록 테두리 사진부터 조사하세요. 초록 집게에 ①·②·③ 번호가 적혀 있습니다.';panel.appendChild(p);return;}
+ if(index===undefined){const p=document.createElement('p');p.textContent='입구를 지나 왼쪽 벽의 초록 테두리 사진부터 조사하세요. 초록 집게에 ①·②·③ 번호가 적혀 있습니다.';panel.appendChild(p);const start=document.createElement('button');start.textContent='안내 확인 · 초록 집게 사진 찾기';start.onclick=()=>game.interactionManager.closeInspect();panel.appendChild(start);return;}
  const caption=document.createElement('p');caption.textContent=`사진 ${index+1} · ${['신문사 앞','야간 플랫폼','인쇄소 골목'][index]}`;panel.appendChild(caption);
  if(state.found.has(index)){caption.textContent+=' · 확인 완료 ✓';return;}
  const choices=document.createElement('div');choices.className='mp-portraits';panel.appendChild(choices);
