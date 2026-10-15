@@ -25,52 +25,54 @@ class Progress{
 function install(game){
  const state=new Progress(),archive=game.mobileArchive,dark=game.mobileDarkroom;game.historyGame={state,questions:QUESTIONS};
  const view=game.inspectViewRenderer.viewContainer,bar=game.inspectViewRenderer.actionBar;
+ let cabinet,exitRoom;
  function node(tag,text,parent){const e=document.createElement(tag);e.textContent=text;if(parent)parent.appendChild(e);return e;}
  function shell(title){view.replaceChildren();bar.replaceChildren();const host=node('section','',view);host.className='gm-expansion history-puzzle';node('h2',title,host);return host;}
- function goal(){const room=game.camera.position.x>=35?'photos':game.camera.position.x>=28?'darkroom':game.camera.position.x>=14?'archive':'main';const remaining=state.remaining(room);const text=remaining.length?`${ROOMS[room]} · 남은 ${remaining.length}개 · 다음: ${remaining[0].place} [${remaining[0].level}]`:room==='main'?'1층 완료 · 오른쪽 지하 자료실 문 →':room==='archive'?'자료실 완료 · 끝의 검은 커튼 →':room==='darkroom'?'암실 완료 · 뒤쪽 검은 커튼 →':'모든 기록을 복원했습니다.';const objective=document.getElementById('exploration-objective');if(objective) {if(objective.textContent!==text)objective.textContent=text;objective.hidden=false;}if(archive.notice.textContent!==text)archive.notice.textContent=text;archive.notice.hidden=room==='main';return text;}
+ function goal(){const room=game.camera.position.x>=35?'photos':game.camera.position.x>=28?'darkroom':game.camera.position.x>=14?'archive':'main';const remaining=state.remaining(room);const text=remaining.length?`${ROOMS[room]} · 남은 ${remaining.length}개 · 다음: ${remaining[0].place} [${remaining[0].level}]`:room==='main'?(exitRoom.found?'1층 완료 · 오른쪽 지하 자료실 문 →':'1층 완료 · 출구 방 테이블의 종이를 조사하세요'):room==='archive'?'자료실 완료 · 끝의 검은 커튼 →':room==='darkroom'?'암실 완료 · 뒤쪽 검은 커튼 →':'모든 기록을 복원했습니다.';const objective=document.getElementById('exploration-objective');if(objective) {if(objective.textContent!==text)objective.textContent=text;objective.hidden=false;}if(archive.notice.textContent!==text)archive.notice.textContent=text;archive.notice.hidden=room==='main';return text;}
  function finishRoom(room){
   if(!state.complete(room))return;
-  if(room==='main'){archive.unlocked=true;game.soundManager.playPuzzleSuccess();}
+  if(room==='main'){game.soundManager.playPuzzleSuccess();}
   if(room==='archive'){archive.solved=true;game.sharedInventory.addItem({id:'darkroom_iron_key',name:'암실 철문 열쇠',desc:'자료실의 출처·언어 기록을 복원해 얻은 열쇠.'});archive.playPuzzleEffect('editing');}
   if(room==='darkroom'){dark.developed=true;game.sharedInventory.addItem({id:'developed_press_photo',name:'복원된 손기정 보도사진',desc:'식민지 현실과 언론 탄압의 맥락을 확인한 기록.'});archive.playPuzzleEffect('develop');}
   goal();
  }
  function quiz(id){
   const q=QUESTIONS.find(q=>q.id===id);if(!q)return;
+  if(id==='cabinet'&&!cabinet.discovered){const host=shell('캐비닛의 역할표 찾기');node('p','1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍에 역할표가 있습니다. 서랍을 열고 안쪽 초록 기록을 조사하세요.',host);const open=node('button','캐비닛 세 번째 서랍 열기',host);open.onclick=()=>{if(!cabinet.drawers[2].opened)cabinet.open(2);game.interactionManager.closeInspect();};return;}
+  game.interactionManager.inspectTitleEl.textContent=q.place;
   game.interactionManager.inspectTagEl.textContent=ROOMS[q.room]+' · 난이도 '+q.level;
-  const host=shell(`${q.title} · 난이도 ${q.level}`);host.dataset.historyQuestion=id;
-  node('p','다른 기사를 읽지 않아도 아래 단서와 힌트로 풀 수 있습니다. 오답은 진행을 잃지 않고 다시 선택할 수 있습니다.',host);
-  const clue=node('aside','',host);clue.className='gp-hints';node('strong','발견한 기록 · 게임 안 단서',clue);node('p',q.clue,clue);node('small','자료: '+q.source,clue);
+  const host=shell('');host.querySelector('h2').remove();host.dataset.historyQuestion=id;
   node('h3',q.question,host);const feedback=node('p','',host);feedback.setAttribute('role','status');
-  if(state.solved.has(id)){feedback.textContent='✓ 기록 복원 완료 · '+q.explanation;}
+  if(state.solved.has(id)){feedback.textContent='✓ 정답 · '+q.explanation;const next=state.remaining(q.room)[0];const text=next?`다음 단계: ${next.place} [난이도 ${next.level}]을 조사하세요.`:q.room==='main'?'다음 단계: 1층 출구 문을 열고 방 안 테이블의 종이를 조사하세요.':q.room==='archive'?'다음 단계: 자료실 끝 검은 커튼을 열고 암실 인화 작업대로 가세요.':q.room==='darkroom'?'다음 단계: 뒤쪽 검은 커튼을 열고 사진방의 초록 집게 사진을 조사하세요.':'모든 기록을 복원했습니다.';const step=node('p',text,host);step.className='history-next-step';return;}
   else{
+   const explanation=node('p',q.clue,host);explanation.className='history-brief';
    const actions=node('div','',host);actions.className='history-answers';
    q.choices.forEach((choice,index)=>{const b=node('button',choice,actions);b.type='button';b.onclick=()=>{
     if(state.solved.has(id)||game.gameEnded)return;
-    if(!state.answer(id,index)){feedback.textContent='먹칠된 기록이 맞지 않습니다. 진행은 유지됩니다. 단서나 힌트를 확인하고 다시 선택하세요.';return;}
+    if(!state.answer(id,index)){feedback.textContent='다시 선택해 보세요. 힌트로 확인할 수 있습니다.';return;}
     finishRoom(q.room);
     if(q.room==='photos'){dark.missingPerson.choose(Number(id.slice(-1)),'record');if(state.complete('photos')){window.GyeongMissingPerson.render(dark,Number(id.slice(-1)));return;}}
     quiz(id);
    };});
   }
   let level=0;const hintText=node('p','',host);hintText.className='gp-hints';hintText.hidden=true;const hint=node('button','힌트 1 보기',host);hint.type='button';hint.onclick=()=>{hintText.hidden=false;hintText.textContent=q.hints[Math.min(level,2)];level=Math.min(level+1,3);hint.textContent=level<3?`힌트 ${level+1} 보기`:'마지막 힌트 다시 보기';};
-  node('p',goal(),host);
  }
  function list(room,title){const host=shell(title);node('p','이 방의 필수 퍼즐을 모두 해결하면 다음 방으로 가는 문이 열립니다. 주변 물건을 조사하거나 아래 기록을 선택하세요.',host);for(const q of QUESTIONS.filter(q=>q.room===room)){const b=node('button',`${state.solved.has(q.id)?'✓ ':''}${q.place} · 난이도 ${q.level}`,host);b.type='button';b.onclick=()=>quiz(q.id);}node('p',goal(),host);}
  function route(){
-  const host=shell('1층 출구 · 지하실로 이어지는 길');
-  node('p','출구라고 쓰인 방은 바깥으로 나가는 문이 아닙니다. 오래된 안내문은 오른쪽 벽의 지하 자료실 문과 내려가는 계단을 가리킵니다.',host);
-  node('p',state.complete('main')?'1층 기록을 모두 복원했습니다. 오른쪽 벽 지하 자료실 문을 열고 계단을 내려가세요.':'1층 퍼즐을 모두 풀어야 지하실 문이 열립니다. 아래에서 남은 기록과 힌트를 확인하세요.',host);
+  const host=shell(exitRoom.found?'1층 출구 · 지하실로 이어지는 길':'1층 출구');
+  node('p',!state.complete('main')?'1층 퍼즐을 모두 풀어야 출구 문이 열립니다.':exitRoom.found?'종이의 단서를 찾았습니다. 오른쪽 자료실 문을 열고 계단을 내려가세요.':'출구 문을 열고 방 안 테이블 위의 종이를 조사하세요.',host);
   const b=node('button','1층 퍼즐·힌트 확인',host);b.onclick=()=>list('main','1층 식자실 · 남은 기록');
-  if(state.complete('main')){const corridor=node('button','1층 출구 안내실 문 열기',host);corridor.onclick=()=>{game.room.openDoor();game.soundManager.playMetalDoorOpen();game.interactionManager.closeInspect();};const open=node('button','지하실로 통하는 문 열기',host);open.onclick=()=>{archive.open=true;game.soundManager.playMetalDoorOpen();game.interactionManager.closeInspect();};}
+  if(state.complete('main')){const corridor=node('button','1층 출구 안내실 문 열기',host);corridor.onclick=()=>{game.room.openDoor();game.soundManager.playMetalDoorOpen();game.interactionManager.closeInspect();};if(exitRoom.found){const open=node('button','지하실로 통하는 문 열기',host);open.onclick=()=>{archive.open=true;game.soundManager.playMetalDoorOpen();game.interactionManager.closeInspect();};}}
  }
  // Capture before legacy inspection listeners so old puzzles cannot replace the new tasks.
  const nativeRender=game.inspectViewRenderer.render.bind(game.inspectViewRenderer);
  const mapped={calendar:'calendar',clock:'calendar',mirror_plate:'calendar',drawer_24:'drawer',drawer_locked:'drawer',proof:'proof',newspaper:'proof',desk:'proof',galley_slot:'proof',print_roller:'proof',cursed_cube:'cabinet',glasses:'cabinet',apron:'cabinet',rack:'book',type_rack_label:'book',censor_poster:'poster',radio:'book',history_poster:'poster',history_cabinet:'cabinet',history_book:'book',history_archive_hint:'archive-language',mobile_archive_hint:'archive-language'};
- function handled(data){return Boolean(mapped[data.type]||['mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
+ function handled(data){return Boolean(mapped[data.type]||['history_exit_note','history_cabinet_drawer','mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
  game.inspectViewRenderer.render=data=>{if(!handled(data)){nativeRender(data);game.interactionManager.inspectTagEl.textContent+=' · 선택 장치 · 난이도 중';}};
  window.addEventListener('space-inspect',event=>{const data=event.detail;if(!handled(data))return;event.stopImmediatePropagation();
   if(mapped[data.type])quiz(mapped[data.type]);
+  else if(data.type==='history_exit_note'){exitRoom.found=true;archive.unlocked=state.complete('main');game.sharedInventory.addItem({id:'history_exit_note',name:'지하실 안내 쪽지',desc:'지하로 내려가시오'});const host=shell('');host.querySelector('h2').remove();node('p','지하로 내려가시오',host).className='history-exit-message';game.interactionManager.inspectTagEl.textContent='1층 출구 방';goal();}
+  else if(data.type==='history_cabinet_drawer'){cabinet.open(data.drawerIndex);game.interactionManager.closeInspect();}
   else if(data.clueId==='clue_exit_door'||data.type==='mobile_archive_door')route();
   else if(data.type==='mobile_archive_records')list('archive','資料室 · 봉인된 기록');
   else if(data.type==='mobile_darkroom_station')quiz('darkroom');
@@ -85,20 +87,32 @@ function install(game){
   }
  },{capture:true});
  game.beginScreamingRoomEnding=()=>game.interactionManager.triggerInspect({type:'history_exit',clueId:'clue_exit_door',name:'1층 출구 · 지하실 안내',description:'바깥이 아니라 지하로 이어지는 기록이다.'});
- let exitRoomGuideShown=false;
- const update=game.playerControls.update.bind(game.playerControls);game.playerControls.update=delta=>{update(delta);if(!game.gameEnded){archive.unlocked=state.complete('main');goal();if(game.camera.position.z<-16&&state.complete('main')&&!exitRoomGuideShown&&game.playerControls.controls.isLocked){exitRoomGuideShown=true;game.beginScreamingRoomEnding();}}};
+ const update=game.playerControls.update.bind(game.playerControls);game.playerControls.update=delta=>{update(delta);if(!game.gameEnded){archive.unlocked=state.complete('main')&&exitRoom.found;goal();}};
  // The corridor marked exit opens into an in-world direction sign, never the ending.
  const openDoor=game.room.openDoor.bind(game.room);game.room.openDoor=()=>state.complete('main')&&openDoor();
- game.room.updateExitSign=function(){if(this.historyExitDrawn)return;this.historyExitDrawn=true;const c=this.signCanvas.getContext('2d');c.fillStyle='#211910';c.fillRect(0,0,768,256);c.fillStyle='#d6c59e';c.textAlign='center';c.font='bold 82px serif';c.fillText('1층 출구',384,115);c.font='36px serif';c.fillText('지하실 안내 · 오른쪽 자료실 문 →',384,205);this.signTexture.needsUpdate=true;};
+ game.room.updateExitSign=function(){if(this.historyExitDrawn)return;this.historyExitDrawn=true;const c=this.signCanvas.getContext('2d');c.fillStyle='#211910';c.fillRect(0,0,768,256);c.fillStyle='#d6c59e';c.textAlign='center';c.font='bold 100px serif';c.fillText('1층 출구',384,168);this.signTexture.needsUpdate=true;};
  game.room.updateExitSign();
  function prop(id,text,x,y,z,w=.9,h=.3){const mesh=archive.sign(text,w,h,true);mesh.position.set(x,y,z);if(id==='cabinet')mesh.rotation.y=Math.PI;mesh.userData={isInteractable:true,clueId:'history_'+id,type:'history_'+id,name:text,description:'어둠 속에 남은 기록. 조사하면 단서·퀴즈·힌트를 확인할 수 있다.'};game.scene.add(mesh);game.furniture.interactables.push(mesh);}
  prop('poster','박람회의 그림자 · 중',-1.3,2.1,-3.86,1.1,.42);
- prop('cabinet','캐비닛 역할표 · 중',-3.6,1.45,4.62,1.1,.35);
- prop('book','복도의 책 · 상',1.2,.22,-6.2,.7,.25);
+ cabinet=window.GyeongCabinetProp.create(game,archive);game.historyGame.cabinet=cabinet;
+ exitRoom=window.GyeongExitRoom.create(game,archive);game.historyGame.exitRoom=exitRoom;
+ game.historyGame.hoverLabels.push({object:exitRoom.note,text:'테이블 위의 종이'});
+ // Worn hardcover game prop; its generated texture is not a historical book facsimile.
+ const T=game.sceneAPI,book=new T.Group();book.position.set(1,0,-6.2);book.rotation.y=-.28;
+ const bookData={isInteractable:true,clueId:'history_book',type:'history_book',name:'복도의 책 · 난이도 상',description:'바닥에 떨어진 책. 가까이 겨냥하면 기록을 읽을 수 있다.'};book.userData=bookData;game.scene.add(book);game.furniture.interactables.push(book);
+ function bookPart(geometry,material,y){const mesh=new T.Mesh(geometry,material);mesh.position.y=y;mesh.userData=bookData;book.add(mesh);return mesh;}
+ bookPart(new T.BoxGeometry(.62,.025,.86),new T.MeshStandardMaterial({color:0x302617,roughness:.9}),.018);
+ bookPart(new T.BoxGeometry(.57,.07,.8),new T.MeshStandardMaterial({color:0xb9aa87,roughness:1}),.06);
+ bookPart(new T.BoxGeometry(.62,.014,.86),new T.MeshStandardMaterial({color:0x302017,roughness:1}),.102);
+ const spine=bookPart(new T.BoxGeometry(.035,.11,.86),new T.MeshStandardMaterial({color:0x24170f,roughness:1}),.06);spine.position.x=-.3;
+ const canvas=document.createElement('canvas');canvas.width=600;canvas.height=840;const ctx=canvas.getContext('2d'),texture=new T.CanvasTexture(canvas);texture.colorSpace='srgb';
+ function cover(image){ctx.fillStyle='#302017';ctx.fillRect(0,0,600,840);if(image)ctx.drawImage(image,0,0,600,840);texture.needsUpdate=true;}
+ cover();const illustration=new Image();illustration.onload=()=>{cover(illustration);game.historyGame.bookCoverReady=true;};illustration.src='../mobile-expansion/assets/history/worn-hardcover.png';
+ const coverMesh=bookPart(new T.PlaneGeometry(.62,.86),new T.MeshStandardMaterial({map:texture,roughness:.95,side:2}),.111);coverMesh.rotation.x=-Math.PI/2;
+ for(const [w,d,x,z]of [[.67,.016,0,-.46],[.67,.016,0,.46],[.016,.92,-.335,0],[.016,.92,.335,0]]){const edge=new T.Mesh(new T.BoxGeometry(w,.008,d),new T.MeshBasicMaterial({color:0x39c85a}));edge.position.set(x,.12,z);edge.userData.isPuzzleMarker=true;edge.raycast=()=>{};book.add(edge);}
+ game.historyGame.book=book;game.historyGame.hoverLabels.push({object:book,text:'복도의 책 · 난이도 상'});
  prop('archive_hint','우리말 기록 · 중',18.7,-1.8,-5.95,1.1,.35);
  game.scene.traverse(object=>{const data=object.userData,q=QUESTIONS.find(q=>q.id===mapped[data.type]);if(q){data.name=q.place+' · 난이도 '+q.level;data.description='남겨진 기록을 조사하면 역사 단서와 재시도 가능한 퀴즈를 확인할 수 있다.';}});
- // A readable clue in the actual exit room points back to the existing stairs.
- const exitHint=archive.sign('지하실은 오른쪽 자료실 문 · 1층 기록부터',1.7,.4,true);exitHint.position.set(0,1.7,-17);exitHint.userData={isInteractable:true,clueId:'clue_exit_door',type:'history_exit',name:'1층 출구 안내문',description:'출구의 기록은 지하실로 이어진다.'};game.scene.add(exitHint);game.furniture.interactables.push(exitHint);
  const nativeUpdateTarget=game.explorationHUD.updateTarget.bind(game.explorationHUD);game.explorationHUD.updateTarget=()=>{game.explorationHUD.targetId=null;nativeUpdateTarget();};
  const notebookRender=game.notebookUI.render.bind(game.notebookUI);game.notebookUI.render=()=>{notebookRender();const right=document.querySelector('.notebook-page.right-page');if(!right)return;right.querySelectorAll('.puzzle-track-card,.notebook-status-summary,#notebook-puzzles-empty').forEach(e=>e.hidden=true);right.querySelector('.page-title').textContent='복원 기록 (HISTORY)';const clues=document.getElementById('notebook-clues-list');clues.replaceChildren();for(const q of QUESTIONS.filter(q=>state.attempts.has(q.id))){node('h4',q.place,clues);node('p',q.clue,clues);}if(!state.attempts.size)node('p','물건을 조사하면 단서가 문제 안에 나타납니다. 한 번 시도한 기록은 여기에 모입니다.',clues);let records=document.getElementById('history-notebook');if(!records){records=node('section','',right);records.id='history-notebook';}records.replaceChildren();for(const room of Object.keys(ROOMS)){node('h4',ROOMS[room],records);for(const q of QUESTIONS.filter(q=>q.room===room))node('p',`${state.solved.has(q.id)?'✓':'未'} ${q.place} · 난이도 ${q.level}`,records);}};
  game.notebookUI.render();

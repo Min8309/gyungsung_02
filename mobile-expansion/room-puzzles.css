@@ -32,3 +32,7 @@
 .history-puzzle p{font-size:14px}.history-puzzle .gp-hints{font-size:14px}.history-puzzle [data-history-question]{max-width:100%}
 #inspect-modal:has(.gm-expansion){position:fixed;inset:0;width:100vw;height:100dvh;overflow:hidden;transition:opacity .2s,visibility .2s}
 #inspect-modal:has(.gm-expansion) .inspect-card{transform:none;transition:none;margin:0}
+.history-puzzle .history-brief{font-size:14px;line-height:1.6;color:#cbd8c9;border-left:2px solid #43875d77;padding:6px 10px}.history-puzzle .history-next-step{border-top:1px solid #43875d77;margin-top:14px;padding-top:12px;color:#bce8c8;font-weight:bold}.history-puzzle h3{margin-top:0}.history-puzzle [role=status]:empty{display:none}
+#history-clue-label{position:fixed;z-index:24;transform:translateX(-50%);padding:6px 10px;background:#10251ed9;border:1px solid #43875d88;border-radius:4px;color:#d5edda;font:13px serif;pointer-events:none;white-space:nowrap}#history-clue-label[hidden]{display:none}
+.history-hover-prompt{visibility:hidden!important}
+.history-exit-message{font-size:clamp(22px,4vw,32px)!important;letter-spacing:.08em;text-align:center;padding:28px 8px;color:#e0d4b0}
