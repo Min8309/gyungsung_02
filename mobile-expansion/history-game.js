@@ -57,7 +57,7 @@ function install(game){
   }
   let level=0;const hintText=node('p','',host);hintText.className='gp-hints';hintText.hidden=true;const hint=node('button','힌트 1 보기',host);hint.type='button';hint.onclick=()=>{hintText.hidden=false;hintText.textContent=q.hints[Math.min(level,2)];level=Math.min(level+1,3);hint.textContent=level<3?`힌트 ${level+1} 보기`:'마지막 힌트 다시 보기';};
  }
- const locations={calendar:'1층 식자실 벽의 달력을 조사하세요.',drawer:'1층 테이블 아래 24번 서랍을 조사하세요.',proof:'1층 테이블 위 교정지를 조사하세요.',poster:'1층 벽의 박람회 포스터를 조사하세요.',cabinet:'1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍을 열고 안쪽 역할표를 조사하세요.',book:'1층 복도 바닥의 낡은 하드커버 책을 조사하세요.','archive-source':'지하 자료실 중앙 책상의 기록을 조사하세요.','archive-language':'지하 자료실 선반의 초록색 우리말 기록을 조사하세요.',darkroom:'암실 인화 작업대를 조사하세요.','photo-0':'사진 건조방의 초록 집게 사진 ①을 조사하세요.','photo-1':'사진 건조방의 초록 집게 사진 ②를 조사하세요.','photo-2':'사진 건조방의 초록 집게 사진 ③을 조사하세요.'};
+ const locations={calendar:'1층 식자실 벽의 달력을 조사하세요.',drawer:'1층 테이블 아래 24번 서랍을 조사하세요.',proof:'1층 테이블 위 교정지를 조사하세요.',poster:'1층 뒤쪽 철제 캐비닛 옆 벽에 붙은 박람회 포스터를 조사하세요.',cabinet:'1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍을 열고 안쪽 역할표를 조사하세요.',book:'1층 복도 바닥의 낡은 하드커버 책을 조사하세요.','archive-source':'지하 자료실 중앙 책상의 기록을 조사하세요.','archive-language':'지하 자료실 선반의 초록색 우리말 기록을 조사하세요.',darkroom:'암실 인화 작업대를 조사하세요.','photo-0':'사진 건조방의 초록 집게 사진 ①을 조사하세요.','photo-1':'사진 건조방의 초록 집게 사진 ②를 조사하세요.','photo-2':'사진 건조방의 초록 집게 사진 ③을 조사하세요.'};
  function guidance(q,host){
   const item=node('details','',host);item.dataset.historyGuide=q.id;
   node('summary',`${q.place} · 난이도 ${q.level}`,item);
@@ -111,7 +111,15 @@ function install(game){
  game.room.updateExitSign=function(){if(this.historyExitDrawn)return;this.historyExitDrawn=true;const c=this.signCanvas.getContext('2d');c.fillStyle='#211910';c.fillRect(0,0,768,256);c.fillStyle='#d6c59e';c.textAlign='center';c.font='bold 100px serif';c.fillText('1층 출구',384,168);this.signTexture.needsUpdate=true;};
  game.room.updateExitSign();
  function prop(id,text,x,y,z,w=.9,h=.3){const mesh=archive.sign(text,w,h,true);mesh.position.set(x,y,z);if(id==='cabinet')mesh.rotation.y=Math.PI;mesh.userData={isInteractable:true,clueId:'history_'+id,type:'history_'+id,name:text,description:'어둠 속에 남은 기록. 조사하면 단서·퀴즈·힌트를 확인할 수 있다.'};game.scene.add(mesh);game.furniture.interactables.push(mesh);}
- prop('poster','박람회의 그림자 · 중',-1.3,2.1,-3.86,1.1,.42);
+ // A paper poster mounted flush against the back wall, beside the filing cabinet.
+ const PT=game.sceneAPI,posterWidth=.98,posterHeight=posterWidth*1400/1118;
+ const poster=new PT.Mesh(new PT.PlaneGeometry(posterWidth,posterHeight),new PT.MeshStandardMaterial({color:0xc8b99d,roughness:1}));
+ poster.position.set(-2.1,1.95,5.965);poster.rotation.y=Math.PI;
+ poster.name='history-wall-poster';poster.userData={isInteractable:true,clueId:'history_poster',type:'history_poster',name:'벽에 붙은 조선박람회 포스터 · 난이도 중',description:'캐비닛 옆 벽에 붙어 있는 빛바랜 박람회 포스터.'};
+ game.scene.add(poster);game.furniture.interactables.push(poster);game.historyGame.poster=poster;
+ const posterImage=new Image();posterImage.onload=()=>{const texture=new PT.CanvasTexture(posterImage);texture.colorSpace='srgb';poster.material.map=texture;poster.material.color.setHex(0xffffff);poster.material.needsUpdate=true;game.historyGame.posterReady=true;};posterImage.src='../mobile-expansion/assets/history/aged-expo-poster.png';
+ for(const [w,h,x,y]of [[posterWidth+.025,.009,0,-posterHeight/2-.012],[posterWidth+.025,.009,0,posterHeight/2+.012],[.009,posterHeight+.025,-posterWidth/2-.012,0],[.009,posterHeight+.025,posterWidth/2+.012,0]]){const edge=new PT.Mesh(new PT.PlaneGeometry(w,h),new PT.MeshBasicMaterial({color:0x39c85a}));edge.position.set(x,y,.002);edge.userData={isPuzzleMarker:true,clueId:'history_poster'};edge.raycast=()=>{};poster.add(edge);}
+ game.renderer.domElement.addEventListener('click',event=>{const interaction=game.interactionManager;if(event.button===0&&game.playerControls.controls.isLocked&&!game.gameEnded&&!interaction.isInspecting&&interaction.currentInteractable?.type==='history_poster')interaction.triggerInspect(interaction.currentInteractable);});
  cabinet=window.GyeongCabinetProp.create(game,archive);game.historyGame.cabinet=cabinet;
  exitRoom=window.GyeongExitRoom.create(game,archive);game.historyGame.exitRoom=exitRoom;
  game.historyGame.hoverLabels.push({object:exitRoom.note,text:'테이블 위의 종이'});

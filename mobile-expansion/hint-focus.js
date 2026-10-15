@@ -19,7 +19,7 @@
   game.interactionManager.promptEl.classList.toggle('history-hover-prompt',!!hovered);
   if(hovered){hovered.object.getWorldPosition(point);point.project(game.camera);label.textContent=(document.documentElement.classList.contains('touch-game')?'':'[E] ')+(hovered.getText?hovered.getText():hovered.text);label.style.left=Math.max(100,Math.min(innerWidth-100,(point.x+1)*innerWidth/2))+'px';label.style.top=Math.max(12,Math.min(innerHeight-48,(1-point.y)*innerHeight/2-48))+'px';}
   for(const item of game.hintSystem.clueRegistry){const active=exploring&&related(item.object);for(const m of item.meshList)if(m.emissive){m.emissive.setHex(0x39c85a);m.emissiveIntensity=active?1.25:.035;}}
-  for(const target of targets){target.object.getWorldPosition(point);const active=exploring&&(related(target.object)||(hit&&point.distanceTo(hit.point)<.55));const opacity=active?.92:.22;for(const m of target.materials)m.opacity+=(opacity-m.opacity)*Math.min(1,Math.max(0,delta)*12);}
+  for(const target of targets){target.object.getWorldPosition(point);const active=exploring&&(related(target.object)||(target.object.userData.isPuzzleMarker&&related(target.object.parent))||(hit&&point.distanceTo(hit.point)<.55));const opacity=active?.92:.22;for(const m of target.materials)m.opacity+=(opacity-m.opacity)*Math.min(1,Math.max(0,delta)*12);}
  };
  game.hintFocus={targets};
 });})();

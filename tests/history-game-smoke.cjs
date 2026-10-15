@@ -24,7 +24,7 @@ const {QUESTIONS}=require('../mobile-expansion/history-game.js');
    await click(page.getByRole('button',{name:q.choices[q.answer],exact:true}));
    if(q.id!=='photo-2'){await page.waitForFunction(id=>game.historyGame.state.solved.has(id),q.id);assert.match(await page.locator('.history-next-step').innerText(),/다음 단계:/);assert.equal(await page.getByRole('button',{name:'힌트 1 보기',exact:true}).count(),0);await close();}
   }
-  await page.evaluate(()=>{game.camera.position.set(-1.3,1.6,-2);game.camera.lookAt(-1.3,2.1,-3.86);});await page.waitForFunction(()=>game.interactionManager.currentInteractable?.clueId==='history_poster');
+  await page.evaluate(()=>{game.camera.position.set(-2.1,1.6,3.8);game.camera.lookAt(-2.1,1.95,5.965);});await page.waitForFunction(()=>game.interactionManager.currentInteractable?.clueId==='history_poster');
   await page.waitForFunction(()=>game.hintFocus.targets.find(t=>t.object.userData.clueId==='history_poster').materials[0].opacity>.7);
   if(mobile){await page.locator('.mobile-pickup').tap();if(await page.locator('#mobile-nearby-clues').isVisible())await page.locator('[data-clue-id="history_poster"]').tap();}else await page.keyboard.press('e');await page.locator('[data-history-question="poster"]').waitFor();await close();
   await page.evaluate(()=>game.camera.lookAt(5,1.6,0));await page.waitForFunction(()=>game.hintFocus.targets.find(t=>t.object.userData.clueId==='history_poster').materials[0].opacity<.3);
