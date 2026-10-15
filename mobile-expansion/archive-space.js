@@ -63,16 +63,21 @@ class ArchiveSpace{
   // One instanced draw for the many book/document piles.
   const books=new this.T.InstancedMesh(new this.T.BoxGeometry(1,1,1),paper,240);const transform=new this.T.Object3D();let bookIndex=0;
   for(const z of[-5.68,.28])for(let bay=0;bay<5;bay++){const x=15.35+bay*2.5;this.box(1.9,2.4,.12,x,f+1.2,z,wood);for(const side of[-.94,.94])this.box(.08,2.4,.8,x+side,f+1.2,z,iron,true);for(let shelf=0;shelf<4;shelf++){const y=f+.25+shelf*.56;this.box(1.95,.07,.85,x,y,z,wood,true);for(let b=0;b<6;b++){transform.position.set(x-.76+b*.29,y+.08+(b%2)*.04,z);transform.scale.set(.23,.11+(b%3)*.035,.45+(b%2)*.15);transform.rotation.set(0,(b%3-1)*.12,0);transform.updateMatrix();books.setMatrixAt(bookIndex++,transform.matrix);}}}
-  this.group.add(books);
+  this.group.add(books);this.paperTargets=[];
+  // Replace two actual shelf stacks with individually selectable paper bundles.
+  for(const [index,x,y,z]of [[40,18.25,-2.15,-5.68],[200,22.67,-2.71,.28]]){
+   transform.scale.set(0,0,0);transform.updateMatrix();books.setMatrixAt(index,transform.matrix);
+   const target=new this.T.Group();target.position.set(x,y,z);target.userData={isInteractable:true,type:'history_archive_hint',clueId:'history_archive_papers_'+this.paperTargets.length,name:'선반 위 서류 더미 · 난이도 중',description:'우리말 기록이 쌓인 흰 서류 더미. 직접 조사하면 퀴즈가 열린다.'};this.group.add(target);
+   const paperMat=new this.T.MeshStandardMaterial({map:this.texture('paper'),color:0xcfcab6,roughness:1});for(let layer=0;layer<4;layer++)this.box(.24,.032,.46,(layer%2)*.006,-.052+layer*.035,0,paperMat,false,target);
+   const accent=new this.T.MeshBasicMaterial({color:0x39c85a});for(const [w,d,dx,dz]of [[.3,.009,0,-.26],[.3,.009,0,.26],[.009,.52,-.15,0],[.009,.52,.15,0]]){const edge=this.box(w,.008,d,dx,.09,dz,accent,false,target);edge.userData.isPuzzleMarker=true;edge.raycast=()=>{};}
+   this.paperTargets.push(target);this.game.furniture.interactables.push(target);
+  }
+  books.instanceMatrix.needsUpdate=true;
   for(let i=0;i<18;i++){const x=15.3+(i%6)*2.15,z=i<9?-4.95:-.55;const box=this.box(.65,.35,.5,x,f+.18+(i%3)*.32,z,wood,true);box.rotation.y=(i%3-1)*.2;}
   for(let i=0;i<22;i++){const page=new this.T.Mesh(new this.T.PlaneGeometry(.3+(i%3)*.06,.42),paper);page.rotation.set(-Math.PI/2,0,i*.9);page.position.set(14.5+(i%9)*1.35,f+.012,-4.3+(i%4)*1.05);this.group.add(page);}
   const table=this.box(2.1,.14,1.1,22,f+.92,-2.7,wood,true);for(const dx of[-.9,.9])for(const dz of[-.42,.42])this.box(.09,.92,.09,22+dx,f+.46,-2.7+dz,iron,true);
   const dossier=this.box(.62,.06,.48,22,f+1.03,-2.7,paper);dossier.userData={isInteractable:true,clueId:'mobile_archive_records',type:'mobile_archive_records',name:'지하 편집실 검열문 대조 작업대',description:'붉은 압수 도장이 찍힌 검열 기사 대장과 회전식 날짜 스탬프. 서랍 틈의 천공 먹지를 맞춰야 한다.'};
-  this.editingData=dossier.userData;this.markPuzzle(22,f+1.065,-2.7,.7,.55);const label=this.sign('檢閱 · 퍼즐',.6,.16,true);label.rotation.x=-Math.PI/2;label.position.set(22,f+1.067,-2.7);label.userData=dossier.userData;this.group.add(label);
-  for(const [x,z,text] of [[20,-5.15,'발행일 11월 24일'],[22.6,-2.7,'날짜 스탬프 1124']]){
-   const note=this.sign(text,1.4,.35,true);note.position.set(x,f+1.65,z);
-   note.userData={isInteractable:true,type:'mobile_archive_hint',clueId:'archive_date_note_'+x,name:'편집자의 초록 날짜 메모',description:'검열 기사 발행일은 11월 24일. 날짜 스탬프에는 월 두 자리 11과 일 두 자리 24를 이어 1124를 넣으세요. 중앙 책상에서 먹지를 얻고 한 번에 맞춘 뒤 스탬프를 찍으면 암실 열쇠가 나옵니다.'};this.group.add(note);
-  }
+  this.editingData=dossier.userData;this.markPuzzle(22,f+1.065,-2.7,.7,.55);
   const exit=this.sign('植字室 ←',1.1,.28);exit.rotation.y=Math.PI/2;exit.position.set(14.13,f+2.95,-2.7);this.group.add(exit);
   this.light(16.5,f+3.15,-2.7,16);this.light(21.2,f+3.4,-2.7,22);this.light(25.8,f+3.15,-2.7,14);
   this.rubble=new this.T.InstancedMesh(new this.T.BoxGeometry(1,1,1),dark,42);for(let i=0;i<42;i++){transform.position.set(14.8+(i%12)*1.04,f+.03,i%2?-.9:-4.5);transform.scale.set(.04+(i%4)*.035,.035,.07+(i%3)*.025);transform.rotation.set(i,.5*i,i*.7);transform.updateMatrix();this.rubble.setMatrixAt(i,transform.matrix);}this.group.add(this.rubble);

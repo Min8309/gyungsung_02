@@ -1,0 +1,8 @@
+// Exercise the hidden false bottom and pickup through the actual world targets.
+module.exports=async function acquireKey(page,mobile){
+ const click=loc=>loc[mobile?'tap':'click']();console.log('hidden key discovery: '+(mobile?'mobile':'desktop'));
+ async function use(type){await page.waitForFunction(type=>game.interactionManager.currentInteractable?.type===type,type);if(mobile){await page.locator('.mobile-pickup').tap();if(await page.locator('#mobile-nearby-clues').isVisible()){const id=await page.evaluate(()=>game.interactionManager.currentInteractable?.clueId);await page.locator(`[data-clue-id="${id}"]`).tap();}}else await page.keyboard.press('e');}
+ await page.evaluate(()=>{game.camera.position.set(-3.6,1.63,3.3);game.camera.lookAt(-3.6,.28,4.66);});await use('history_cabinet_drawer');console.log('bottom drawer opened');await page.waitForFunction(()=>game.historyGame.cabinet.drawers[0].progress>.95);
+ await page.evaluate(()=>game.camera.lookAt(game.historyGame.cabinet.secretPanel.getWorldPosition(new game.sceneAPI.Vector3()).add(new game.sceneAPI.Vector3(.29,0,0))));await use('history_key_cache');console.log('false bottom found');await click(page.getByRole('button',{name:'긁힌 바닥판 밀어 올리기',exact:true}));await page.waitForFunction(()=>game.historyGame.cabinet.secretProgress>.95);
+ await page.evaluate(()=>{game.camera.position.set(-3.6,1.63,3.8);game.camera.lookAt(game.historyGame.cursedKey.getWorldPosition(new game.sceneAPI.Vector3()));});await use('cursed_key');console.log('hidden key reached');await click(page.getByRole('button',{name:'머리카락 엉킨 열쇠 챙기기',exact:true}));await click(page.locator('#inspect-close'));await page.locator('#inspect-modal').waitFor({state:'hidden'});
+};

@@ -9,25 +9,30 @@
  const texture=new T.CanvasTexture(canvas),metal=new T.MeshStandardMaterial({map:texture,roughness:.85,metalness:.45}),handle=new T.MeshStandardMaterial({color:0x24291f,roughness:.7,metalness:.65}),paper=new T.MeshStandardMaterial({color:0xb1a184,roughness:1});
  function box(w,h,d,x,y,z,mat,parent=group){const mesh=new T.Mesh(new T.BoxGeometry(w,h,d),mat);mesh.position.set(x,y,z);parent.add(mesh);return mesh;}
  box(.93,2.04,.035,0,1.02,.34,metal);for(const x of[-.45,.45])box(.035,2.04,.7,x,1.02,0,metal);for(const y of[.02,2.02])box(.93,.035,.7,0,y,0,metal);
- const drawers=[];let note;
+ const drawers=[];let note,secretPanel;
  for(let index=0;index<4;index++){
   const drawer=new T.Group();drawer.position.y=.28+index*.46;group.add(drawer);const data={isInteractable:true,type:'history_cabinet_drawer',clueId:'history_cabinet_drawer_'+index,drawerIndex:index,name:`캐비닛 ${index+1}번 서랍`,description:'낡은 서랍을 열어 안쪽 기록을 확인하세요.'};drawer.userData=data;
   box(.81,.4,.03,0,0,-.34,metal,drawer).userData=data;box(.78,.018,.59,0,-.18,-.02,metal,drawer);
   for(const x of[-.39,.39])box(.018,.3,.59,x,-.035,-.02,metal,drawer);box(.78,.3,.02,0,-.035,.27,metal,drawer);
   box(.23,.085,.014,0,.095,-.365,paper,drawer).userData=data;box(.21,.024,.035,0,-.025,-.405,handle,drawer).userData=data;
   for(const x of[-.1,.1])box(.022,.055,.06,x,-.015,-.38,handle,drawer).userData=data;
-  box(.59,.03,.36,0,-.14,0,paper,drawer);
+  if(index!==0)box(.59,.03,.36,0,-.14,0,paper,drawer);
+  else{secretPanel=new T.Group();secretPanel.position.set(-.29,-.12,-.05);secretPanel.userData={isInteractable:true,type:'history_key_cache',clueId:'history_key_cache',name:'긁힌 서랍 바닥판',description:'바닥 가장자리에 손톱으로 긁은 듯한 홈이 있다.'};const panel=box(.58,.018,.36,.29,0,0,metal,secretPanel);box(.09,.006,.012,.45,.012,-.12,handle,secretPanel);drawer.add(secretPanel);secretPanel.visible=false;}
   drawers.push({group:drawer,progress:0,opened:false,index});
   if(index===2){const sign=archive.sign('',.67,.3,true),card=document.createElement('canvas');card.width=512;card.height=256;const ink=card.getContext('2d');ink.fillStyle='#b9ac85';ink.fillRect(0,0,512,256);ink.strokeStyle='#39c85a';ink.lineWidth=6;ink.strokeRect(10,10,492,236);ink.fillStyle='#203b27';ink.textAlign='center';ink.font='bold 36px serif';ink.fillText('이길용 — 기자',256,105);ink.fillText('이상범 — 화가',256,175);sign.material.map.dispose();sign.material.map=new T.CanvasTexture(card);sign.rotation.x=-Math.PI/2;sign.position.set(0,-.115,-.08);drawer.add(sign);sign.visible=false;note=sign;}
  }
- const cabinet={group,drawers,note,discovered:false,open(index){const d=drawers[index];if(!d)return;d.opened=!d.opened;game.soundManager.playDrawerUnlock();}};
+ const cabinet={group,drawers,note,secretPanel,secretRevealed:false,secretProgress:0,discovered:false,revealKey(){if(drawers[0].progress<.95)return false;this.secretRevealed=true;game.soundManager.playDrawerUnlock();return true;},open(index){const d=drawers[index];if(!d)return;d.opened=!d.opened;game.soundManager.playDrawerUnlock();}};
+ const key=game.historyGame.cursedKey;if(key){drawers[0].group.add(key);key.position.set(0,-.155,-.07);key.traverse(o=>o.visible=false);}
+ game.furniture.interactables.push(secretPanel);
  const update=game.playerControls.update.bind(game.playerControls);game.playerControls.update=delta=>{
   update(delta);for(const d of drawers){const target=d.opened?1:0;d.progress+=Math.sign(target-d.progress)*Math.min(Math.abs(target-d.progress),Math.max(0,delta)*1.8);d.group.position.z=-.5*(d.progress*d.progress*(3-2*d.progress));}
+  const bottomOpen=drawers[0].progress>.95;secretPanel.visible=bottomOpen;cabinet.secretProgress+=Math.sign((cabinet.secretRevealed?1:0)-cabinet.secretProgress)*Math.min(Math.abs((cabinet.secretRevealed?1:0)-cabinet.secretProgress),Math.max(0,delta)*1.4);secretPanel.rotation.z=cabinet.secretProgress*1.12;
+  if(key){const available=bottomOpen&&cabinet.secretRevealed&&!game.sharedInventory.hasItem('rusty_key')&&!game.historyGame.exitRoom?.keyPlaced;key.traverse(o=>o.visible=available);}
   const visible=drawers[2].progress>.95;note.visible=visible;
   if(visible&&!cabinet.discovered){cabinet.discovered=true;note.userData={isInteractable:true,clueId:'history_cabinet',type:'history_cabinet',name:'서랍 안의 역할표 · 난이도 중',description:'이길용은 기자, 이상범은 화가. 발견한 역할표를 읽어 퀴즈를 해결하세요.'};game.sharedInventory.addItem({id:'history_role_card',name:'캐비닛의 역할표',desc:'이길용—기자 / 이상범—화가. 캐비닛 세 번째 서랍에서 발견한 기록.'});}
  };
  game.furniture.interactables.push(...drawers.map(d=>d.group),note);
  game.historyGame.hoverLabels=[...(game.historyGame.hoverLabels||[]),...drawers.map(d=>({object:d.group,getText:()=>`캐비닛 ${d.index+1}번 서랍 · ${d.opened?'닫기':'열기'}`}))];
- game.historyGame.hoverLabels.unshift({object:note,text:'발견한 역할표 · 난이도 중'});
+ game.historyGame.hoverLabels.unshift({object:note,text:'발견한 역할표 · 난이도 중'},{object:secretPanel,text:'긁힌 서랍 바닥판 · 조사'},...(key?[{object:key,text:'숨겨진 머리카락 엉킨 열쇠 · 획득'}]:[]));
  return cabinet;
 }};})(window);

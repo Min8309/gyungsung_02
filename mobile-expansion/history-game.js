@@ -6,11 +6,12 @@ const QUESTIONS=[
  {id:'clock',kind:'clock',room:'main',place:'멈춘 괘종시계',level:'중',title:'자정에 돌아오는 식자공',initial:3,solution:23*60+47,clue:'시계 안쪽의 쪽지: “기록은 자정을 넘긴 00시 03분. 그가 마지막으로 문을 두드린 것은 이 기록보다 16분 전이다. 바늘을 그 시각으로 되돌려라. 자정을 다시 울리면… 이번에는 네 이름이 지워진다.”',question:'문밖의 발소리가 멎도록, 마지막 두드림의 시각을 맞추세요.',hints:['00시 03분에서 앞으로 가지 말고 16분을 거슬러 올라가세요.','먼저 3분을 빼면 00시 00분입니다. 거기서 13분을 더 되돌리세요.','자정 이전인 23시 47분에 맞추고 봉인을 확인하세요.'],explanation:'00시 03분에서 16분을 되돌리면 전날 23시 47분입니다. 초침이 멈추고 문밖의 발소리가 사라졌습니다.',source:'창작 공포 퍼즐 · 역사적 사건이나 실제 인물의 기록이 아님'},
  {id:'drawer',room:'main',place:'24번 서랍',level:'하',title:'서랍 속 세 장의 종이',clue:'한 장은 당시 신문 지면, 한 장은 현대어 요약, 한 장은 편집국이 새로 쓴 재현 대사이다. 재현 대사는 실제 발언으로 확인된 기록이 아니다.',question:'편집국이 새로 만든 대사에 붙일 표시는?',choices:['당시 기자의 실제 발언','창작 재구성','법원에서 확정된 사실'],answer:1,hints:['누가 언제 만든 자료인지 보세요.','새로 만든 문장과 당시 기록은 다릅니다.','실제 발언이 확인되지 않은 새 대사는 창작 재구성입니다.'],explanation:'원문·요약·창작을 구분해야 합니다. 당시 신문도 오류와 편향을 검토해야 합니다.',source:'경성야록 자료 유형 안내'},
  {id:'proof',room:'main',place:'테이블의 교정지',level:'중',title:'먹칠된 이름',clue:'현진건은 『운수 좋은 날』을 쓴 소설가이며 손기정 일장기 말소사건 당시 동아일보 사회부장이었다. 기사별 집필자는 서명이나 별도 자료로 확인한다.',question:'이 자료로 확인할 수 있는 현진건의 역할은?',choices:['사진 수정 화가만을 맡았다.','백백교의 교주였다.','소설가이자 신문사 사회부장이었다.'],answer:2,hints:['교정지의 작품명과 직책을 읽으세요.','글을 쓰는 역할과 신문사 직책을 함께 고르세요.','소설가 + 사회부장입니다.'],explanation:'작가와 기자의 활동은 연결될 수 있지만 특정 기사의 작성자까지 자동으로 증명하지는 않습니다.',source:'경성야록 인물면 · 현진건'},
+ {id:'typesetting',kind:'typesetting',room:'main',place:'테이블의 활자판',level:'중',title:'지워진 지면을 조판하라',clue:'복원 기록: 1936년 손기정 우승 사진의 일장기를 지운 보도는 언론 탄압으로 이어졌다. 사건 기록 속 이길용은 기자, 이상범은 화가이다.',question:'신문의 네 빈칸을 알맞은 글자 큐브로 채우세요.',letters:['일','자','가','탄','왕','금','정','신'],solution:['일','자','가','탄'],article:['1936년 손기정의 우승 사진에서 ','장기가 지워졌다. 기록 속 이길용의 직업은 기',', 이상범은 화','였다. 이 보도는 식민지 언론에 대한 ','압으로 이어졌다.'],hints:['일장기·기자·화가·탄압에서 빠진 글자를 찾으세요.','이길용은 기자, 이상범은 화가입니다. 마지막 단어는 언론 탄압입니다.','왼쪽부터 일 → 자 → 가 → 탄 순서로 채우세요.'],explanation:'일장기·기자·화가·탄압을 복원했습니다. 신문 속 인물의 역할과 식민지 언론 탄압의 맥락을 함께 읽습니다.',source:'경성야록 문화면 · 손기정 사건을 바탕으로 재구성한 게임용 신문(원문 아님)'},
  {id:'poster',room:'main',place:'벽의 포스터',level:'중',title:'빛나는 박람회의 그림자',clue:'1929년 조선박람회는 총독부가 통치 성과를 홍보한 행사였다. 화려한 광고와 함께 경복궁의 변화·관람 동원 자료를 비교해야 한다.',question:'포스터와 다른 기록을 함께 읽는 이유는?',choices:['홍보가 강조한 것과 생략한 맥락을 비교하려고','그림은 언제나 거짓이므로','모든 기록이 같은 목적을 가졌으므로'],answer:0,hints:['포스터를 만든 주체와 목적에 주목하세요.','홍보 자료에 모든 사정이 담길까요?','강조점과 생략된 맥락을 비교합니다.'],explanation:'자료의 제작 목적을 확인하고 다른 자료와 대조하면 선전의 성격을 읽을 수 있습니다.',source:'경성야록 부록 · 1929 조선박람회'},
  {id:'cabinet',room:'main',place:'뒤의 캐비닛',level:'중',title:'지워진 역할표',clue:'손기정 일장기 말소사건에서 이길용은 기자, 이상범은 사진 수정에 관여한 화가로 소개된다.',question:'인물의 역할을 올바르게 연결한 것은?',choices:['이길용—화가 / 이상범—선수','이길용—기자 / 이상범—화가','두 사람 모두 마라톤 선수'],answer:1,hints:['캐비닛의 역할표에서 직업을 확인하세요.','기사와 사진은 서로 다른 사람이 담당할 수 있습니다.','이길용은 기자, 이상범은 화가입니다.'],explanation:'사건에 관여한 사람의 역할을 구분해야 보도 과정을 이해할 수 있습니다.',source:'경성야록 문화면 · 손기정 사건'},
  {id:'book',room:'main',place:'복도에 떨어진 책',level:'상',title:'기사와 소설 사이',clue:'박태원의 『우맹』은 백백교 사건을 소재로 한 소설이다. 소설의 대사와 장면을 모두 실제 발언·사건으로 확인할 수는 없다.',question:'이 자료만으로 판단할 수 있는 내용은?',choices:['소설의 모든 대사가 실제 발언이다.','박태원이 최초 사건 기사를 썼다.','실제 사건이 문학의 소재가 되었다.'],answer:2,hints:['소재가 되었다는 말의 범위를 생각하세요.','소설 집필과 최초 뉴스 보도는 다른 일입니다.','확인되는 것은 사건과 작품의 소재 관계입니다.'],explanation:'문학적 재구성과 뉴스 보도는 구분합니다. 최초 보도 기자는 별도 원문 확인이 필요합니다.',source:'경성야록 문학관 · 박태원 『우맹』'},
  {id:'archive-source',room:'archive',place:'자료실 중앙 책상',level:'상',title:'서로 다른 숫자',clue:'백백교 사건의 피해자 수는 자료마다 다르다. 경성야록은 당시 동아일보 보도 기준임을 밝히며 수치를 제시한다.',question:'숫자가 다른 자료를 다룰 때 적절한 방법은?',choices:['출처·날짜·조사 범위를 함께 확인한다.','모든 숫자를 더한다.','가장 큰 숫자를 무조건 정답으로 쓴다.'],answer:0,hints:['숫자 옆의 출처 표시를 확인하세요.','조사 시기와 범위가 다를 수 있습니다.','출처·날짜·범위를 함께 확인해야 합니다.'],explanation:'수치만 외우지 말고 무엇을 언제 집계한 자료인지 확인합니다.',source:'경성야록 사회면 · 백백교 사건'},
- {id:'archive-language',room:'archive',place:'자료실 선반의 책',level:'중',title:'사라지지 않는 글자',clue:'조선어학회는 1933년 한글 맞춤법 통일안을 마련하고 사전 편찬을 추진했다. 1942년 조선어학회 사건으로 활동가들이 탄압받았다.',question:'이 활동의 역사적 의미는?',choices:['올림픽 경기 기록만 정리했다.','우리말과 민족 문화를 지키려 했다.','1933년에 이미 광복을 이루었다.'],answer:1,hints:['책 표지의 우리말·맞춤법·사전이라는 말을 보세요.','언어를 정리하고 기록하는 활동입니다.','우리말과 민족 문화 수호에 연결됩니다.'],explanation:'언어 연구·사전 편찬은 민족 문화 수호와 연결됩니다. 탄압 이후의 노력도 지워 설명하지 않습니다.',source:'교과 연계 설명 · 조선어학회와 문화 수호'},
+ {id:'archive-language',room:'archive',place:'자료실 선반의 서류 더미',level:'중',title:'사라지지 않는 글자',clue:'조선어학회는 1933년 한글 맞춤법 통일안을 마련하고 사전 편찬을 추진했다. 1942년 조선어학회 사건으로 활동가들이 탄압받았다.',question:'이 활동의 역사적 의미는?',choices:['올림픽 경기 기록만 정리했다.','우리말과 민족 문화를 지키려 했다.','1933년에 이미 광복을 이루었다.'],answer:1,hints:['서류의 우리말·맞춤법·사전이라는 말을 보세요.','언어를 정리하고 기록하는 활동입니다.','우리말과 민족 문화 수호에 연결됩니다.'],explanation:'언어 연구·사전 편찬은 민족 문화 수호와 연결됩니다. 탄압 이후의 노력도 지워 설명하지 않습니다.',source:'교과 연계 설명 · 조선어학회와 문화 수호'},
  {id:'darkroom',room:'darkroom',place:'암실 인화 작업대',level:'중',title:'지워진 가슴',clue:'1936년 베를린 올림픽에서 우승한 손기정은 식민지 현실 속에서 일본 국적으로 출전했다. 일장기를 지운 사진의 보도는 민족의식과 언론 탄압의 문제로 이어졌다.',question:'일장기 말소사건을 이해하는 핵심 맥락은?',choices:['광복 후 독립 국가로 출전했다.','종이가 우연히 찢어졌을 뿐이다.','식민지 현실·민족의식·언론 탄압이다.'],answer:2,hints:['사진이 만들어진 1936년의 조선 상황을 보세요.','우승의 기쁨과 식민지 현실이 함께 있었습니다.','민족의식과 언론 탄압을 함께 읽습니다.'],explanation:'사진의 변화는 단순한 인쇄 오류가 아니라 당시 식민지 현실과 연결됩니다.',source:'경성야록 문화면 · 손기정 일장기 말소사건'},
  {id:'photo-0',room:'photos',place:'초록 집게 사진 ①',level:'하',title:'신문과 시',clue:'심훈의 「오오, 조선의 남아여!」는 손기정 우승에 대한 문학적 반응으로 경성야록에 소개된다. 경기 기록표와 시는 자료의 성격이 다르다.',question:'이 시에서 주로 읽을 수 있는 것은?',choices:['민족적 감정과 문학적 표현','법원 판결문','초 단위 경기 기록의 공식 수정'],answer:0,hints:['시와 경기 기록표의 목적을 비교하세요.','문학은 감정과 생각을 표현합니다.','민족적 감정과 문학적 표현입니다.'],explanation:'문학적 반응과 경기 결과 보도는 같은 자료가 아닙니다.',source:'경성야록 문학관 · 심훈'},
  {id:'photo-1',room:'photos',place:'초록 집게 사진 ②',level:'중',title:'범인이라고 쓰기 전에',clue:'죽첨정 사건 보도에는 무고한 가족을 유력 용의자로 지목한 일이 있었다. 조사 중인 용의자와 유죄가 확인된 범인은 구분해야 한다.',question:'조사 중인 사람을 부르는 적절한 표현은?',choices:['이미 확정된 범인','용의자','반드시 유죄인 사람'],answer:1,hints:['조사 중이라는 조건을 읽으세요.','혐의와 유죄 확정은 다릅니다.','아직 조사 중인 사람은 용의자입니다.'],explanation:'수사 발표를 그대로 유죄 확정처럼 보도하지 않아야 합니다.',source:'경성야록 사회면 · 죽첨정 사건의 오보'},
@@ -19,13 +20,14 @@ const QUESTIONS=[
 const ROOMS={main:'1층 식자실',archive:'지하 자료실',darkroom:'암실',photos:'사진 건조방'};
 class Progress{
  constructor(){this.solved=new Set();this.attempts=new Map();}
- answer(id,index){const q=QUESTIONS.find(q=>q.id===id);if(!q||q.kind==='clock'||!Number.isInteger(index)||index<0||index>=q.choices.length)return false;this.attempts.set(id,(this.attempts.get(id)||0)+1);if(index!==q.answer)return false;this.solved.add(id);return true;}
+ answer(id,index){const q=QUESTIONS.find(q=>q.id===id);if(!q||q.kind||!Number.isInteger(index)||index<0||index>=q.choices.length)return false;this.attempts.set(id,(this.attempts.get(id)||0)+1);if(index!==q.answer)return false;this.solved.add(id);return true;}
  setClock(hour,minute){if(!Number.isInteger(hour)||hour<0||hour>23||!Number.isInteger(minute)||minute<0||minute>59)return false;this.attempts.set('clock',(this.attempts.get('clock')||0)+1);if(hour*60+minute!==QUESTIONS.find(q=>q.id==='clock').solution)return false;this.solved.add('clock');return true;}
+ setTypesetting(letters){const q=QUESTIONS.find(q=>q.id==='typesetting');if(!Array.isArray(letters)||letters.length!==q.solution.length||letters.some(c=>!q.letters.includes(c))||new Set(letters).size!==letters.length)return false;this.attempts.set(q.id,(this.attempts.get(q.id)||0)+1);if(!letters.every((c,i)=>c===q.solution[i]))return false;this.solved.add(q.id);return true;}
  remaining(room){return QUESTIONS.filter(q=>q.room===room&&!this.solved.has(q.id));}
  complete(room){return Boolean(ROOMS[room])&&this.remaining(room).length===0;}
 }
 function install(game){
- let clockMinutes=3;
+ let clockMinutes=3,typesettingSlots=['','','',''],activeTypeSlot=0;
  const state=new Progress(),archive=game.mobileArchive,dark=game.mobileDarkroom;game.historyGame={state,questions:QUESTIONS,audio:new window.GyeongFeedbackAudio(game.soundManager)};
  const view=game.inspectViewRenderer.viewContainer,bar=game.inspectViewRenderer.actionBar;
  let cabinet,exitRoom;
@@ -37,7 +39,7 @@ function install(game){
  }
  function hasExitKey(){return exitRoom.keyPlaced||game.sharedInventory.hasItem('rusty_key');}
  function mainReady(){return state.complete('main')&&hasExitKey();}
- function mainNext(){return exitRoom.keyPlaced?'지하실 문이 열렸습니다. 오른쪽 자료실 문으로 내려가세요.':hasExitKey()?'철문 안 책상 위 종이에 머리카락 엉킨 열쇠를 올려놓으세요.':'1층 왼쪽 선반의 머리카락 엉킨 열쇠를 챙기세요.';}
+ function mainNext(){return exitRoom.keyPlaced?'지하실 문이 열렸습니다. 오른쪽 자료실 문으로 내려가세요.':hasExitKey()?'철문 안 책상 위 종이에 머리카락 엉킨 열쇠를 올려놓으세요.':'캐비닛 맨 아래 서랍의 긁힌 바닥판을 조사하세요.';}
  function syncDoors(){if(mainReady()&&game.room.openDoor())game.soundManager.playMetalDoorOpen();archive.unlocked=state.complete('main')&&exitRoom.keyPlaced;}
  function node(tag,text,parent){const e=document.createElement(tag);e.textContent=text;if(parent)parent.appendChild(e);return e;}
  function shell(title){view.replaceChildren();bar.replaceChildren();const host=node('section','',view);host.className='gm-expansion history-puzzle';node('h2',title,host);return host;}
@@ -59,6 +61,7 @@ function install(game){
   else{
    const explanation=node('p',q.clue,host);explanation.className='history-brief';
    if(q.kind==='clock')clockPuzzle(host,feedback,q);
+   else if(q.kind==='typesetting')typesettingPuzzle(host,feedback,q);
    else{
    const actions=node('div','',host);actions.className='history-answers';
    q.choices.forEach((choice,index)=>{const b=node('button',choice,actions);b.type='button';b.onclick=()=>{
@@ -92,7 +95,21 @@ function install(game){
   };
   refresh();
  }
- const locations={clock:'1층 식자실의 멈춘 괘종시계를 직접 조사하세요.',calendar:'1층 식자실 벽의 달력을 조사하세요.',drawer:'1층 테이블 아래 24번 서랍을 조사하세요.',proof:'1층 테이블 위 교정지를 조사하세요.',poster:'1층 뒤쪽 철제 캐비닛 옆 벽에 붙은 박람회 포스터를 조사하세요.',cabinet:'1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍을 열고 안쪽 역할표를 조사하세요.',book:'1층 복도 바닥의 낡은 하드커버 책을 조사하세요.','archive-source':'지하 자료실 중앙 책상의 기록을 조사하세요.','archive-language':'지하 자료실 선반의 초록색 우리말 기록을 조사하세요.',darkroom:'암실 인화 작업대를 조사하세요.','photo-0':'사진 건조방의 초록 집게 사진 ①을 조사하세요.','photo-1':'사진 건조방의 초록 집게 사진 ②를 조사하세요.','photo-2':'사진 건조방의 초록 집게 사진 ③을 조사하세요.'};
+ function typesettingPuzzle(host,feedback,q){
+  node('small','교과·기사 내용을 바탕으로 재구성한 게임용 신문 · 원문 아님',host);
+  const article=node('div','',host);article.className='history-typesetting-article';node('h4','사진의 빈자리 · 1936',article);
+  const line=node('p','',article),slots=[];q.article.forEach((part,index)=>{line.appendChild(document.createTextNode(part));if(index<q.solution.length){const slot=node('button','',line);slot.type='button';slot.className='history-type-slot';slot.onclick=()=>{activeTypeSlot=index;refresh();};slots.push(slot);}});
+  node('p','빈칸을 선택하고 아래 글자 큐브를 누르세요. 잘못 놓은 글자는 칸을 비운 뒤 다시 고를 수 있습니다.',host);
+  const bank=node('div','',host);bank.className='history-type-bank';const tiles=[];
+  for(const letter of q.letters){const b=node('button',letter,bank);b.type='button';b.setAttribute('aria-label',letter+' 활자');b.onclick=()=>{if(typesettingSlots.includes(letter))return;typesettingSlots[activeTypeSlot]=letter;const empty=typesettingSlots.findIndex(c=>!c);if(empty>=0)activeTypeSlot=empty;refresh();};tiles.push(b);}
+  const controls=node('div','',host);controls.className='history-type-actions';
+  const clear=node('button','선택한 칸 비우기',controls);clear.type='button';clear.onclick=()=>{typesettingSlots[activeTypeSlot]='';refresh();};
+  const reset=node('button','모든 활자 되돌리기',controls);reset.type='button';reset.onclick=()=>{typesettingSlots.fill('');activeTypeSlot=0;refresh();};
+  const check=node('button','지면 조판 확인',host);check.type='button';check.onclick=()=>{if(game.gameEnded||state.solved.has(q.id))return;if(typesettingSlots.some(c=>!c)){feedback.textContent='네 빈칸을 모두 채운 뒤 확인하세요.';return;}if(!state.setTypesetting(typesettingSlots)){feedback.textContent='지면의 문장이 맞지 않습니다. 기록과 힌트를 읽고 다시 조판하세요.';return;}game.historyGame.audio.play('correct');finishRoom(q.room);quiz(q.id);};
+  function refresh(){feedback.textContent='';slots.forEach((slot,index)=>{slot.textContent=typesettingSlots[index]||'□';slot.setAttribute('aria-label',`${index+1}번 빈칸: ${typesettingSlots[index]||'비어 있음'}`);slot.setAttribute('aria-pressed',String(index===activeTypeSlot));});tiles.forEach((b,index)=>b.disabled=typesettingSlots.includes(q.letters[index]));game.historyGame.typesetting?.setLetters(typesettingSlots);}
+  refresh();
+ }
+ const locations={typesetting:'1층 테이블 위 활자판을 직접 클릭하거나 조사하세요. 글자 큐브는 활자판 옆에 있습니다.',clock:'1층 식자실의 멈춘 괘종시계를 직접 조사하세요.',calendar:'1층 식자실 벽의 달력을 조사하세요.',drawer:'1층 테이블 아래 24번 서랍을 조사하세요.',proof:'1층 테이블 위 교정지를 조사하세요.',poster:'1층 뒤쪽 철제 캐비닛 옆 벽에 붙은 박람회 포스터를 조사하세요.',cabinet:'1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍을 열고 안쪽 역할표를 조사하세요.',book:'1층 복도 바닥의 낡은 하드커버 책을 조사하세요.','archive-source':'지하 자료실 중앙 책상의 기록을 조사하세요.','archive-language':'지하 자료실 선반의 흰 서류 더미를 조사하세요. 희미한 초록빛 테두리를 찾으세요.',darkroom:'암실 인화 작업대를 조사하세요.','photo-0':'사진 건조방의 초록 집게 사진 ①을 조사하세요.','photo-1':'사진 건조방의 초록 집게 사진 ②를 조사하세요.','photo-2':'사진 건조방의 초록 집게 사진 ③을 조사하세요.'};
  function guidance(q,host){
   const item=node('details','',host);item.dataset.historyGuide=q.id;
   node('summary',`${q.place} · 난이도 ${q.level}`,item);
@@ -120,7 +137,7 @@ function install(game){
   const host=shell('머리카락 엉킨 열쇠');game.interactionManager.inspectTagEl.textContent='1층 식자실 · 소지품';
   if(hasExitKey()){node('p',exitRoom.keyPlaced?'열쇠는 철문 안 책상의 종이 위에 놓여 있습니다.':'열쇠를 이미 챙겼습니다.',host);return;}
   node('p','붉은 실과 검은 머리카락이 녹슨 열쇠를 감고 있습니다.',host);
-  const take=node('button','머리카락 엉킨 열쇠 챙기기',host);take.type='button';take.onclick=()=>{if(game.gameEnded||!cursedKey||game.camera.position.distanceTo(cursedKey.position)>3.5||hasExitKey())return;game.sharedInventory.addItem({id:'rusty_key',name:'머리카락 엉킨 열쇠',desc:'철문 안 책상 위 종이에 올려놓을 녹슨 열쇠.'});cursedKey.visible=false;cursedKey.traverse(o=>o.visible=false);game.soundManager.playDrawerUnlock();syncDoors();inspectKey();goal();};
+  const take=node('button','머리카락 엉킨 열쇠 챙기기',host);take.type='button';take.onclick=()=>{if(game.gameEnded||!cursedKey||!cabinet.secretRevealed||!cursedKey.visible||game.camera.position.distanceTo(cursedKey.getWorldPosition(new game.sceneAPI.Vector3()))>3.5||hasExitKey())return;game.sharedInventory.addItem({id:'rusty_key',name:'머리카락 엉킨 열쇠',desc:'철문 안 책상 위 종이에 올려놓을 녹슨 열쇠.'});cursedKey.visible=false;cursedKey.traverse(o=>o.visible=false);game.soundManager.playDrawerUnlock();syncDoors();inspectKey();goal();};
  }
  function inspectExitPaper(){
   const host=shell('책상 위의 종이');game.interactionManager.inspectTagEl.textContent='1층 철문 안';
@@ -131,13 +148,14 @@ function install(game){
  }
  // Capture before legacy inspection listeners so old puzzles cannot replace the new tasks.
  const nativeRender=game.inspectViewRenderer.render.bind(game.inspectViewRenderer);
- const mapped={clock:'clock',calendar:'calendar',drawer_24:'drawer',proof:'proof',newspaper:'proof',history_poster:'poster',history_cabinet:'cabinet',history_book:'book',history_archive_hint:'archive-language'};
- const guided={mirror_plate:'calendar',drawer_locked:'drawer',desk:'proof',galley_slot:'proof',print_roller:'proof',cursed_cube:'cabinet',glasses:'cabinet',apron:'cabinet',rack:'book',type_rack_label:'book',censor_poster:'poster',radio:'book',mobile_archive_hint:'archive-language'};
- function handled(data){return Boolean(mapped[data.type]||guided[data.type]||['cursed_key','history_exit_note','history_cabinet_drawer','mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
+ const mapped={galley_slot:'typesetting',clock:'clock',calendar:'calendar',drawer_24:'drawer',proof:'proof',newspaper:'proof',history_poster:'poster',history_cabinet:'cabinet',history_book:'book',history_archive_hint:'archive-language'};
+ const guided={typesetting_tile:'typesetting',mirror_plate:'calendar',drawer_locked:'drawer',desk:'proof',print_roller:'proof',glasses:'cabinet',apron:'cabinet',rack:'book',type_rack_label:'book',censor_poster:'poster',radio:'book',};
+ function handled(data){return Boolean(mapped[data.type]||guided[data.type]||['history_key_cache','cursed_key','history_exit_note','history_cabinet_drawer','mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
  game.inspectViewRenderer.render=data=>{if(!handled(data)){nativeRender(data);game.interactionManager.inspectTagEl.textContent+=' · 선택 장치 · 난이도 중';}};
  window.addEventListener('space-inspect',event=>{const data=event.detail;if(!handled(data))return;event.stopImmediatePropagation();
   if(mapped[data.type])quiz(mapped[data.type]);
   else if(guided[data.type])directGuide(guided[data.type]);
+  else if(data.type==='history_key_cache'){const host=shell('서랍의 이중 바닥');node('p',cabinet.secretRevealed?'바닥판 아래에서 머리카락 엉킨 열쇠가 드러났습니다. 직접 조사해 챙기세요.':'금속판 아래에서 가늘게 긁는 소리가 납니다. 가장자리의 홈을 밀어 볼 수 있습니다.',host);if(!cabinet.secretRevealed){const reveal=node('button','긁힌 바닥판 밀어 올리기',host);reveal.type='button';reveal.onclick=()=>{if(game.camera.position.distanceTo(cabinet.secretPanel.getWorldPosition(new game.sceneAPI.Vector3()))<=3.5&&cabinet.revealKey())game.interactionManager.closeInspect();};}}
   else if(data.type==='cursed_key')inspectKey();
   else if(data.type==='history_exit_note')inspectExitPaper();
   else if(data.type==='history_cabinet_drawer'){cabinet.open(data.drawerIndex);game.interactionManager.closeInspect();}
@@ -161,7 +179,6 @@ function install(game){
  const openDoor=game.room.openDoor.bind(game.room);game.room.openDoor=()=>mainReady()&&openDoor();
  game.room.updateExitSign=function(){if(this.historyExitDrawn)return;this.historyExitDrawn=true;const c=this.signCanvas.getContext('2d');c.fillStyle='#211910';c.fillRect(0,0,768,256);c.fillStyle='#d6c59e';c.textAlign='center';c.font='bold 100px serif';c.fillText('1층 출구',384,168);this.signTexture.needsUpdate=true;};
  game.room.updateExitSign();
- function prop(id,text,x,y,z,w=.9,h=.3){const mesh=archive.sign(text,w,h,true);mesh.position.set(x,y,z);if(id==='cabinet')mesh.rotation.y=Math.PI;mesh.userData={isInteractable:true,clueId:'history_'+id,type:'history_'+id,name:text,description:'어둠 속에 남은 기록. 조사하면 단서·퀴즈·힌트를 확인할 수 있다.'};game.scene.add(mesh);game.furniture.interactables.push(mesh);}
  // A paper poster mounted flush against the back wall, beside the filing cabinet.
  const PT=game.sceneAPI,posterWidth=.98,posterHeight=posterWidth*1400/1118;
  const poster=new PT.Mesh(new PT.PlaneGeometry(posterWidth,posterHeight),new PT.MeshStandardMaterial({color:0xc8b99d,roughness:1}));
@@ -170,7 +187,8 @@ function install(game){
  game.scene.add(poster);game.furniture.interactables.push(poster);game.historyGame.poster=poster;
  const posterImage=new Image();posterImage.onload=()=>{const texture=new PT.CanvasTexture(posterImage);texture.colorSpace='srgb';poster.material.map=texture;poster.material.color.setHex(0xffffff);poster.material.needsUpdate=true;game.historyGame.posterReady=true;};posterImage.src='../mobile-expansion/assets/history/aged-expo-poster.png';
  for(const [w,h,x,y]of [[posterWidth+.025,.009,0,-posterHeight/2-.012],[posterWidth+.025,.009,0,posterHeight/2+.012],[.009,posterHeight+.025,-posterWidth/2-.012,0],[.009,posterHeight+.025,posterWidth/2+.012,0]]){const edge=new PT.Mesh(new PT.PlaneGeometry(w,h),new PT.MeshBasicMaterial({color:0x39c85a}));edge.position.set(x,y,.002);edge.userData={isPuzzleMarker:true,clueId:'history_poster'};edge.raycast=()=>{};poster.add(edge);}
- game.renderer.domElement.addEventListener('click',event=>{const interaction=game.interactionManager;if(event.button===0&&game.playerControls.controls.isLocked&&!game.gameEnded&&!interaction.isInspecting&&interaction.currentInteractable?.type==='history_poster')interaction.triggerInspect(interaction.currentInteractable);});
+ game.renderer.domElement.addEventListener('click',event=>{const interaction=game.interactionManager;if(event.button===0&&game.playerControls.controls.isLocked&&!game.gameEnded&&!interaction.isInspecting&&['history_poster','galley_slot','history_archive_hint','mobile_archive_records','history_key_cache'].includes(interaction.currentInteractable?.type))interaction.triggerInspect(interaction.currentInteractable);});
+ game.historyGame.typesetting=window.GyeongTypesettingProp.create(game);
  cabinet=window.GyeongCabinetProp.create(game,archive);game.historyGame.cabinet=cabinet;
  exitRoom=window.GyeongExitRoom.create(game,archive);game.historyGame.exitRoom=exitRoom;
  game.historyGame.hoverLabels.push({object:exitRoom.note,text:'테이블 위의 종이'});
@@ -188,7 +206,7 @@ function install(game){
  const coverMesh=bookPart(new T.PlaneGeometry(.62,.86),new T.MeshStandardMaterial({map:texture,roughness:.95,side:2}),.111);coverMesh.rotation.x=-Math.PI/2;
  for(const [w,d,x,z]of [[.67,.016,0,-.46],[.67,.016,0,.46],[.016,.92,-.335,0],[.016,.92,.335,0]]){const edge=new T.Mesh(new T.BoxGeometry(w,.008,d),new T.MeshBasicMaterial({color:0x39c85a}));edge.position.set(x,.12,z);edge.userData.isPuzzleMarker=true;edge.raycast=()=>{};book.add(edge);}
  game.historyGame.book=book;game.historyGame.hoverLabels.push({object:book,text:'복도의 책 · 난이도 상'});
- prop('archive_hint','우리말 기록 · 중',18.7,-1.8,-5.95,1.1,.35);
+ game.historyGame.archivePapers=archive.paperTargets;
  game.scene.traverse(object=>{const data=object.userData,q=QUESTIONS.find(q=>q.id===mapped[data.type]);if(q){data.name=q.place+' · 난이도 '+q.level;data.description='남겨진 기록을 조사하면 역사 단서와 재시도 가능한 퀴즈를 확인할 수 있다.';}});
  const nativeUpdateTarget=game.explorationHUD.updateTarget.bind(game.explorationHUD);game.explorationHUD.updateTarget=()=>{game.explorationHUD.targetId=null;nativeUpdateTarget();};
  const notebookRender=game.notebookUI.render.bind(game.notebookUI);game.notebookUI.render=()=>{notebookRender();const right=document.querySelector('.notebook-page.right-page');if(!right)return;right.querySelectorAll('.puzzle-track-card,.notebook-status-summary,#notebook-puzzles-empty').forEach(e=>e.hidden=true);right.querySelector('.page-title').textContent='복원 기록 (HISTORY)';const clues=document.getElementById('notebook-clues-list');clues.replaceChildren();for(const q of QUESTIONS.filter(q=>state.attempts.has(q.id))){node('h4',q.place,clues);node('p',q.clue,clues);}if(!state.attempts.size)node('p','물건을 조사하면 단서가 문제 안에 나타납니다. 한 번 시도한 기록은 여기에 모입니다.',clues);let records=document.getElementById('history-notebook');if(!records){records=node('section','',right);records.id='history-notebook';}records.replaceChildren();for(const room of Object.keys(ROOMS)){node('h4',ROOMS[room],records);for(const q of QUESTIONS.filter(q=>q.room===room))node('p',`${state.solved.has(q.id)?'✓':'未'} ${q.place} · 난이도 ${q.level}`,records);}};

@@ -16,6 +16,7 @@ const {QUESTIONS}=require('../mobile-expansion/history-game.js');
   async function inspect(data){await page.evaluate(data=>game.interactionManager.triggerInspect(data),data);await page.locator('#inspect-modal').waitFor({state:'visible'});}
   async function close(){await click(page.locator('#inspect-close'));await page.locator('#inspect-modal').waitFor({state:'hidden'});}
   async function solve(q,data){if(q.id==='cabinet'){await page.evaluate(()=>game.interactionManager.triggerInspect({type:'history_cabinet_drawer',drawerIndex:2,name:'서랍'}));await page.waitForFunction(()=>game.historyGame.cabinet.discovered);}await inspect(data);await page.locator(`[data-history-question="${q.id}"]`).waitFor();
+   if(q.kind==='typesetting'){for(const letter of ['탄','자','가','일'])await click(page.getByRole('button',{name:letter+' 활자',exact:true}));await click(page.getByRole('button',{name:'지면 조판 확인',exact:true}));assert.match(await page.locator('.history-puzzle [role=status]').innerText(),/다시 조판/);await click(page.getByRole('button',{name:'모든 활자 되돌리기',exact:true}));for(const letter of q.solution)await click(page.getByRole('button',{name:letter+' 활자',exact:true}));await click(page.getByRole('button',{name:'지면 조판 확인',exact:true}));await page.locator('.history-next-step').waitFor();await close();return;}
    if(q.kind==='clock'){await click(page.getByRole('button',{name:'시계의 봉인 확인',exact:true}));assert.match(await page.locator('.history-puzzle [role=status]').innerText(),/다시 시도/);for(let n=0;n<16;n++)await click(page.getByRole('button',{name:'일 분 뒤로',exact:true}));await click(page.getByRole('button',{name:'시계의 봉인 확인',exact:true}));await page.locator('.history-next-step').waitFor();await close();return;}
    assert.match(await page.locator('#inspect-tag').innerText(),new RegExp('난이도 '+q.level));
    const before=await page.evaluate(()=>game.historyGame.state.solved.size);
@@ -34,13 +35,13 @@ const {QUESTIONS}=require('../mobile-expansion/history-game.js');
   await page.screenshot({path:mobile?'/tmp/history-mobile-exploration.png':'/tmp/history-desktop-exploration.png'});
   await inspect({type:'mobile_archive_door',name:'지하 문'});assert.equal(await page.evaluate(()=>game.mobileArchive.open),false);assert.equal(await page.getByRole('button',{name:'지하실로 통하는 문 열기',exact:true}).count(),0);await close();
   await inspect({type:'history_exit',clueId:'clue_exit_door',name:'1층 출구'});
-  assert.equal(await page.locator('.history-exit-checklist li').count(),8);
+  assert.equal(await page.locator('.history-exit-checklist li').count(),9);
   assert.equal(await page.locator('.history-puzzle details,.history-puzzle button,[data-history-question]').count(),0);
   assert.equal(await page.evaluate(()=>game.historyGame.state.solved.size),0);await close();
-  await page.evaluate(()=>{game.camera.position.set(-3.55,1.63,.6);game.camera.lookAt(-4.28,1.25,2);});await page.waitForFunction(()=>game.interactionManager.currentInteractable?.type==='cursed_key');await inspect({type:'cursed_key',name:'머리카락 엉킨 열쇠'});await click(page.getByRole('button',{name:'머리카락 엉킨 열쇠 챙기기',exact:true}));assert.equal(await page.evaluate(()=>game.sharedInventory.hasItem('rusty_key')),true);await close();
+ await require('./key-cache-helper.cjs')(page,mobile);
   for(const type of ['radio','glasses']){await inspect({type,name:'주변 물건'});assert.equal(await page.locator('[data-history-question],.history-answers').count(),0);await close();}
   assert.equal(await page.evaluate(()=>game.historyGame.cabinet.drawers[2].opened),false);
-  const types={clock:'clock',calendar:'calendar',drawer:'drawer_24',proof:'proof',poster:'history_poster',cabinet:'history_cabinet',book:'history_book'};
+  const types={typesetting:'galley_slot',clock:'clock',calendar:'calendar',drawer:'drawer_24',proof:'proof',poster:'history_poster',cabinet:'history_cabinet',book:'history_book'};
   for(const q of QUESTIONS.filter(q=>q.room==='main')){await solve(q,{type:types[q.id],name:q.place});if(q.id!=='book')assert.equal(await page.evaluate(()=>game.mobileArchive.unlocked),false);}
   assert.equal(await page.evaluate(()=>game.mobileArchive.unlocked),false);
   await page.waitForFunction(()=>game.room.doorOpenProgress>=1);
@@ -50,6 +51,8 @@ const {QUESTIONS}=require('../mobile-expansion/history-game.js');
   await page.waitForFunction(()=>game.mobileArchive.progress>=1);assert.equal(await page.evaluate(()=>game.room.colliders.includes(game.mobileArchive.doorCollider)),false);
   if(mobile){for(const [x,z]of [[0,-15.2],[0,-3],[2.6,-2.7],[4,-2.7],[6,-2.7],[14.5,-2.7],[20.3,-2.7],[20.3,-1.4],[21.8,-1.4]])await walk(x,z);}else await page.evaluate(()=>game.camera.position.set(21.8,-2,-1.4));
   await inspect({type:'mobile_darkroom_curtain',curtainIndex:0,name:'자료실 커튼'});assert.equal(await page.getByRole('button',{name:'검은 커튼 젖히기',exact:true}).isDisabled(),true);await close();
+  await page.evaluate(()=>{game.camera.position.set(18.25,-1.97,-3.9);game.camera.lookAt(18.25,-2.15,-5.68);});await page.waitForFunction(()=>game.interactionManager.currentInteractable?.type==='history_archive_hint');
+  if(mobile){await page.locator('.mobile-pickup').tap();if(await page.locator('#mobile-nearby-clues').isVisible())await page.locator('[data-clue-id="history_archive_papers_0"]').tap();}else await page.keyboard.press('e');await page.locator('[data-history-question="archive-language"]').waitFor();await close();
   for(const q of QUESTIONS.filter(q=>q.room==='archive'))await solve(q,{type:q.id==='archive-source'?'mobile_archive_records':'history_archive_hint',name:q.place});
   // Each archive task opens only at its own physical record.
   assert.equal(await page.evaluate(()=>game.mobileArchive.solved),true);
