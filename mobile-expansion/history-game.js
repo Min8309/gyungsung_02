@@ -38,7 +38,7 @@ function install(game){
  }
  function quiz(id){
   const q=QUESTIONS.find(q=>q.id===id);if(!q)return;
-  if(id==='cabinet'&&!cabinet.discovered){const host=shell('캐비닛의 역할표 찾기');node('p','1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍에 역할표가 있습니다. 서랍을 열고 안쪽 초록 기록을 조사하세요.',host);const open=node('button','캐비닛 세 번째 서랍 열기',host);open.onclick=()=>{if(!cabinet.drawers[2].opened)cabinet.open(2);game.interactionManager.closeInspect();};return;}
+  if(id==='cabinet'&&!cabinet.discovered){const host=shell('캐비닛의 역할표 찾기');node('p','1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍에 역할표가 있습니다. 서랍을 열고 안쪽 초록 기록을 조사하세요.',host);return;}
   game.interactionManager.inspectTitleEl.textContent=q.place;
   game.interactionManager.inspectTagEl.textContent=ROOMS[q.room]+' · 난이도 '+q.level;
   const host=shell('');host.querySelector('h2').remove();host.dataset.historyQuestion=id;
@@ -57,7 +57,23 @@ function install(game){
   }
   let level=0;const hintText=node('p','',host);hintText.className='gp-hints';hintText.hidden=true;const hint=node('button','힌트 1 보기',host);hint.type='button';hint.onclick=()=>{hintText.hidden=false;hintText.textContent=q.hints[Math.min(level,2)];level=Math.min(level+1,3);hint.textContent=level<3?`힌트 ${level+1} 보기`:'마지막 힌트 다시 보기';};
  }
- function list(room,title){const host=shell(title);node('p','이 방의 필수 퍼즐을 모두 해결하면 다음 방으로 가는 문이 열립니다. 주변 물건을 조사하거나 아래 기록을 선택하세요.',host);for(const q of QUESTIONS.filter(q=>q.room===room)){const b=node('button',`${state.solved.has(q.id)?'✓ ':''}${q.place} · 난이도 ${q.level}`,host);b.type='button';b.onclick=()=>quiz(q.id);}node('p',goal(),host);}
+ const locations={calendar:'1층 식자실 벽의 달력을 조사하세요.',drawer:'1층 테이블 아래 24번 서랍을 조사하세요.',proof:'1층 테이블 위 교정지를 조사하세요.',poster:'1층 벽의 박람회 포스터를 조사하세요.',cabinet:'1층 뒤쪽 왼편 철제 캐비닛의 세 번째 서랍을 열고 안쪽 역할표를 조사하세요.',book:'1층 복도 바닥의 낡은 하드커버 책을 조사하세요.','archive-source':'지하 자료실 중앙 책상의 기록을 조사하세요.','archive-language':'지하 자료실 선반의 초록색 우리말 기록을 조사하세요.',darkroom:'암실 인화 작업대를 조사하세요.','photo-0':'사진 건조방의 초록 집게 사진 ①을 조사하세요.','photo-1':'사진 건조방의 초록 집게 사진 ②를 조사하세요.','photo-2':'사진 건조방의 초록 집게 사진 ③을 조사하세요.'};
+ function guidance(q,host){
+  const item=node('details','',host);item.dataset.historyGuide=q.id;
+  node('summary',`${q.place} · 난이도 ${q.level}`,item);
+  node('p','위치: '+locations[q.id],item);
+  let level=0;const text=node('p','',item);text.hidden=true;
+  const hint=node('button','힌트 1 보기',item);hint.type='button';
+  hint.onclick=()=>{text.hidden=false;text.textContent=q.hints[Math.min(level,2)];level=Math.min(level+1,3);hint.textContent=level<3?`힌트 ${level+1} 보기`:'마지막 힌트 다시 보기';};
+ }
+ function list(room,title){
+  const host=shell(title);node('p','여기서는 남은 게임의 위치와 힌트만 확인할 수 있습니다. 안내창을 닫고 해당 물건을 직접 찾아 조사하면 퀴즈가 열립니다.',host);
+  const remaining=state.remaining(room);node('p',`남은 게임 ${remaining.length}개`,host);
+  for(const q of remaining)guidance(q,host);
+  if(!remaining.length)node('p','이 방의 기록을 모두 복원했습니다.',host);
+  node('p',goal(),host);
+ }
+ function directGuide(id){const q=QUESTIONS.find(q=>q.id===id),host=shell('기록이 있는 곳');node('p','이 물건에서는 퀴즈를 풀 수 없습니다. 아래 위치로 이동해 해당 기록을 조사하세요.',host);guidance(q,host);host.querySelector('details').open=true;}
  function route(){
   const host=shell(exitRoom.found?'1층 출구 · 지하실로 이어지는 길':'1층 출구');
   node('p',!state.complete('main')?'1층 퍼즐을 모두 풀어야 출구 문이 열립니다.':exitRoom.found?'종이의 단서를 찾았습니다. 오른쪽 자료실 문을 열고 계단을 내려가세요.':'출구 문을 열고 방 안 테이블 위의 종이를 조사하세요.',host);
@@ -66,15 +82,17 @@ function install(game){
  }
  // Capture before legacy inspection listeners so old puzzles cannot replace the new tasks.
  const nativeRender=game.inspectViewRenderer.render.bind(game.inspectViewRenderer);
- const mapped={calendar:'calendar',clock:'calendar',mirror_plate:'calendar',drawer_24:'drawer',drawer_locked:'drawer',proof:'proof',newspaper:'proof',desk:'proof',galley_slot:'proof',print_roller:'proof',cursed_cube:'cabinet',glasses:'cabinet',apron:'cabinet',rack:'book',type_rack_label:'book',censor_poster:'poster',radio:'book',history_poster:'poster',history_cabinet:'cabinet',history_book:'book',history_archive_hint:'archive-language',mobile_archive_hint:'archive-language'};
- function handled(data){return Boolean(mapped[data.type]||['history_exit_note','history_cabinet_drawer','mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
+ const mapped={calendar:'calendar',drawer_24:'drawer',proof:'proof',newspaper:'proof',history_poster:'poster',history_cabinet:'cabinet',history_book:'book',history_archive_hint:'archive-language'};
+ const guided={clock:'calendar',mirror_plate:'calendar',drawer_locked:'drawer',desk:'proof',galley_slot:'proof',print_roller:'proof',cursed_cube:'cabinet',glasses:'cabinet',apron:'cabinet',rack:'book',type_rack_label:'book',censor_poster:'poster',radio:'book',mobile_archive_hint:'archive-language'};
+ function handled(data){return Boolean(mapped[data.type]||guided[data.type]||['history_exit_note','history_cabinet_drawer','mobile_archive_records','mobile_darkroom_station','drying_missing_photo','drying_missing_note','mobile_archive_door','mobile_darkroom_curtain'].includes(data.type)||data.clueId==='clue_exit_door');}
  game.inspectViewRenderer.render=data=>{if(!handled(data)){nativeRender(data);game.interactionManager.inspectTagEl.textContent+=' · 선택 장치 · 난이도 중';}};
  window.addEventListener('space-inspect',event=>{const data=event.detail;if(!handled(data))return;event.stopImmediatePropagation();
   if(mapped[data.type])quiz(mapped[data.type]);
+  else if(guided[data.type])directGuide(guided[data.type]);
   else if(data.type==='history_exit_note'){exitRoom.found=true;archive.unlocked=state.complete('main');game.sharedInventory.addItem({id:'history_exit_note',name:'지하실 안내 쪽지',desc:'지하로 내려가시오'});const host=shell('');host.querySelector('h2').remove();node('p','지하로 내려가시오',host).className='history-exit-message';game.interactionManager.inspectTagEl.textContent='1층 출구 방';goal();}
   else if(data.type==='history_cabinet_drawer'){cabinet.open(data.drawerIndex);game.interactionManager.closeInspect();}
   else if(data.clueId==='clue_exit_door'||data.type==='mobile_archive_door')route();
-  else if(data.type==='mobile_archive_records')list('archive','資料室 · 봉인된 기록');
+  else if(data.type==='mobile_archive_records')quiz('archive-source');
   else if(data.type==='mobile_darkroom_station')quiz('darkroom');
   else if(data.type==='drying_missing_photo')quiz('photo-'+data.photoIndex);
   else if(data.type==='drying_missing_note')list('photos','寫眞乾燥室 · 마지막 세 기록');

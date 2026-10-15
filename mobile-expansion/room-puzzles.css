@@ -36,3 +36,5 @@
 #history-clue-label{position:fixed;z-index:24;transform:translateX(-50%);padding:6px 10px;background:#10251ed9;border:1px solid #43875d88;border-radius:4px;color:#d5edda;font:13px serif;pointer-events:none;white-space:nowrap}#history-clue-label[hidden]{display:none}
 .history-hover-prompt{visibility:hidden!important}
 .history-exit-message{font-size:clamp(22px,4vw,32px)!important;letter-spacing:.08em;text-align:center;padding:28px 8px;color:#e0d4b0}
+
+.history-puzzle [data-history-guide]{border:1px solid #43875d77;margin:8px 0;padding:0 10px}.history-puzzle [data-history-guide] summary{cursor:pointer;min-height:44px;box-sizing:border-box;padding:12px 0;line-height:1.5;touch-action:manipulation}.history-puzzle [data-history-guide] p{line-height:1.6;overflow-wrap:anywhere}

@@ -60,73 +60,11 @@
     var names={ceiling:'천장',floor:'바닥',wall:'벽',corner:'코너'};
     return {id:kind,name:names[kind],zone:zone,point:[x,y,z],offset:offset};
   }
-  /* ── 기괴한 금속 소리 (녹음 파일 없이 그 자리에서 만들어 냄) ──
-     0 녹슨 철판 긁는 소리 · 1 활로 켠 쇠 (길게 우는 소리) · 2 멀리서 울리는 쇠 종 · 3 쇠사슬 끌리는 소리 · 4 철문 경첩 삐걱임 */
-  function metal(sm, kind, dur, rnd) {
-    var ctx = sm && sm.ctx; if (!ctx || sm.isMuted) return;
-    if (ctx.state === 'suspended' && ctx.resume) { try { var pr = ctx.resume(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
-    var t = ctx.currentTime, out = ctx.createGain(), dest = sm.masterGain || ctx.destination;
-    out.gain.value = 0; out.connect(dest);
-    /* 쇠 울림 (금속판 공명) */
-    var dl = ctx.createDelay(1), fb = ctx.createGain(), lp = ctx.createBiquadFilter();
-    dl.delayTime.value = .031 + rnd() * .02; fb.gain.value = .62; lp.type = 'lowpass'; lp.frequency.value = 3800;
-    dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(out);
-    function noise(sec) { var n = ctx.createBufferSource(), b = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * sec), ctx.sampleRate), d = b.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; n.buffer = b; return n; }
-    function partials(base, list, g, len, bend) {
-      list.forEach(function (r, i) {
-        var o = ctx.createOscillator(), gg = ctx.createGain();
-        o.type = i % 2 ? 'triangle' : 'sine'; o.frequency.setValueAtTime(base * r, t);
-        if (bend) o.frequency.exponentialRampToValueAtTime(base * r * bend, t + len);
-        gg.gain.setValueAtTime(.0001, t); gg.gain.exponentialRampToValueAtTime(g / (i + 1), t + .02 + i * .01); gg.gain.exponentialRampToValueAtTime(.0001, t + len * (1 - i * .08));
-        o.connect(gg); gg.connect(out); gg.connect(dl); o.start(t); o.stop(t + len + .1);
-      });
-    }
-    var L = Math.max(2.4, dur + .6);
-    out.gain.setValueAtTime(.0001, t); var pk = [.9, 1.8, .9, 2.4, .5][kind] || .9;
-    out.gain.exponentialRampToValueAtTime(pk, t + dur * .3); out.gain.setValueAtTime(pk, t + dur * .6); out.gain.exponentialRampToValueAtTime(.0001, t + L);
-    if (kind === 0) {            // 녹슨 철판 긁기
-      var n = noise(L), bp = ctx.createBiquadFilter(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
-      bp.type = 'bandpass'; bp.Q.value = 14; bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(2600, t + L * .6); bp.frequency.exponentialRampToValueAtTime(700, t + L);
-      lfo.frequency.value = 13 + rnd() * 9; lg.gain.value = .5; lfo.connect(lg); lg.connect(g.gain); g.gain.value = .55;
-      n.connect(bp); bp.connect(g); g.connect(out); g.connect(dl); n.start(t); lfo.start(t); n.stop(t + L); lfo.stop(t + L);
-      partials(1180 + rnd() * 300, [1, 1.47, 2.09], .12, L, .82);
-    } else if (kind === 1) {     // 활로 켠 쇠 — 높게 울다 무너짐
-      partials(410 + rnd() * 160, [1, 2.76, 5.4, 8.93], .2, L, .71);
-      var n2 = noise(L), hp = ctx.createBiquadFilter(), g2 = ctx.createGain(); hp.type = 'highpass'; hp.frequency.value = 3000; g2.gain.value = .05;
-      n2.connect(hp); hp.connect(g2); g2.connect(out); n2.start(t); n2.stop(t + L);
-    } else if (kind === 2) {     // 멀리서 울리는 쇠 종 (두 번)
-      [0, .55 + rnd() * .3].forEach(function (d) {
-        var base = 160 + rnd() * 60;
-        [1, 2.4, 3.9, 5.43, 6.8].forEach(function (r, i) {
-          var o = ctx.createOscillator(), gg = ctx.createGain(); o.frequency.value = base * r * (1 + (Math.random() - .5) * .01);
-          gg.gain.setValueAtTime(.0001, t + d); gg.gain.exponentialRampToValueAtTime(.28 / (i + 1), t + d + .008); gg.gain.exponentialRampToValueAtTime(.0001, t + d + L * (.9 - i * .1));
-          o.connect(gg); gg.connect(out); gg.connect(dl); o.start(t + d); o.stop(t + d + L);
-        });
-      });
-    } else if (kind === 3) {     // 쇠사슬 끌림
-      var c = 0, T = 0;
-      while (T < L * .8) {
-        var at = t + T, nn = noise(.06), f = ctx.createBiquadFilter(), gg = ctx.createGain();
-        f.type = 'bandpass'; f.frequency.value = 2200 + Math.random() * 3000; f.Q.value = 9;
-        gg.gain.setValueAtTime(.5 * (.4 + Math.random() * .6), at); gg.gain.exponentialRampToValueAtTime(.0001, at + .06);
-        nn.connect(f); f.connect(gg); gg.connect(out); gg.connect(dl); nn.start(at); nn.stop(at + .07);
-        T += .05 + Math.random() * .11; c++;
-      }
-      partials(90, [1, 1.5], .2, L, .9);
-    } else {                     // 철문 경첩 삐걱임
-      var o = ctx.createOscillator(), am = ctx.createOscillator(), ag = ctx.createGain(), g4 = ctx.createGain(), bp4 = ctx.createBiquadFilter();
-      o.type = 'sawtooth'; o.frequency.setValueAtTime(140 + rnd() * 50, t); o.frequency.linearRampToValueAtTime(320 + rnd() * 120, t + L * .7); o.frequency.linearRampToValueAtTime(190, t + L);
-      am.frequency.setValueAtTime(18, t); am.frequency.linearRampToValueAtTime(34, t + L); ag.gain.value = .5; g4.gain.value = .5;
-      bp4.type = 'bandpass'; bp4.frequency.value = 1300; bp4.Q.value = 3;
-      am.connect(ag); ag.connect(g4.gain); o.connect(bp4); bp4.connect(g4); g4.connect(out); g4.connect(dl);
-      o.start(t); am.start(t); o.stop(t + L); am.stop(t + L);
-    }
-    setTimeout(function () { try { out.disconnect(); fb.disconnect(); } catch (e) {} }, (L + 3) * 1000);
-  }
   function fadeOpacity(seconds) { return seconds<0||seconds>=2.4?0:Math.max(0,Math.min(1,seconds/.45,(2.4-seconds)/.8)); }
   class Director {
     constructor(options) {
       Object.assign(this, options);
+      this.popupSound = new window.SikjasilGhostAudio.PopupAudio(this.soundManager,this.random||Math.random);
       this.plan = createPlan(options.random);
       this.encounters = this.plan;
       this.history = [];
@@ -192,21 +130,21 @@
       void this.layer.offsetWidth;
       this.layer.classList.add('active');
       this.lighting.triggerFlicker();
-      /* 나올 때마다 기괴한 쇠 소리 다섯 가지 중 하나 · 비명은 가끔 */
-      var rnd = this.random || Math.random, sm = this.soundManager;
-      try { metal(sm, Math.floor(rnd() * 5), 2.4, rnd); } catch (e) {}
-      if (rnd() < .45) setTimeout(function () { try { sm.playGhostScream(); } catch (e) {} }, 700);
+      this.popupSound.play(2.4);
       var record = { number: this.history.length + 1, action:encounter.action||'rush', ghost: encounter.ghost.id, location: place.id, zone:place.zone||'main', point:place.point.slice(), scheduledSeconds: encounter.at, shownAt: now };
       this.history.push(record);
       window.dispatchEvent(new CustomEvent('ghost-encounter', { detail: record }));
       return true;
     }
     hide() {
+      this.popupSound.stop();
       this.sprite.visible = false; this.material.opacity = 0;
       this.layer.classList.remove('active'); this.active = null;
     }
     stop() { this.stopped = true; this.hide(); }
     update(now, enabled, elapsed) {
+      this.popupSound.prepare();
+      if(this.soundManager?.isMuted)this.popupSound.stop(0);
       if (this.stopped) return;
       if (!enabled || !this.canShow()) { if(this.active)this.lastEncounter=now;this.hide(); return; }
       if (this.active) {
@@ -224,5 +162,5 @@
       if (next && elapsed >= next.at && elapsed < 597) this.trigger(next, now);
     }
   }
-  return { Director: Director, createPlan: createPlan, GHOSTS: GHOSTS, PLACES: PLACES, resolveExpandedPlace:resolveExpandedPlace, fadeOpacity:fadeOpacity, ACTIONS:ACTIONS, metal: metal };
+  return { Director: Director, createPlan: createPlan, GHOSTS: GHOSTS, PLACES: PLACES, resolveExpandedPlace:resolveExpandedPlace, fadeOpacity:fadeOpacity, ACTIONS:ACTIONS };
 });
