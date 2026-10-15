@@ -98,3 +98,6 @@ GitHub Pages의 `main` / 저장소 루트 배포를 그대로 사용합니다. H
 
 설정: `sikjasil/manifest.webmanifest`, `sikjasil/pwa-install.js`, `game-pwa-sw.js`. 서비스 워커는 식자실 경로만 제어하며 나머지 신문 사이트의 페이지는 제어하지 않습니다.
 검증: 정적 서버 실행 후 `GAME_TEST_URL=http://127.0.0.1:8000 node tests/pwa-smoke.cjs`. 실제 휴대폰의 설치·음향·성능은 기기에서 확인합니다.
+
+퀴즈 정답 시 업로드된 `correct.mp3`를 재생합니다. 건조실 사진 3개를 모두 풀면 마지막 사진의 뒤집기 시작(기본 0.6초 대기)에 맞춰 `ending.mp3`를 한 번 재생합니다. 마지막 정답음은 엔딩음 시작 시 종료하며, 모두 전체 음량·음소거를 따릅니다.
+정답·엔딩 음원 검증: 정적 서버 실행 후 `node tests/feedback-audio-smoke.cjs` (PC/모바일 정답·오답·중복 재생 방지·마지막 사진·음소거).

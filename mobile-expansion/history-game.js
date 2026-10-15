@@ -23,7 +23,7 @@ class Progress{
  complete(room){return Boolean(ROOMS[room])&&this.remaining(room).length===0;}
 }
 function install(game){
- const state=new Progress(),archive=game.mobileArchive,dark=game.mobileDarkroom;game.historyGame={state,questions:QUESTIONS};
+ const state=new Progress(),archive=game.mobileArchive,dark=game.mobileDarkroom;game.historyGame={state,questions:QUESTIONS,audio:new window.GyeongFeedbackAudio(game.soundManager)};
  const view=game.inspectViewRenderer.viewContainer,bar=game.inspectViewRenderer.actionBar;
  let cabinet,exitRoom;
  function node(tag,text,parent){const e=document.createElement(tag);e.textContent=text;if(parent)parent.appendChild(e);return e;}
@@ -31,7 +31,6 @@ function install(game){
  function goal(){const room=game.camera.position.x>=35?'photos':game.camera.position.x>=28?'darkroom':game.camera.position.x>=14?'archive':'main';const remaining=state.remaining(room);const text=remaining.length?`${ROOMS[room]} · 남은 ${remaining.length}개 · 다음: ${remaining[0].place} [${remaining[0].level}]`:room==='main'?(exitRoom.found?'1층 완료 · 오른쪽 지하 자료실 문 →':'1층 완료 · 출구 방 테이블의 종이를 조사하세요'):room==='archive'?'자료실 완료 · 끝의 검은 커튼 →':room==='darkroom'?'암실 완료 · 뒤쪽 검은 커튼 →':'모든 기록을 복원했습니다.';const objective=document.getElementById('exploration-objective');if(objective) {if(objective.textContent!==text)objective.textContent=text;objective.hidden=false;}if(archive.notice.textContent!==text)archive.notice.textContent=text;archive.notice.hidden=room==='main';return text;}
  function finishRoom(room){
   if(!state.complete(room))return;
-  if(room==='main'){game.soundManager.playPuzzleSuccess();}
   if(room==='archive'){archive.solved=true;game.sharedInventory.addItem({id:'darkroom_iron_key',name:'암실 철문 열쇠',desc:'자료실의 출처·언어 기록을 복원해 얻은 열쇠.'});archive.playPuzzleEffect('editing');}
   if(room==='darkroom'){dark.developed=true;game.sharedInventory.addItem({id:'developed_press_photo',name:'복원된 손기정 보도사진',desc:'식민지 현실과 언론 탄압의 맥락을 확인한 기록.'});archive.playPuzzleEffect('develop');}
   goal();
@@ -50,6 +49,7 @@ function install(game){
    q.choices.forEach((choice,index)=>{const b=node('button',choice,actions);b.type='button';b.onclick=()=>{
     if(state.solved.has(id)||game.gameEnded)return;
     if(!state.answer(id,index)){feedback.textContent='다시 선택해 보세요. 힌트로 확인할 수 있습니다.';return;}
+    game.historyGame.audio.play('correct');
     finishRoom(q.room);
     if(q.room==='photos'){dark.missingPerson.choose(Number(id.slice(-1)),'record');if(state.complete('photos')){window.GyeongMissingPerson.render(dark,Number(id.slice(-1)));return;}}
     quiz(id);
@@ -105,7 +105,7 @@ function install(game){
   }
  },{capture:true});
  game.beginScreamingRoomEnding=()=>game.interactionManager.triggerInspect({type:'history_exit',clueId:'clue_exit_door',name:'1층 출구 · 지하실 안내',description:'바깥이 아니라 지하로 이어지는 기록이다.'});
- const update=game.playerControls.update.bind(game.playerControls);game.playerControls.update=delta=>{update(delta);if(!game.gameEnded){archive.unlocked=state.complete('main')&&exitRoom.found;goal();}};
+ const update=game.playerControls.update.bind(game.playerControls);game.playerControls.update=delta=>{update(delta);game.historyGame.audio.prepare();if(!game.gameEnded){archive.unlocked=state.complete('main')&&exitRoom.found;goal();}};
  // The corridor marked exit opens into an in-world direction sign, never the ending.
  const openDoor=game.room.openDoor.bind(game.room);game.room.openDoor=()=>state.complete('main')&&openDoor();
  game.room.updateExitSign=function(){if(this.historyExitDrawn)return;this.historyExitDrawn=true;const c=this.signCanvas.getContext('2d');c.fillStyle='#211910';c.fillRect(0,0,768,256);c.fillStyle='#d6c59e';c.textAlign='center';c.font='bold 100px serif';c.fillText('1층 출구',384,168);this.signTexture.needsUpdate=true;};

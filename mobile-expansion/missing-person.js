@@ -24,7 +24,7 @@ function render(space,index){
   const back=document.createElement('div');back.className='mp-final-back';const title=document.createElement('strong');title.textContent='다음 시즌 예고 · 새벽의 윤전기';const teaser=document.createElement('blockquote');teaser.textContent='“분명 세 사람이 찍힌 사진이었다.\n뒷면에는 네 번째 이름이 적혀 있었다.\n그 이름은… 당신의 것이었다.\n\n새벽 네 시, 멈춘 윤전기가 다시 돌면\n아직 찍히지 않은 당신의 실종 기사가 인쇄된다.\n뒤에서 종이 넘기는 소리가 나도, 돌아보지 마라.”';back.append(title,teaser);card.append(front,back);panel.appendChild(card);
   const credit=document.createElement('p');credit.className='mp-photo-credit';credit.textContent=CREDIT;panel.appendChild(credit);
   const close=document.createElement('button');close.textContent='예고 확인 · 게임 종료';close.onclick=()=>{state.teaserSeen=true;view.replaceChildren();const terminal=document.createElement('section');terminal.className='gm-expansion mp-puzzle';const heading=document.createElement('h2');heading.textContent='게임이 종료되었습니다.';const message=document.createElement('p');message.textContent='모든 퍼즐을 해결했습니다. 다음 시즌에서 다시 만나겠습니다. 게임을 다시 시작하려면 페이지를 새로고침하세요.';terminal.append(heading,message);view.appendChild(terminal);};panel.appendChild(close);view.scrollTop=0;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>card.classList.add('mp-flipped')));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{card.classList.add('mp-flipped');if(!space.endingAudioStarted){space.endingAudioStarted=true;game.historyGame?.audio.play('ending',window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:.6);}}));
   return;
  }
 
