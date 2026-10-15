@@ -8,12 +8,7 @@ class ArchiveSpace{
   this.game=game;this.T=THREE;this.scene=game.scene;this.room=game.room;this.player=game.playerControls;this.open=false;this.unlocked=false;this.progress=0;this.zone='main';this.solved=false;this.originalLocationTitle=document.querySelector('.location-title').textContent;
   this.group=new THREE.Group();this.group.name='mobile-underground-archive';this.scene.add(this.group);
   this.ambient=new THREE.AmbientLight(0x819386,.25);this.ambient.visible=false;this.group.add(this.ambient);
-  this.materials=this.makeMaterials();this.cutDoorway();this.buildEntrance();this.buildStairs();this.buildArchive();this.buildEditingProps();this.installMovement();this.installInspection();
-  this.onSolved=e=>{if(e.detail?.puzzleKey==='puzzle_a')this.unlocked=true;};window.addEventListener('puzzle-solved',this.onSolved);
-  this.quest=new window.GyeongMobileExpansion.Expansion({getRemainingSeconds:()=>game.playTimer.startedAt===null?600:Math.max(0,600-(performance.now()-game.playTimer.startedAt)/1000),isMobile:()=>true});
-  const render=this.quest.render.bind(this.quest);this.quest.render=()=>{render();const next=this.quest.host?.querySelector('[data-next]');if(next){next.hidden=!this.quest.solved.has(this.quest.room.id);next.textContent='조사창 닫고 다음 장소로 이동';next.onclick=()=>this.game.interactionManager.closeInspect();}};
-  this.quest.on('puzzle-solved',detail=>{if(detail.room==='archive'){this.solved=true;game.sharedInventory.addItem({id:'darkroom_iron_key',name:'암실 철문 열쇠',desc:'1124 날짜 스탬프로 봉인을 푼 서류함에서 얻은 열쇠.'});this.updateNotice();this.playPuzzleEffect('editing');}});
-  this.quest.on('item-acquired',item=>game.sharedInventory.addItem(item));
+  this.materials=this.makeMaterials();this.cutDoorway();this.buildEntrance();this.buildStairs();this.buildArchive();this.buildEditingProps();this.installMovement();
   this.originalFog={color:this.scene.fog.color.clone(),density:this.scene.fog.density};
   this.notice=document.createElement('div');this.notice.id='archive-route-notice';this.notice.setAttribute('role','status');document.body.appendChild(this.notice);this.notice.hidden=true;
  }
@@ -37,7 +32,7 @@ class ArchiveSpace{
   this.box(.4,1.6,1.8,5.2,3.5,-2.7,wall.material,true);
   const trim=this.scene.children.find(o=>o.isMesh&&o.position.x===4.95&&o.geometry.parameters.width===.08&&o.geometry.parameters.depth===10);if(trim)trim.visible=false;
  }
- sign(text,w=.9,h=.24,accent=false){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const c=canvas.getContext('2d');c.fillStyle='#211b11';c.fillRect(0,0,512,128);c.strokeStyle=accent?'#39c85a':'#897757';c.strokeRect(8,8,496,112);c.fillStyle=accent?'#9aefb2':'#d1bd95';c.font='bold 56px serif';c.textAlign='center';c.fillText(text,256,87);return new this.T.Mesh(new this.T.PlaneGeometry(w,h),new this.T.MeshBasicMaterial({map:new this.T.CanvasTexture(canvas),side:2}));}
+ sign(text,w=.9,h=.24,accent=false){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const c=canvas.getContext('2d');c.fillStyle='#211b11';c.fillRect(0,0,512,128);c.strokeStyle=accent?'#39c85a':'#897757';c.strokeRect(8,8,496,112);c.fillStyle=accent?'#9aefb2':'#d1bd95';c.font='bold 56px serif';c.textAlign='center';c.fillText(text,256,87);const mesh=new this.T.Mesh(new this.T.PlaneGeometry(w,h),new this.T.MeshBasicMaterial({map:new this.T.CanvasTexture(canvas),side:2}));mesh.isHintAccent=accent;return mesh;}
  buildEntrance(){
   const frame=new this.T.Group();frame.name='archive-entrance';this.group.add(frame);
   const data={isInteractable:true,clueId:'mobile_archive_door',type:'mobile_archive_door',name:'지하 자료실 입구',description:'오른쪽 벽의 낡은 자료실 문. 아래로 이어지는 계단에서 젖은 종이 냄새가 올라온다.'};frame.userData=data;
@@ -107,35 +102,15 @@ class ArchiveSpace{
   };
  }
  updateDoor(delta){if(!this.open||this.progress>=1)return;this.progress=Math.min(1,this.progress+delta/1.1);this.hinge.rotation.y=-this.progress*Math.PI/2;if(this.progress===1)this.room.colliders=this.room.colliders.filter(b=>b!==this.doorCollider);}
- updateNotice(){this.notice.hidden=this.zone==='main';document.querySelector('.location-title').textContent=this.zone==='archive'?'京城日報 地下資料室':this.zone==='stairs'?'京城日報 地下階段':this.originalLocationTitle;this.notice.textContent=this.zone==='stairs'?'地下階段 · 아래로 이어지는 자료실':this.solved?'자료실 완료 · 끝의 暗室 표지·검은 커튼 조사 → 철문 열기':'자료실 · 초록 날짜 메모를 읽고 중앙 책상 조사';}
+ updateNotice(){this.notice.hidden=this.zone==='main';document.querySelector('.location-title').textContent=this.zone==='archive'?'京城日報 地下資料室':this.zone==='stairs'?'京城日報 地下階段':this.originalLocationTitle;this.notice.textContent=this.zone==='stairs'?'地下階段 · 아래로 이어지는 자료실':this.solved?'자료실 완료 · 끝의 暗室 표지·검은 커튼 조사 → 철문 열기':'자료실 · 중앙 책상과 선반의 역사 기록을 확인하세요';}
  playPuzzleEffect(kind){
-  if(kind==='editing')this.typewriterSheet.visible=true;const element=document.createElement('div');element.className='gp-room-effect';element.setAttribute('role','status');const caption=document.createElement('p');caption.textContent=kind==='editing'?'타자기 롤러가 헛돈다…\n보지 말아야 할 것을 보았구나':'핏자국 14 — 붉은 안전등이 깨졌다';element.appendChild(caption);
+  if(kind==='editing')this.typewriterSheet.visible=true;const element=document.createElement('div');element.className='gp-room-effect';element.setAttribute('role','status');const caption=document.createElement('p');caption.textContent=kind==='editing'?'타자기 롤러가 헛돈다…\n보지 말아야 할 것을 보았구나':'사진 속 얼굴이 움직인다 — 붉은 안전등이 깨졌다';element.appendChild(caption);
   if(kind==='develop'&&!this.game.interactionManager.isInspecting&&this.game.playerControls.controls.isLocked){const image=document.createElement('img');image.src='./assets/ghosts/shroud.png';image.alt='인화지 뒤편의 일그러진 그림자';element.appendChild(image);}
   document.body.appendChild(element);const audio=this.game.soundManager.ctx||this.game.soundManager.audioContext;
   if(audio&&audio.state==='running'){const count=kind==='editing'?14:1;for(let i=0;i<count;i++){const oscillator=audio.createOscillator(),gain=audio.createGain(),time=audio.currentTime+i*.065;oscillator.type=kind==='editing'?'square':'sawtooth';oscillator.frequency.setValueAtTime(kind==='editing'?170+(i%4)*80:1800,time);oscillator.frequency.exponentialRampToValueAtTime(45,time+.12);gain.gain.setValueAtTime(.07,time);gain.gain.exponentialRampToValueAtTime(.001,time+.15);oscillator.connect(gain);gain.connect(this.game.soundManager.masterGain||audio.destination);oscillator.start(time);oscillator.stop(time+.16);}}
   const lights=[];this.scene.traverse(object=>{if(object.isLight){lights.push([object,object.visible]);object.visible=false;}});this.effectUntil=performance.now()+4500;setTimeout(()=>{for(const [light,visible]of lights)light.visible=visible;element.remove();},4600);
  }
- installInspection(){
-  this.onInspect=e=>{
-   const custom=e.detail.type==='mobile_archive_door'||e.detail.type==='mobile_archive_records';
-   this.game.inspectViewRenderer.viewContainer.style.minHeight=custom?'0':'';
-   this.game.interactionManager.inspectModalEl.querySelector('.inspect-card').scrollTop=0;
-   if(custom)this.game.interactionManager.inspectTagEl.textContent='地下資料室 · 1934';
-   if(e.detail.type==='mobile_archive_door'){
-    const view=this.game.inspectViewRenderer.viewContainer,bar=this.game.inspectViewRenderer.actionBar;view.replaceChildren();bar.replaceChildren();
-    const text=document.createElement('p');text.textContent=this.open?'문이 열렸다. 좁은 계단을 내려가 지하 자료실로 가시오.':this.unlocked?'24번 서랍의 쇠빗장이 풀리며 자료실의 봉인이 열렸다. 아래로 이어지는 계단이 보인다.':'자료실 문은 봉인되어 있다. 식자실의 24번 서랍 암호를 먼저 풀어야 한다.';view.appendChild(text);
-    if(!this.open){const b=document.createElement('button');b.className='inspect-action-btn';b.textContent='자료실 문 열기';b.disabled=!this.unlocked;b.onclick=()=>{this.open=true;this.game.soundManager.playMetalDoorOpen();this.game.interactionManager.closeInspect();};bar.appendChild(b);}
-   }
-   if(e.detail.type==='mobile_archive_hint'){
-    const view=this.game.inspectViewRenderer.viewContainer;view.replaceChildren();this.game.inspectViewRenderer.actionBar.replaceChildren();
-    const p=document.createElement('p');p.className='gp-hints';p.textContent='풀이: 중앙 책상 조사 → 먹지 얻기 → 한 번에 맞추기 → 날짜 1124 입력 → 스탬프 찍기. 열쇠를 얻으면 자료실 끝 暗室 표지의 검은 커튼을 조사하세요.';view.appendChild(p);
-   }
-   if(e.detail.type==='mobile_archive_records'){
-    const view=this.game.inspectViewRenderer.viewContainer;this.game.inspectViewRenderer.actionBar.replaceChildren();
-    if(this.quest.room.id!=='archive'){view.replaceChildren();const p=document.createElement('p');p.textContent='검열문을 대조하고 1124 스탬프로 암실 철문 열쇠를 얻었다. 암실 인화 작업대에서 다음 기록을 확인하시오.';view.appendChild(p);}else if(this.quest.phase==='idle')this.quest.start(view);else{this.quest.host=view;this.quest.render();}
-   }
-  };window.addEventListener('space-inspect',this.onInspect);
- }
+
 }
 return{ArchiveSpace,ROUTE,groundHeight};
 });
