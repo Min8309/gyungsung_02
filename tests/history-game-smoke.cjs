@@ -52,7 +52,7 @@ const {QUESTIONS}=require('../mobile-expansion/history-game.js');
   if(mobile){for(const [x,z]of [[0,-15.2],[0,-3],[2.6,-2.7],[4,-2.7],[6,-2.7],[14.5,-2.7],[20.3,-2.7],[20.3,-1.4],[21.8,-1.4]])await walk(x,z);}else await page.evaluate(()=>game.camera.position.set(21.8,-2,-1.4));
   await inspect({type:'mobile_darkroom_curtain',curtainIndex:0,name:'자료실 커튼'});assert.equal(await page.getByRole('button',{name:'검은 커튼 젖히기',exact:true}).isDisabled(),true);await close();
   await page.evaluate(()=>{game.camera.position.set(18.25,-1.97,-3.9);game.camera.lookAt(18.25,-2.15,-5.68);});await page.waitForFunction(()=>game.interactionManager.currentInteractable?.type==='history_archive_hint');
-  if(mobile){await page.locator('.mobile-pickup').tap();if(await page.locator('#mobile-nearby-clues').isVisible())await page.locator('[data-clue-id="history_archive_papers_0"]').tap();}else await page.keyboard.press('e');await page.locator('[data-history-question="archive-language"]').waitFor();await close();
+  if(mobile){await page.locator('.mobile-pickup').tap();if(await page.locator('#mobile-nearby-clues').isVisible())await page.locator('[data-clue-id="history_archive_papers_0"]').tap();}else await page.keyboard.press('e');await page.locator('[data-history-question="archive-language"]').waitFor();await close();await page.evaluate(()=>game.camera.position.set(21.8,-1.97,-1.4));
   for(const q of QUESTIONS.filter(q=>q.room==='archive'))await solve(q,{type:q.id==='archive-source'?'mobile_archive_records':'history_archive_hint',name:q.place});
   // Each archive task opens only at its own physical record.
   assert.equal(await page.evaluate(()=>game.mobileArchive.solved),true);
