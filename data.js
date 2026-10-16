@@ -143,7 +143,7 @@ window.YAROK = {
      ※ editorial(편집 헤드라인)과 카드 설명은 경성야록 팀이 쓰는 편집 문구입니다. 옛 기사 원문이 아닙니다.
         그래서 따옴표나 출처를 붙이지 않습니다. 한자 표기는 모두 // 검토필요
      hero  : 대표 이미지 — { a: 사건id, illust: 삽화 } 또는 { a: 사건id, crop: 스캔 조각 }
-     panel : 대표 사진 오른쪽 어두운 판 (hero-panel-reference.html) — kick: 머리표, year: 머리표 아래 연도, title: 큰 제목 두 줄, sub: 부제 두 줄
+     panel : 대표 사진 오른쪽 어두운 판 (메인 대표 사진 패널) — kick: 머리표, year: 머리표 아래 연도, title: 큰 제목 두 줄, sub: 부제 두 줄
      cards : 작은 카드 1~2개 — { a: 사건id, desc: [한 줄, 카드 폭에 맞게 짧게] } / 사진 없이 글만이면 noPhoto: true
              title: [한자, 한글] 을 쓰면 사건 제목 대신 짧은 제목 / emptyThumb: '글씨' 면 사진 대신 빈 타원 틀
              사건이 모자라면 { illust: 당시 지도·사진 } 또는 { crop: 당시 지면 조각 } 으로 채움 */

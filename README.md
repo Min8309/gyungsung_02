@@ -75,7 +75,7 @@ Playwright와 Chromium이 설치된 환경에서 `node tests/game-input-smoke.cj
 호외 인쇄에 별도 귀신 팝업을 추가하지 않으며, 게임 종료·철문 엔딩에서는 무작위 등장을 멈춥니다.
 일찍 엔딩에 도달하면 남은 예약은 취소합니다. 새로 시작하면 다시 6회로 초기화됩니다.
 
-이미지는 `sikjasil/assets/ghosts/`에 보관하며, 더블클릭으로 여는 경우 `media-local-ghosts.js`가 같은 PNG를 제공합니다.
+이미지는 `sikjasil/assets/ghosts/`에서 직접 불러옵니다. 게임은 HTTP/HTTPS 서버에서 실행하며, 귀신 base64 로컬 테스트 번들은 제거했습니다.
 참고 이미지를 바탕으로 새로 생성한 귀신: 천장 원혼, 소복 그림자, 벽 속 식자공, 매달린 원혼, 활자장 노인, 먹물 속 비명.
 
 검증: `node --test tests/ghost-plan.test.cjs`, `node tests/ghost-browser-smoke.cjs`.
@@ -113,3 +113,11 @@ GitHub Pages의 `main` / 저장소 루트 배포를 그대로 사용합니다. H
 테이블의 활자판은 난이도 중 「지워진 지면을 조판하라」 퍼즐입니다. 옆의 글자 큐브 8개 중 알맞은 글자를 골라 신문의 네 빈칸을 채웁니다. 원문이 아닌 재구성 지면임을 표시하며, 잘못 놓은 글자 교체·초기화·3단계 힌트·정답음을 제공합니다. 검증: `node tests/typesetting-smoke.cjs`.
 
 플레이 중 왼쪽 아래에 낡은 종이 체크 수첩을 고정 표시합니다. 전체 14개 중 완료·남은 수, 현재 방의 게임별 체크와 난이도, 열쇠 획득·배치 상태가 자동 갱신됩니다. 이동·조사를 가로막지 않으며 모바일에서는 조이스틱 위에 배치합니다. 검증: `node tests/progress-notepad-smoke.cjs`.
+
+## 배포·공용 에셋 정리 (2026-10-16)
+
+- 전체 통합 배포에는 `sikjasil/`, `mobile-expansion/`, `game-pwa-sw.js`가 함께 필요합니다. [적용 가이드](이스터에그_적용방법.txt)를 참고하세요.
+- 게임만 배포할 때: `python3 tools/package-sikjasil.py --output /tmp/sikjasil-standalone.zip`. ZIP 안의 모든 파일을 배포하면 상위 폴더 의존 없이 실행됩니다.
+- `radio-device/`는 응접실·주파수 다이얼·수신 파형을 갖춘 독립 체험입니다. 방송 음원 설정은 [라디오 안내](radio-device/README.md)를 참고하세요.
+- 과거 `case/index.html#/case/...` 주소는 현재 사건 페이지로 이동합니다. 사용 중인 `case/fonts`, `case/audio`, 마리아 이미지는 유지하고, 중복된 옛 빌드 에셋은 정리했습니다.
+- 사건 지면 공통 라디오 그림은 `assets/radio/`, 공통 파비콘은 `assets/case-favicon.svg`에 보관합니다. 독립 라디오 체험의 고해상도 그림은 별도 이미지이므로 유지합니다.

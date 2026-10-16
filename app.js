@@ -581,7 +581,7 @@ function cardHTML(c){const a=c.a&&ART[c.a],m=metaOf(c);
   return `<button class="card${c.noPhoto?' nophoto':''}" type="button"${a?` data-art="${c.a}"`:''}>`
     +(c.noPhoto?'':c.emptyThumb?`<span class="th empty"><span class="th-oval"><small>${esc(c.emptyThumb)}</small></span></span>`:`<span class="th">${smallThumb(c)}</span>`)
     +`<span class="cd"><b>${title}</b><p title="${esc((c.desc||[]).join(' '))}">${esc((c.desc||[]).join(' '))}</p>${small}</span><span class="ar" aria-hidden="true">→</span></button>`}
-/* 대표 사진 오른쪽 어두운 판: 오른쪽부터 머리표 | 큰 제목 | 부제 (hero-panel-reference.html) */
+/* 대표 사진 오른쪽 어두운 판: 오른쪽부터 머리표 | 큰 제목 | 부제 (메인 대표 사진 패널) */
 function panelHTML(p){return `<div class="hero-panel"><span class="hp-kick">${esc(p.kick)} <em>${esc(p.year)}</em></span>`
   +`<h3 class="hp-title">${p.title.map(esc).join('<br>')}</h3><p class="hp-sub">${p.sub.map(esc).join('<br>')}</p></div>`}
 function faceHTML(id,marks=''){const f=faceOf(id),fp=DATA.frontPage[id],m=metaOf(fp.hero);

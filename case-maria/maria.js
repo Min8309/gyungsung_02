@@ -73,7 +73,7 @@
       text: ['철도국 관사가 모여 잇든 초량정 거리. 마리아가 숨진 집도 이 일대에 잇섯소. 옛 거리의 전차 길은 이제 좁은 골목과 가게로 바뀌엇소.',
              '철도국 관사가 모여 있던 초량동 거리. 마리아가 숨진 집도 이 일대에 있었다. 옛 거리의 전찻길은 이제 좁은 골목과 가게로 바뀌었다.'] },
     { name: '초량 언덕', sub: ['바다와 역 사이', '바다와 역 사이의 비탈'],
-      then: IMG + 'place/choryang-view-02.jpg', now: IMG + 'place/choryang-2026-04.jpg',
+      then: IMG + 'place/choryang-view-02.jpg', now: IMG + 'place/choryang-2026.jpg',
       thenAddr: ['초량 바닷가 · 낫은 지붕들', '초량 바닷가 · 낮은 지붕들'], nowAddr: ['산비탈까지 들어찬 동네', '산비탈까지 들어찬 동네'],
       text: ['바다와 역 사이에 끼인 초량. 옛 사진의 낫은 지붕들은 이제 산비탈 꼭대기까지 빽빽한 집들로 바뀌엇소.',
              '바다와 역 사이에 끼인 초량. 옛 사진의 낮은 지붕들은 이제 산비탈 꼭대기까지 빽빽한 집들로 바뀌었다.'] },
@@ -523,14 +523,14 @@
     var pct = function (f) { return (f - LO) / (HI - LO) * 100; };
     var HILLS = '<svg class="rx-hills" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 46 L40 24 L76 40 L118 12 L160 38 L196 22 L236 42 L270 28 L300 38 L300 60 L0 60Z" fill="#221d17"></path><path d="M0 54 L60 42 L110 50 L160 40 L214 52 L260 44 L300 50 L300 60 L0 60Z" fill="#191510"></path></svg>';
     root.innerHTML =
-      '<div class="rx-panel rx-room"><div class="rx-room-bg" aria-hidden="true" style="background-image:url(\'' + JK + 'image/Jukcheomjeong/case/room.jpg\')"></div>' +
+      '<div class="rx-panel rx-room"><div class="rx-room-bg" aria-hidden="true" style="background-image:url(\'../assets/radio/room.jpg\')"></div>' +
         '<div class="rx-mast"><strong>京城野錄</strong><small>' + H('긔록 수신긔', '기록 수신기') + '</small></div>' +
-        '<button type="button" class="rx-radio" aria-label="라디오 켜기"><span class="rx-glow" aria-hidden="true"></span><img alt="1930년대 나무 라디오 (재현 그림)" draggable="false" src="' + JK + 'image/Jukcheomjeong/case/radio.png"><span class="yk-credit">재현</span></button>' +
+        '<button type="button" class="rx-radio" aria-label="라디오 켜기"><span class="rx-glow" aria-hidden="true"></span><img alt="1930년대 나무 라디오 (재현 그림)" draggable="false" src="../assets/radio/radio.png"><span class="yk-credit">재현</span></button>' +
         '<p class="rx-hint">' + H('라듸오를 눌러<br>긔록의 주파수를 바드시오.', '라디오를 눌러<br>기록의 주파수를 받으세요.') + '</p></div>' +
       '<div class="rx-panel rx-tuner"><div class="rx-scale"><div class="rx-nums"><span>550</span><span>700</span><span>900</span><span>1100</span><span>1300</span><span>1500</span></div><div class="rx-ticks"></div><span class="rx-needle"></span>' +
         '<div class="rx-years">' + ST.map(function (s, i) { return '<button type="button" data-i="' + i + '" style="left:' + pct(freqOf(s.ang)) + '%">' + s.y + '</button>'; }).join('') + '</div></div>' +
         '<div class="rx-dial-wrap"><span class="rx-screw a"></span><span class="rx-screw b"></span><span class="rx-screw c"></span><span class="rx-screw d"></span><span class="rx-dial-mark" aria-hidden="true"></span>' +
-        '<div class="rx-dial" role="slider" tabindex="0" aria-label="주파수 다이얼. 좌우 화살표로도 돌릴 수 있습니다." aria-valuemin="550" aria-valuemax="1500"><img alt="" draggable="false" src="' + JK + 'image/Jukcheomjeong/case/dial.png"></div></div>' +
+        '<div class="rx-dial" role="slider" tabindex="0" aria-label="주파수 다이얼. 좌우 화살표로도 돌릴 수 있습니다." aria-valuemin="550" aria-valuemax="1500"><img alt="" draggable="false" src="../assets/radio/dial.png"></div></div>' +
         '<div class="rx-readout">---<small>키로</small></div><div class="rx-bars">' + new Array(23).join('<i></i>') + '</div><span class="rx-signal">' + H('잡히는 정도') + '</span></div>' +
       '<div class="rx-panel rx-air"><div class="rx-screen"><div class="rx-screen-top"><span class="rx-when">' + H('수신 대긔', '수신 대기') + '</span><span class="rx-onair">' + H('방송 중이오', '방송 중') + '</span></div>' +
         '<div class="rx-visual"><span class="rx-moon"></span>' + HILLS + '<p class="rx-static">' + H('전원이 꺼져 잇소', '전원이 꺼져 있습니다') + '</p></div>' +

@@ -8,8 +8,8 @@ const TARGET_ANGLE = 217;
 // 정답으로 인정하는 범위 (± 몇 도)
 const SNAP_RANGE = 5;
 
-// 방송 파일. 이 경로에 mp3가 있으면 재생하고, 없으면 파형만 움직입니다.
-const BROADCAST_SRC = 'assets/broadcast.mp3';
+// 선택 방송 파일: index.html의 body data-broadcast-src에 지정합니다. 없으면 파형만 표시합니다.
+const BROADCAST_SRC = document.body.dataset.broadcastSrc || '';
 
 // 다이얼 숫자 범위 (0도 = FREQ_MIN, 한 바퀴 = FREQ_MAX)
 const FREQ_MIN = 550;
@@ -339,6 +339,7 @@ const broadcast = {
 
 // 페이지가 열릴 때 파일이 있는지 미리 확인
 (function checkBroadcastFile() {
+  if (!BROADCAST_SRC) { broadcast.checked = true; fileNote.hidden = false; return; }
   const a = new Audio();
   a.preload = 'auto';
   const done = (ok) => {

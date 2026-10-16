@@ -1198,7 +1198,7 @@ body{background:var(--night)}
 .rc{grid-template-rows:minmax(0,1fr) 72px}
 .card .th{height:58px}
 
-/* ---------- 대표 사진 오른쪽 어두운 판 (hero-panel-reference.html · 제목배치-시안.png) ----------
+/* ---------- 대표 사진 오른쪽 어두운 판 (메인 대표 사진 패널 · 제목배치-시안.png) ----------
    너비 250px, 안쪽 7px에 두 줄 괘선. 오른쪽부터 머리표 | 큰 제목 | 부제, 칸 사이 가는 세로선, 모두 같은 윗선에서 시작 */
 .hero-panel{position:absolute;top:0;right:0;bottom:0;width:250px;z-index:8;display:grid;grid-template-columns:auto auto auto;justify-content:end;padding:10px 12px;
   background:#1b140d;box-shadow:inset 18px 0 22px -14px rgba(0,0,0,.8);color:#ebdfc6;font-family:"Noto Serif KR","Noto Serif CJK KR",serif;text-shadow:none}
